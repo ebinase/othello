@@ -2,8 +2,8 @@
 
 namespace Packages\Domain\Stone;
 
-use Packages\Domain\Position\Position;
-use Packages\Domain\Color\Color;
+// use Packages\Domain\Position\Position;
+// use Packages\Domain\Color\Color;
 
 /**
  * コマを表すクラス(仮)
@@ -14,7 +14,7 @@ class Stone
     private $color;
     private $position;
 
-    public function __construct(Color $color, Position $position)
+    public function __construct($color, $position)
     {
         //
     }

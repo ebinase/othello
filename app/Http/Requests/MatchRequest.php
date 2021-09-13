@@ -27,6 +27,11 @@ class MatchRequest extends AbstractRequest
                 break;
 
             case 'process':
+                $rules = [
+                    'color' => 'required',
+                    'x'     => 'required',
+                    'y'     => 'required',
+                ];
                 break;
 
             default:

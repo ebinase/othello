@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-class MatchRequest extends AbstractRequest
+class GameRequest extends AbstractRequest
 {
     /**
      * Determine if the user is authorized to make this request.

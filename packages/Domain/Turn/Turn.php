@@ -4,50 +4,46 @@ namespace Packages\Domain\Turn;
 
 use Packages\Domain\Board\Board;
 use Packages\Domain\Color\Color;
+use Packages\Domain\Stone\Stone;
 
 class Turn
 {
-    private TurnNumber  $turnNumber;
-    private Color       $playerColor;
-    private Board       $board;
+    private int    $turnNumber;
+    private Color  $playableColor;
+    private Board  $board;
+    private int    $skipCount;
 
-    public function __construct(TurnNumber $turnNumber, Color $playerColor, Board $board)
+    public function __construct(int $turnNumber, Color $playableColor, Board $board, int $skipCount)
     {
-        $this->turnNumber   = $turnNumber;
-        $this->playerColor  = $playerColor;
-        $this->board        = $board;   
+        if ($turnNumber < 0) {
+            throw new \InvalidArgumentException();
+        }
+
+        $this->turnNumber    = $turnNumber;
+        $this->playableColor = $playableColor;
+        $this->board         = $board;
+        $this->skipCount     = $skipCount;
     }
 
-    // ゲッター系
-    public function getTurnNumber()
+    /**
+     * 次のターンへ
+     *
+     * @param Stone $stone
+     * @return void
+     */
+    public function next(Stone $stone)
     {
-        //
-    }
+        // このターンに行動可能な色かチェック
+        if (!$stone->colorEquals($this->playableColor)) {
+            throw new \InvalidArgumentException();
+        }
 
-    public function getPlayerColor()
-    {
-        //
-    }
-
-    public function getBoard()
-    {
-        //
-    }
-
-    // 複数クラス操作系
-    public function next()
-    {
-        /*
-        ・ ボードを更新
-        ・ ターン+1
-        ・ 色を反転
-        ・ Turnオブジェクトに詰めて返却
-        */
-    }
-
-    public function isPlayable()
-    {
-        
+        return new Turn(
+            $this->turnNumber + 1,
+            $this->playableColor->opposite(),
+            $this->board->flipStones($stone),
+            $this->board->isPlacable($this->playableColor) ? 0 : $this->skipCount + 1
+        );
     }
 
     //　FIXME: TurnFlowServiceに移す？

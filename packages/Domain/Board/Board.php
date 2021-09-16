@@ -2,6 +2,8 @@
 
 namespace Packages\Domain\Board;
 
+use Packages\Domain\Stone\Stone;
+
 class Board
 {
     // TODO: arrayable検討
@@ -27,15 +29,6 @@ class Board
         $this->board = $board;
     }
 
-    /**
-     * 盤面を取得
-     *
-     * @return array
-     */
-    public function getBoard()
-    {
-        return $this->board;
-    }
 
     /**
      * 何も置かれていない場所の数を取得
@@ -69,11 +62,12 @@ class Board
         //
     }
 
-    public function flipStones($color, $X, $Y)
+    public function flipStones(Stone $stone): Board
     {
         // TODO: #6 番兵などでパフォーマンス改善
 
-        
+        $board = $this->board;
+        return new Board($board);
     }
 
     public function equals()

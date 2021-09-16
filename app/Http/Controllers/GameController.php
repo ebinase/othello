@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\MatchRequest;
+use App\Http\Requests\GameRequest;
+use Packages\UseCases\Turn\GameProcessUsecase;
 use Illuminate\Routing\Controller as BaseController;
-use Packages\UseCases\Turn\TurnProcessUsecase;
 
-class MatchController extends BaseController
+class GameController extends BaseController
 {
     private $turnProcessUsecase;
 
-    public function  __construct(TurnProcessUsecase $turnProcessUsecase)
+    public function  __construct(GameProcessUsecase $turnProcessUsecase)
     {
         $this->turnProcessUsecase = $turnProcessUsecase;
     }
@@ -20,11 +20,12 @@ class MatchController extends BaseController
         
     }
 
-    public function process(MatchRequest $request)
+    public function process(GameRequest $request)
     {
+        $id = $request->session()->get('game_id');
         $params = $request->getProcessParams();
 
-        $this->turnProcessUsecase->process($params);
+        $this->turnProcessUsecase->process($id, $params);
 
         return redirect()->route('match.show');
     }

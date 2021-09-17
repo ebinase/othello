@@ -7,43 +7,74 @@ namespace Packages\Domain\Position;
  */
 class Position
 {
-    private $xSize;
-    private $ySize;
-
-    const DEFAULT_SIZE_X = 8;
-    const DEFAULT_SIZE_Y = 8;
-
     private int $x;
     private int $y;
 
-    public function __construct(int $x, int $y, $xSize = self::DEFAULT_SIZE_X, $ySize = self::DEFAULT_SIZE_Y)
+    public function __construct(int $x, int $y)
     {
-        //
+        $this->x = $x;
+        $this->y = $y;
+    }
+
+    public function toArray()
+    {
+        return ['x' => $this->x, 'y' => $this->y];
     }
 
     // インデックスでの取得
-    public function x(): Position
+    public function x()
+    {
+        return $this->x;
+    }
+
+    public function y()
     {
         // 何かしらの処理
-        return $this;
+        return $this->y;
     }
 
-    public function y(): Position
+    /**
+     * 方向を指定して直線的に移動した先の座標を返す
+     *
+     * @param  int $step
+     * @param  array $direction
+     * @return Position
+     */
+    public function move($step, $direction): Position
     {
-        // 何かしらの処理
-        return $this;
+        // 進行方向を取得
+        list($xDir, $yDir) = $direction;
+        // 指定されたステップ分だけ進む
+        $x = $this->x + $step * $xDir;
+        $y = $this->y + $step * $yDir;
+        return new Position($x, $y);
     }
 
-    public function index()
+    public function positionsInMove($step, $direction): array
     {
-
+        $posions = [];
+        for ($i=1; $i <= $step; $i++) { 
+            $posions[] = $this->move($i, $direction);
+        }
+        return $posions;
     }
 
-    public function first() {
+    /**
+     * 自身の場所から移動する間にある座標をすべて返す
+     *
+     * @param  int $step
+     * @param  array $direction
+     * @param  array $containsEdge 目的地の座標も含めるかどうか
+     * @return Position
+     */
+    public function checkPoints(Position $goal)
+    {
         
-    } 
+        // return new Position($x, $y);
+    }
 
-    public function last() {
+    public function diff(Position $position)
+    {
         
-    } 
+    }
 }

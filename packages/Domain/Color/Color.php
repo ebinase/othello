@@ -22,6 +22,11 @@ class Color
         $this->color = $color;
     }
 
+    public function toCode()
+    {
+        return $this->color;
+    }
+
     public function opposite(): Color
     {
         foreach($this->colorList as $colorCode => $colorName) {

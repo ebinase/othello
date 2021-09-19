@@ -2,7 +2,7 @@
 
 namespace Packages\UseCases\Turn;
 
-use Packages\Domain\Stone\Stone;
+use Packages\Domain\Position\Position;
 use Packages\Domain\Game\GameRepositoryInterface;
 
 class GameProcessUsecase
@@ -14,15 +14,13 @@ class GameProcessUsecase
         $this->gameRepository = $gameRepository;
     }
 
-    public function process($gameId, $params)
+    public function process($gameId, $playerMove)
     {
-        $movedStone = new Stone($params['color'], $params['x'], $params['y']);
-
         $game = $this->gameRepository->find($gameId);
 
-        $game->process($movedStone);
+        $game->process($playerMove);
         // 保存
-        $this->gameRepository->save($game);
+        $$this->gameRepository->save($game);
 
         // viewModelに詰め替えて返却
         return;

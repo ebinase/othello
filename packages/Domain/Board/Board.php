@@ -3,18 +3,12 @@
 namespace Packages\Domain\Board;
 
 use Packages\Domain\Stone\Stone;
-use Packages\Domain\Position\Position;
 use Packages\Domain\Common\Definitions\PositionDefine;
 
 class Board
 {
-    // TODO: arrayable or Stoneのファーストクラスコレクション化を検討
-    private $board;
-
-    const BOARD_STATUS_EMPTY = 0;
-    const BOARD_STATUS_PLACED = 0;
-    // const BOARD_STATUS_BLACK = 1;
-    // const BOARD_STATUS_WHITE = 2;
+    // TODO: FieldListファーストクラスコレクション化
+    private array $board;
     
     const BOARD_SIZE_X = 8;
     const BOARD_SIZE_Y = 8;
@@ -33,18 +27,19 @@ class Board
             }
         }
 
-        $this->board = $this->map($board);
+        $this->board = $board;
+        // $this->board = $this->map($board);
     }
 
-    public function map($board)
-    {
-        foreach ($board as $x => $row) {
-            foreach ($row as $y => $color) {
-                $board[$x][$y] = !empty($color) ? new Stone($color, new Position($x, $y)) : self::BOARD_STATUS_EMPTY;
-            }
-        }
-        return $board;
-    }
+    // public function map($board)
+    // {
+    //     foreach ($board as $x => $row) {
+    //         foreach ($row as $y => $color) {
+    //             $board[$x][$y] = !empty($color) ? app()->make('Stone', [$color, $x, $y]) : self::BOARD_STATUS_EMPTY;
+    //         }
+    //     }
+    //     return $board;
+    // }
 
     public function toArray(): array
     {
@@ -87,21 +82,45 @@ class Board
 
     public function update(Stone $stone): Board
     {
+        // 置けない場合は盤面に変更を加えず返す
+        if (!$this->isPlayable($stone)) {
+            return $this;
+        }
+        // 更新された盤面を返す
         $updatedBoard = $this->flipStones($this->board, $stone);;
         return new Board($updatedBoard);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param Stone[] $board
+     * @param Stone $stone
+     * @return array
+     */
     private function flipStones(array $board, Stone $stone): array
     {
         // TODO: #6 番兵などでパフォーマンス改善
-        
+        // TODO: $boardをプリミティブな配列からfieldListに置き換え
+        $totalCount = 0;
         foreach(PositionDefine::directions as $direction) {
             // 何個裏返すことができるか計算
             $flipCount = $this->flipCountInLine($board, $stone, $direction);
-            // 裏返せるコマの位置を取得しひとつひとつ裏返す
-            foreach ($stone->positionsInMove($flipCount, $direction) as $postion) {
-                $board = $this->flip($board, $postion, $stone->colorCode());
+
+            if ($flipCount > 0) {
+                // はさまれたコマの位置を取得しひとつひとつ裏返す
+                foreach ($stone->positionsInMove($flipCount, $direction) as $postion) {
+                    // ボードをStoneの配列にすれば、引数は$boardと$positionだけでいいかも
+                    $board = $this->flip($board, $postion, $stone->colorCode());
+                }
+                // 裏返したコマの数を追加
+                $totalCount += $flipCount;
             }
+        }
+
+        if ($totalCount > 0) {
+            // ひとつでも裏返せていたらコマを置く
+            $this->flip($board, $stone->position(), $stone->colorCode());
         }
 
         return $board;
@@ -123,7 +142,7 @@ class Board
         $y = $stone->y() + $direction['y'];
 
         // 反対の色が連続する数を調べる
-        while ($board[$x][$y] === $stone->colorCode()->opposite()) {
+        while ($stone->isOppositeColor($board[$x][$y])) {
             $count++;
             // 次のマスへ
             $x += $direction['x'];
@@ -131,7 +150,7 @@ class Board
         }
         
         // ループが終了したマスの状態に応じて処理分岐
-        if ($stone->colorCode()) {
+        if ($stone->colorEquals($board[$x][$y])) {
             // 同じ色があったらカウント数を返す
             return $count;
         } else {
@@ -143,7 +162,7 @@ class Board
     private function flip($board, $position, $colorCode)
     {
         // TODO: 色チェックと引数をオブジェクトにするのかの確認
-        return $board[$position['x']][$position['y']] = $colorCode;
+        return $board[$position->x()][$position->y()] = $colorCode;
     }
 
     public function equals()

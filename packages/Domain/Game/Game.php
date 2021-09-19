@@ -3,6 +3,7 @@
 namespace Packages\Domain\Game;
 
 use Packages\Domain\Turn\Turn;
+use Packages\Domain\Position\Position;
 
 class Game
 {
@@ -22,10 +23,10 @@ class Game
         $this->turn = $turn;
     }
 
-    public function process()
+    public function process(Position $playerMove)
     {
         // TODO: 処理追加　
-        // FIXME: ゲームの進行とゲーム情報の分離を検討
-        $this->turn = $this->turn->next;
+        // HACK: ゲームの進行とゲーム情報の分離を検討
+        $this->turn = $this->turn->next($playerMove);
     }
 }

@@ -28,7 +28,6 @@ class GameRequest extends AbstractRequest
 
             case 'process':
                 $rules = [
-                    'color' => 'required',
                     'x'     => 'required',
                     'y'     => 'required',
                 ];
@@ -62,10 +61,7 @@ class GameRequest extends AbstractRequest
 
     public function getProcessParams()
     {
-        $params = [];
-
-        $params['color'] = $this->input('color');
-        $params['position'] = [
+        $params = [
             'x' => $this->input('x'),
             'y' => $this->input('y'),
         ];

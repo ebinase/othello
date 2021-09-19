@@ -25,9 +25,19 @@ class Stone
         return $this->color === $color;
     }
 
+    public function isOppositeColor(Stone $stone): bool
+    {
+        return $stone->colorCode() == $this->opposite()->colorCode();
+    }
+
     public function colorCode()
     {
         return $this->color->toCode();
+    }
+
+    public function opposite(): Stone
+    {
+        return new Stone($this->color->opposite(), $this->position);
     }
 
     public function move($step, $direction): Stone
@@ -42,7 +52,10 @@ class Stone
         return $this->position->positionsInMove($step, $direction);
     }
 
-
+    public function position(): Position
+    {
+        return $this->position;
+    }
 
     public function x(): int
     {

@@ -4,6 +4,7 @@ namespace Packages\Domain\Turn;
 
 use Packages\Domain\Board\Board;
 use Packages\Domain\Color\Color;
+use Packages\Domain\Position\Position;
 use Packages\Domain\Stone\Stone;
 
 class Turn
@@ -31,22 +32,19 @@ class Turn
      * @param Stone $stone
      * @return void
      */
-    public function next(Stone $stone)
+    public function next(Position $position)
     {
-        // このターンに行動可能な色かチェック
-        if (!$stone->colorEquals($this->playableColor)) {
-            throw new \InvalidArgumentException();
-        }
+        $stone = app()->make('Stone', [$this->playableColor, $position]);
 
         return new Turn(
             $this->turnNumber + 1,
             $this->playableColor->opposite(),
-            $this->board->flipStones($stone),
-            $this->board->isPlacable($this->playableColor) ? 0 : $this->skipCount + 1
+            $this->board->update($stone),
+            $this->board->isPlayable($this->playableColor) ? 0 : $this->skipCount + 1
         );
     }
 
-    //　FIXME: TurnFlowServiceに移す？
+    // HACK: TurnFlowServiceに移す？
     public function diff($board)
     {
         

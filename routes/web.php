@@ -17,11 +17,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group('match', function() {
-    Route::name('match.')->group(function() {
+Route::group(['game'], function() {
+    Route::name('game.')->group(function() {
         // ゲーム画面を表示
-        Route::get('show', 'MatchController@show')->name('show');
+        Route::get('show', 'GameController@show')->name('show');
         // ターンを更新する
-        Route::post('process', 'MatchController@process')->name('process');
+        Route::post('process', 'GameController@process')->name('process');
     });
 });

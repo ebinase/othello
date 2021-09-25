@@ -77,17 +77,19 @@ class Board
      */
     public function isPlayable($color)
     {
-        //
+        return true;
     }
 
-    public function update(Stone $stone): Board
+    public function update(Stone $stone)
     {
         // 置けない場合は盤面に変更を加えず返す
         if (!$this->isPlayable($stone)) {
             return $this;
         }
+        return $this->flipCountInLine($this->board, $stone, [-1,-1]);
+
         // 更新された盤面を返す
-        $updatedBoard = $this->flipStones($this->board, $stone);;
+        $updatedBoard = $this->flipStones($this->board, $stone);
         return new Board($updatedBoard);
     }
 
@@ -98,7 +100,7 @@ class Board
      * @param Stone $stone
      * @return array
      */
-    private function flipStones(array $board, Stone $stone): array
+    private function flipStones(array $board, Stone $stone)//: array
     {
         // TODO: #6 番兵などでパフォーマンス改善
         // TODO: $boardをプリミティブな配列からfieldListに置き換え
@@ -106,6 +108,7 @@ class Board
         foreach(PositionDefine::directions as $direction) {
             // 何個裏返すことができるか計算
             $flipCount = $this->flipCountInLine($board, $stone, $direction);
+$result[] = $flipCount;
 
             if ($flipCount > 0) {
                 // はさまれたコマの位置を取得しひとつひとつ裏返す
@@ -117,10 +120,11 @@ class Board
                 $totalCount += $flipCount;
             }
         }
+return $result;
 
         if ($totalCount > 0) {
             // ひとつでも裏返せていたらコマを置く
-            $this->flip($board, $stone->position(), $stone->colorCode());
+            $board = $this->flip($board, $stone->position(), $stone->colorCode());
         }
 
         return $board;
@@ -134,19 +138,19 @@ class Board
      * @param array $direction
      * @return array $length
      */
-    public function flipCountInLine($board, $stone, $direction)
+    private function flipCountInLine($board, $stone, $direction)
     {
         $count = 0;
         // 隣のマスへ移動
-        $x = $stone->x() + $direction['x'];
-        $y = $stone->y() + $direction['y'];
+        $x = $stone->x() + $direction[0];
+        $y = $stone->y() + $direction[1];
 
         // 反対の色が連続する数を調べる
         while ($stone->isOppositeColor($board[$x][$y])) {
             $count++;
             // 次のマスへ
-            $x += $direction['x'];
-            $y += $direction['y'];
+            $x += $direction[0];
+            $y += $direction[1];
         }
         
         // ループが終了したマスの状態に応じて処理分岐

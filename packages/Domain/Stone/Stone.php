@@ -25,9 +25,9 @@ class Stone
         return $this->color === $color;
     }
 
-    public function isOppositeColor(Stone $stone): bool
+    public function isOppositeColor($color): bool
     {
-        return $stone->colorCode() == $this->opposite()->colorCode();
+        return $color == $this->color->opposite()->toCode();
     }
 
     public function colorCode()

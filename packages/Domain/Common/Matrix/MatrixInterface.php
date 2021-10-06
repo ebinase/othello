@@ -14,14 +14,15 @@ interface MatrixInterface
     public function changeOrigin(int $origin);
 
     // コンテナの中身の入出力
-    public function setData($data, int $row, int $col);
-    public function getData(int $row, int $col);
+    public function setData($data, int $row, int $col): void;
+    public function getData(int $row, int $col): mixed;
     public function toArray();
 
-    public function getRow($rowNum);
-    public function getCol($colNum);
-    public function getDiag($rowNum, $colNum);
-    public function getLine($direction, $oneWay);
+    public function getRow(int|array $pos, bool $split=false): array;
+    public function getCol(int|array $pos, bool $split=false): array;
+    public function getDiagUp(array $pos, bool $split=false): array; // 右上がり(anti-diag)
+    public function getDiagDown(array $pos, bool $split=false): array; // 右下がり(diag)
+    public function getAllDirection(array $pos, bool $split=false): array;
 
     // 空の要素が設定されている部分を指定した値で埋める
     public function fill($value): self;
@@ -29,4 +30,6 @@ interface MatrixInterface
     public function flat($offset): self;
     // 行列の要素数を二次元配列で取得する
     public function shape(): array;
+    public function size(): int;
+    public function dim(): int;
 }

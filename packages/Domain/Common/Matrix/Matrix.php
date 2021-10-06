@@ -2,34 +2,33 @@
 
 namespace Packages\Domain\Common\Matrix;
 
+use http\Exception\InvalidArgumentException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class Matrix implements MatrixInterface
 {
-    private Collection $container;
+    private array $container;
 
     // 原点
     private $origin = 1;
+    private $emptySign;
 
     /**
      * シングルトンで実装
-     * @param Collection $data
+     * @param array $data
+     * @param $emptySign
      */
-    protected function __construct(Collection $data)
+    protected function __construct(array $data, $emptySign  = null)
     {
         $this->container = $data;
+        $this->emptySign = $emptySign;
     }
 
     public static function make(array ...$arrayList): self
     {
-        $data = [];
-        // 初期化
-        foreach ($arrayList as $array) {
-            // 行データをもとに多次元配列作成
-            $data[] = collect($array);
-        }
         // 多次元配列のコレクションからインスタンス作成
-        return new Matrix(collect($data));
+        return new Matrix($arrayList);
     }
 
     public static function init(int $size, int $dim = null, $fillWith = null): self
@@ -44,8 +43,8 @@ class Matrix implements MatrixInterface
             // 指定がなければ正方行列を作成
             $data = collect()->pad($size, $row);
         }
-        // コレクションからインスタンス化
-        return new Matrix($data);
+        // 配列化してからインスタンス化
+        return new Matrix($data->toArray(), $fillWith);
     }
 
     public function changeOrigin(int $origin)
@@ -53,47 +52,84 @@ class Matrix implements MatrixInterface
         $this->origin = $origin;
     }
 
-    public function setData($data, int $row, int $col)
+    public function setData($data, int $row, int $col): void
     {
+        // TODO: 範囲チェック
         list($row, $col) = $this->convert($row, $col);
-        /**@var Collection $rowData*/
-        $rowData = $this->container->get($row);
-        // 行データを変更して上書き
-        $this->container->put($row, $rowData->put($col, $data));
+        $this->container[$row][$col] = $data;
     }
 
-    public function getData(int $row, int $col)
+    public function getData(int $row, int $col): mixed
     {
+        // TODO: 範囲チェック
         list($row, $col) = $this->convert($row, $col);
-        /**@var Collection $rowData*/
-        $rowData = $this->container->get($row);
-        return $rowData->get($col);
+        return $this->container[$row][$col] ?? null;
     }
 
     public function toArray(): array
     {
-        return $this->container->toArray();
+        return $this->container;
     }
 
-
-    public function getRow($rowNum)
+    public function getRow(array|int $pos, bool $split = false): array
     {
-        // TODO: Implement getRow() method.
+        if (is_int($pos)) {
+            $row = $pos;
+            return Arr::get($this->container, $this->convert($row), []);
+        }
+
+        // このあとが少し冗長になるが、ここで引数の配列の要素数をチェック
+        if (count($pos) !== 2) throw new InvalidArgumentException();
+        list($row, $col) = $this->convert($pos[0], $pos[1]);
+
+        $rowData = Arr::get($this->container, $row, []);
+
+        if ($split === false) {
+            return $rowData;
+        }
+
+        // TODO: split実装
+//        $splited = collect($rowData)->chunkWhile(function ($value, $key, $chunk) use ($col) {
+//            return $key !== $col;
+//        });
+
+        return [];
     }
 
-    public function getCol($colNum)
+    public function getCol(array|int $pos, bool $split = false): array
     {
-        // TODO: Implement getCol() method.
+        // 列番号のみ指定された場合($splitは無視)
+        if (is_int($pos)) {
+            $col = $this->convert($pos);
+            return collect($this->container)->pluck($col)->toArray();
+        }
+
+        // 引数が配列だった場合、要素数をチェック
+        if (count($pos) !== 2) throw new InvalidArgumentException();
+        list($row, $col) = $pos;
+
+        $colData = collect($this->container)->pluck($col)->toArray();
+
+        if ($split === false) {
+            return $colData;
+        }
+        // TODO: split実装
+        return [];
     }
 
-    public function getDiag($rowNum, $colNum)
+    public function getDiagUp(array $position, bool $split = false): array
     {
-        // TODO: Implement getDiag() method.
+        // TODO: Implement getDiagDown() method.
     }
 
-    public function getLine($direction, $oneWay)
+    public function getDiagDown(array $pos, bool $split = false): array
     {
-        // TODO: Implement getLine() method.
+        // TODO: Implement getDiagDown() method.
+    }
+
+    public function getAllDirection(array $pos, bool $split = false): array
+    {
+        // TODO: Implement getAllDirection() method.
     }
 
     public function fill($value): MatrixInterface
@@ -109,6 +145,17 @@ class Matrix implements MatrixInterface
     public function shape(): array
     {
         // TODO: Implement shape() method.
+    }
+
+
+    public function size(): int
+    {
+        // TODO: Implement size() method.
+    }
+
+    public function dim(): int
+    {
+        // TODO: Implement dim() method.
     }
 
     private function index($num): int

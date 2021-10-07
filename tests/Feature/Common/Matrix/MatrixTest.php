@@ -11,50 +11,70 @@ class MatrixTest extends TestCase
 {
     public function test_init()
     {
-        $this->assertSame($this->getInitBoard(), $this->getInitMatrix()->toArray());
+        self::assertSame($this->getZeroFillArray(), Matrix::init(size: 4, fillWith: 0)->toArray());
+    }
+
+    public function test_make()
+    {
+        $matrix = Matrix::make($this->getArrayOfId());
+        self::assertSame($this->getArrayOfId(), $matrix());
     }
 
     public function test_getRow()
     {
-        $matrix = $this->getInitMatrix();
+        $matrix = Matrix::make($this->getArrayOfId());
+
+        $this->assertSame([31, 32, 33, 34], $matrix->getRow(3));
+        // splitかつ片方が空配列
+        $this->assertSame([[33, 32, 31] , []], $matrix->getRow([3, 4], true));
     }
 
-    public function test_()
+    public function test_getCol()
     {
-
+        $matrix = Matrix::make($this->getArrayOfId());
+        $this->assertSame([13, 23, 33, 43], $matrix->getCol(3));
+        // splitかつ片方が空配列
+        $this->assertSame([[33, 23, 13], []], $matrix->getCol([4, 3], true));
     }
 
-    private function getInitMatrix():Matrix
+    public function test_getDiagUp()
     {
-        $matrix = Matrix::init(size: 8, fillWith: 0);
-        $matrix->setData('white', 4, 4);
-        $matrix->setData('black', 4, 5);
-        $matrix->setData('black', 5, 4);
-        $matrix->setData('white', 5, 5);
-
-        return $matrix;
+        $matrix = Matrix::make($this->getArrayOfId());
+        $this->assertSame([11, 22, 33, 44], $matrix->getDiagUp([3, 3]));
+        // split(前半２つが反転する場所)
+        $this->assertSame([[22, 11], [44]], $matrix->getDiagUp([3, 2], true));
+        $this->assertSame([[], []], $matrix->getDiagUp([1, 1], true));
     }
 
-    private function getInitBoard()
+    public function test_getDiagDown()
     {
-        static $board = null;
-        if (isset($board)) return $board;
+        $matrix = Matrix::make($this->getArrayOfId());
+        $this->assertSame([41, 32, 23, 14], $matrix->getDiagDown([3, 2]));
+        // split(前半２つが反転する場所)
+        $this->assertSame([[41], [23, 14]], $matrix->getDiagDown([3, 2], true));
+        $this->assertSame([[], []], $matrix->getDiagDown([1, 4], true));
+    }
 
-        $emptyRow = collect()->pad(8, 0)->toArray();
 
-        // 初期盤面
-        $initBoard = [
-            $emptyRow,
-            $emptyRow,
-            $emptyRow,
-            collect($emptyRow)->put(3, 'white')->put(4, 'black')->toArray(),
-            collect($emptyRow)->put(3, 'black')->put(4, 'white')->toArray(),
-            $emptyRow,
-            $emptyRow,
-            $emptyRow,
-        ];
+//    public function test_()
+//    {
+//
+//    }
 
-        $board = $initBoard;
-        return $board;
+    private function getZeroFillArray()
+    {
+        $emptyRow = collect()->pad(4, 0);
+        return collect()->pad(4, $emptyRow)->toArray(); //再帰的に配列化
+    }
+
+    private function getArrayOfId()
+    {
+        $emptyArray = $this->getZeroFillArray();
+        foreach ($emptyArray as $row => $emptyRow) {
+            foreach ($emptyRow as $col => $item) {
+                $ret[$row][$col] = ($row+1)* 10 + ($col+1); //1スタートの値に直してから数値に変換する(1,3) => 13
+            }
+        }
+        return $ret;
     }
 }

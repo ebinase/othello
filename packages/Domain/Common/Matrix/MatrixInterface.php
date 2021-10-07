@@ -26,8 +26,8 @@ interface MatrixInterface
 
     // 空の要素が設定されている部分を指定した値で埋める
     public function fill($value): self;
-    // 一次元配列に変形。
-    public function flat($offset): self;
+    // 一次元配列として取得。
+    public function flatten(): array;
     // 行列の要素数を二次元配列で取得する
     public function shape(): array;
     public function size(): int;

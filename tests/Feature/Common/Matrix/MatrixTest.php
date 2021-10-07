@@ -58,10 +58,24 @@ class MatrixTest extends TestCase
     }
 
 
-//    public function test_()
-//    {
-//
-//    }
+    public function test_fill()
+    {
+        $matrix = Matrix::init(2);
+        self::assertSame([[1, 1], [1, 1]], $matrix->fill(1)->toArray());
+        $matrix = Matrix::init(2, 2, 0);
+        self::assertSame([[1, 1], [1, 1]], $matrix->fill(1)->toArray());
+        $matrix = Matrix::init(2, 2, '');
+        self::assertSame([[null, null], [null, null]], $matrix->fill(null)->toArray());
+    }
+
+    public function test_utils()
+    {
+        $matrix = Matrix::init(1, 2, 1);
+        self::assertSame([1, 1], $matrix->flatten());
+        self::assertSame([2, 1], $matrix->shape());
+        self::assertSame(1, $matrix->size());
+        self::assertSame(2, $matrix->dim());
+    }
 
     private function getZeroFillArray()
     {

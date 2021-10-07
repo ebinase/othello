@@ -3,9 +3,6 @@
 namespace Packages\Domain\Common\Matrix;
 
 use http\Exception\InvalidArgumentException;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * phpの配列とnumpyの中間のような形で配列をラッピングして扱えるようにするクラス
@@ -196,33 +193,50 @@ class Matrix implements MatrixInterface
 
     public function getAllDirection(array $position, bool $split = false): array
     {
-        // TODO: Implement getAllDirection() method.
+        return [
+            $this->getRow($position, $split),
+            $this->getCol($position, $split),
+            $this->getDiagUp($position, $split),
+            $this->getDiagDown($position, $split),
+        ];
     }
 
     public function fill($value): MatrixInterface
     {
-        // TODO: Implement fill() method.
+        $result = [];
+
+        $rowNum = 1;
+        while ($rowNum <= $this->dim()) {
+            $result[] = array_map(function ($data) use ($value) {
+                return $data === $this->emptySign ? $value : $data;
+            }, $this->getRow($rowNum));
+
+            $rowNum++;
+        }
+
+        // 新しいインスタンスを作成して返す
+        return self::make($result);
     }
 
-    public function flat($offset): MatrixInterface
+    public function flatten(): array
     {
-        // TODO: Implement flat() method.
+        return collect($this->container)->flatten()->toArray();
     }
 
     public function shape(): array
     {
-        // TODO: Implement shape() method.
+        return [$this->dim(), $this->size()];
     }
 
 
     public function size(): int
     {
-        // TODO: Implement size() method.
+        return count($this->getRow(1)); // 1行目の要素数をカウント
     }
 
     public function dim(): int
     {
-        // TODO: Implement dim() method.
+        return count($this->container); // 行の数をカウント
     }
 
     private function inverse(array $vector): array

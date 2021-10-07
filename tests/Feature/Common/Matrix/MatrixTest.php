@@ -25,33 +25,35 @@ class MatrixTest extends TestCase
         $matrix = Matrix::make($this->getArrayOfId());
 
         $this->assertSame([31, 32, 33, 34], $matrix->getRow(3));
+        $this->assertSame([31, 32, 33, 34], $matrix->getRow([3, 9999]));
         // splitかつ片方が空配列
-        $this->assertSame([[33, 32, 31] , []], $matrix->getRow([3, 4], true));
+        $this->assertSame([[], [33, 32, 31]], $matrix->getRow([3, 4], true));
     }
 
     public function test_getCol()
     {
         $matrix = Matrix::make($this->getArrayOfId());
         $this->assertSame([13, 23, 33, 43], $matrix->getCol(3));
+        $this->assertSame([13, 23, 33, 43], $matrix->getCol([9999, 3]));
         // splitかつ片方が空配列
-        $this->assertSame([[33, 23, 13], []], $matrix->getCol([4, 3], true));
+        $this->assertSame([[], [33, 23, 13]], $matrix->getCol([4, 3], true));
     }
 
     public function test_getDiagUp()
     {
         $matrix = Matrix::make($this->getArrayOfId());
-        $this->assertSame([11, 22, 33, 44], $matrix->getDiagUp([3, 3]));
+        $this->assertSame([41, 32, 23, 14], $matrix->getDiagUp([2, 3]));
         // split(前半２つが反転する場所)
-        $this->assertSame([[22, 11], [44]], $matrix->getDiagUp([3, 2], true));
+        $this->assertSame([[14], [32, 41]], $matrix->getDiagUp([2, 3], true));
         $this->assertSame([[], []], $matrix->getDiagUp([1, 1], true));
     }
 
     public function test_getDiagDown()
     {
         $matrix = Matrix::make($this->getArrayOfId());
-        $this->assertSame([41, 32, 23, 14], $matrix->getDiagDown([3, 2]));
+        $this->assertSame([11, 22, 33, 44], $matrix->getDiagDown([3, 3]));
         // split(前半２つが反転する場所)
-        $this->assertSame([[41], [23, 14]], $matrix->getDiagDown([3, 2], true));
+        $this->assertSame([[44], [22, 11]], $matrix->getDiagDown([3, 3], true));
         $this->assertSame([[], []], $matrix->getDiagDown([1, 4], true));
     }
 

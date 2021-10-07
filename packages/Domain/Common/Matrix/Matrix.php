@@ -5,10 +5,14 @@ namespace Packages\Domain\Common\Matrix;
 use http\Exception\InvalidArgumentException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * phpの配列とnumpyの中間のような形で配列をラッピングして扱えるようにするクラス
- * HACK: 数学的な行列計算に振り切って、https://github.com/markrogoyski/math-phpを利用してもいいかも
+ *
+ * 配列のキーの始めの値や配列のサイズなどの概念・用語を統一する。
+ * また、配列の任意の要素やその要素の周囲の要素を直線的に取得する機能も提供する
+ * HACK: 車輪の再発明感が否めない。。。数学的な行列計算に振り切って、https://github.com/markrogoyski/math-phpを利用してもいいかも
  */
 class Matrix implements MatrixInterface
 {
@@ -31,10 +35,10 @@ class Matrix implements MatrixInterface
         $this->emptySign = $emptySign;
     }
 
-    public static function make(array ...$arrayList): self
+    public static function make(array $data): self
     {
-        // 多次元配列のコレクションからインスタンス作成
-        return new Matrix($arrayList);
+        // 配列からインスタンス作成
+        return new Matrix($data);
     }
 
     public static function init(int $size, int $dim = null, $fillWith = null): self
@@ -74,53 +78,42 @@ class Matrix implements MatrixInterface
 
     public function toArray(): array
     {
+        // TODO: データ形式に応じた変換処理実装
         return $this->container;
     }
 
+    // TODO: 座標系の原点の位置やベクトルの正負の向き、「行・列の番号とindexes」などの概念を統一する
+
     public function getRow(array|int $position, bool $split = false): array
     {
-        if (is_int($position)) {
-            $row = $position;
-            return Arr::get($this->container, $this->convert([$row]), []);
-        }
-
-        // このあとが少し冗長になるが、ここで引数の配列の要素数をチェック
-        if (count($position) !== 2) throw new InvalidArgumentException();
-        list($row, $col) = $this->convert($position);
-
-        $rowData = Arr::get($this->container, $row, []);
+        // 引数が配列だった場合、要素数をチェック
+        if (is_array($position) && count($position) !== 2) throw new InvalidArgumentException();
 
         if ($split === false) {
-            return $rowData;
+            // 行番号を取り出す
+            $row = is_int($position) ? $this->index($position) : $this->index($position[0]);
+            return $this->container[$row] ?? [];
         }
 
-        // TODO: split実装
-//        $splited = collect($rowData)->chunkWhile(function ($value, $key, $chunk) use ($col) {
-//            return $key !== $col;
-//        });
-
-        return [];
+        $base = $this->convert($position);
+        $vector = [0, 1];
+        return $this->getLineAll($base, $vector, $split);
     }
 
     public function getCol(array|int $position, bool $split = false): array
     {
-        // 列番号のみ指定された場合($splitは無視)
-        if (is_int($position)) {
-            $col = $this->convert([$position]);
+        // 引数が配列だった場合、要素数をチェック
+        if (is_array($position) && count($position) !== 2) throw new InvalidArgumentException();
+
+        if ($split === false) {
+            // 列番号を取り出す
+            $col = is_int($position) ? $this->index($position) : $this->index($position[1]);
             return collect($this->container)->pluck($col)->toArray();
         }
 
-        // 引数が配列だった場合、要素数をチェック
-        if (count($position) !== 2) throw new InvalidArgumentException();
-        list($row, $col) = $position;
-
-        $colData = collect($this->container)->pluck($col)->toArray();
-
-        if ($split === false) {
-            return $colData;
-        }
-        // TODO: split実装
-        return [];
+        $base = $this->convert($position);
+        $vector = [1, 0];
+        return $this->getLineAll($base, $vector, $split);
     }
 
     /**
@@ -130,29 +123,34 @@ class Matrix implements MatrixInterface
      */
     public function getDiagUp(array $position, bool $split = false): array
     {
-        $indexes = $this->convert($position);
-        $vector = [1, 1];
-        $upperRight = $this->getLine($indexes, $vector);
-        $lowerLeft  = $this->getLine($indexes, $this->inverse($vector));
-
-        if ($split) {
-            return [$lowerLeft, $upperRight]; // 指定された場所から外側に向かう方向(<-->)
-        } else {
-            return array_reverse($lowerLeft) + [$this->get($indexes)] + $upperRight; // 左下から右上に向かう方向(-->>)
-        }
+        $base = $this->convert($position);
+        $vector = [-1, 1];
+        // 左下から右上に向かう方向(-->>) or 左上と右下に向かう方向(<-->)
+        return $this->getLineAll($base, $vector, $split);
     }
 
     public function getDiagDown(array $position, bool $split = false): array
     {
-        $indexes = $this->convert($position);
-        $vector = [1, -1];
-        $lowerRight = $this->getLine($indexes, $vector);
-        $upperLeft  = $this->getLine($indexes, $this->inverse($vector));
+        $base = $this->convert($position);
+        $vector = [1, 1];
+        // 左上から右下に向かう方向(-->>) or 左上と右下に向かう方向(<-->)
+        return $this->getLineAll($base, $vector, $split);
+
+    }
+
+    public function getLineAll(array $base, array $vector, bool $split = false): array
+    {
+        // ベクトルの方向
+        $vectorDir = $this->getOneWayLine($base, $vector);
+        // 逆ベクトルの方向
+        $inverseDir  = $this->getOneWayLine($base, $this->inverse($vector));
 
         if ($split) {
-            return [$upperLeft, $lowerRight]; // 指定された場所から外側に向かう方向(<-->)
+            return [$vectorDir, $inverseDir]; // 指定された場所から外側に向かう方向(<-->)
         } else {
-            return array_reverse($upperLeft) + [$this->get($indexes)] + $lowerRight; // 左上から右下に向かう方向(-->>)
+            return array_merge(
+                array_reverse($inverseDir), [$this->get($base)], $vectorDir // ベクトルの向かう方向(-->>)
+            );
         }
     }
 
@@ -163,7 +161,7 @@ class Matrix implements MatrixInterface
      * @param int|null $limit 取得する要素数
      * @return array
      */
-    private function getLine(array $indexes, array $vector, ?int $limit = null): array
+    private function getOneWayLine(array $indexes, array $vector, ?int $limit = null): array
     {
         // 隣のマスに移動
         $indexes = $this->move($indexes, $vector);
@@ -272,5 +270,10 @@ class Matrix implements MatrixInterface
         }
 
         return true;
+    }
+
+    public function __invoke(): array
+    {
+        return $this->toArray();
     }
 }

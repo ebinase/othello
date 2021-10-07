@@ -8,7 +8,7 @@ namespace Packages\Domain\Common\Matrix;
 interface MatrixInterface
 {
     // 初期化
-    public static function make(array ...$arrayList): self;
+    public static function make(array $data): self;
     public static function init(int $size, int $dim, $fillWith = null): self;
     // 原点(行と列の番号の始点)を変更する
     public function changeOrigin(int $origin);

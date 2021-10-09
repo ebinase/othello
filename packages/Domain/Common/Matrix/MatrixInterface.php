@@ -22,7 +22,11 @@ interface MatrixInterface
     public function getCol(int|array $position, bool $split=false): array;
     public function getDiagUp(array $position, bool $split=false): array; // 右上がり(anti-diag)
     public function getDiagDown(array $position, bool $split=false): array; // 右下がり(diag)
-    public function getAllDirection(array $position, bool $split=false): array;
+
+    public function getLinesClockwise(array $position, bool $reverse=false): array;
+    public function setLinesClockwise(array $lineDataList, array $position, bool $reverse=false): void;
+
+    public function getSuroundings(array $position, bool $reverse=false);
 
     // 空の要素が設定されている部分を指定した値で埋める
     public function fill($value): self;

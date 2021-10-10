@@ -22,7 +22,7 @@ class Stone
 
     public function colorEquals($color): bool
     {
-        return $this->color === $color;
+        return $this->color->toCode() == $color;
     }
 
     public function isOppositeColor($color): bool
@@ -35,6 +35,11 @@ class Stone
         return $this->color->toCode();
     }
 
+    public function color(): Color
+    {
+        return $this->color;
+    }
+
     public function opposite(): Stone
     {
         return new Stone($this->color->opposite(), $this->position);
@@ -43,13 +48,6 @@ class Stone
     public function move($step, $direction): Stone
     {
         return new Stone($this->color, $this->position->move($step, $direction));
-    }
-
-
-    // TODO: PositionService(仮)に移動？
-    public function positionsInMove($step, $direction): array
-    {
-        return $this->position->positionsInMove($step, $direction);
     }
 
     public function position(): Position

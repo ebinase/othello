@@ -37,4 +37,14 @@ class Color
         $oppositeColor = $this->color == self::COLOR_WHITE ? self::COLOR_BLACK : self::COLOR_WHITE;
         return new Color($oppositeColor);
     }
+
+    public function equals($color): bool
+    {
+        return $this->color == $color;
+    }
+
+    public function isOpposite($color): bool
+    {
+        return $color == $this->opposite()->toCode();
+    }
 }

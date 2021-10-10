@@ -77,7 +77,7 @@ class Matrix implements MatrixInterface
     {
         // TODO: 範囲チェック
         list($row, $col) = $this->convert([$row, $col]);
-        return $this->container[$row][$col] ?? null;
+        return $this->container[$row][$col]; // デフォルト値 or 例外を設定？
     }
 
     public function toArray(): array

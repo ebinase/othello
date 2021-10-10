@@ -10,21 +10,21 @@ use Packages\Domain\Position\Position;
 use Packages\Domain\Stone\Stone;
 use Tests\TestCase;
 
-class BoardTest extends TestCase
+class BoardUpdateTest extends TestCase
 {
     /**
      * テストケース
      * 初期盤面で正しい位置にコマを置く
      * 初期盤面で不正な位置にコマを置く
-     * 
+     *
      * 正常系
      * 一列内で複数個をひっくり返す
      * 複数列を同時にひっくり返す
-     * 
+     *
      * 異常系
      * 盤面外にコマを置く
      * 周りになにもない場所に置く
-     * 
+     *
      */
 
     const COLOR_WHITE = 1;
@@ -55,7 +55,7 @@ class BoardTest extends TestCase
         $expected[3][5] = self::COLOR_WHITE;
 
         $board = new Board($initBoard);
-        $updated = $board->update(new Stone(new Color(self::COLOR_WHITE), new Position(3, 5)));
-        // $this->assertSame($expected, $updated->toArray());
+        $updated = $board->update(new Stone(new Color(self::COLOR_WHITE), new Position(4, 6)));
+        $this->assertSame($expected, $updated->toArray());
     }
 }

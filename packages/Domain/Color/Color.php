@@ -2,8 +2,11 @@
 
 namespace Packages\Domain\Color;
 
+use http\Exception\InvalidArgumentException;
+
 /**
  * Enum風に実装
+ * TODO: enum化
  */
 class Color
 {
@@ -12,13 +15,14 @@ class Color
 
     private static $colorList = [
         self::COLOR_WHITE => '白',
-        self::COLOR_WHITE => '黒',
+        self::COLOR_BLACK => '黒',
     ];
 
     private $color;
 
     public function __construct($color)
     {
+        if (!self::isColor($color)) throw new InvalidArgumentException();
         $this->color = $color;
     }
 

@@ -7,17 +7,15 @@ use Packages\Domain\Position\Position;
 
 /**
  * コマを表すクラス(仮)
- * 色をenumにするか、座標情報も持たせるか、など検討
  */
 class Stone
 {
     private $color;
-    private $position;
 
-    public function __construct(Color $color, Position $position)
+    public function __construct($colorCode)
     {
-        $this->color = $color;
-        $this->position = $position;
+        // HACK: 密結合だけど、後々enumに直す
+        $this->color = new Color($colorCode);
     }
 
     public function colorEquals($color): bool
@@ -35,33 +33,13 @@ class Stone
         return $this->color->toCode();
     }
 
-    public function color(): Color
+    public function flip(): Stone
     {
-        return $this->color;
+        return new Stone($this->color->opposite());
     }
 
-    public function opposite(): Stone
+    public function equals(Stone $stone)
     {
-        return new Stone($this->color->opposite(), $this->position);
-    }
-
-    public function move($step, $direction): Stone
-    {
-        return new Stone($this->color, $this->position->move($step, $direction));
-    }
-
-    public function position(): Position
-    {
-        return $this->position;
-    }
-
-    public function x(): int
-    {
-        return $this->position->x();
-    }
-
-    public function y(): int
-    {
-        return $this->position->x();
+        return $this->colorEquals($stone->colorCode());
     }
 }

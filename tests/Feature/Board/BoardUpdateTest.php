@@ -55,7 +55,7 @@ class BoardUpdateTest extends TestCase
         $expected[3][5] = self::COLOR_WHITE;
 
         $board = new Board($initBoard);
-        $updated = $board->update(new Stone(new Color(self::COLOR_WHITE), new Position(4, 6)));
+        $updated = $board->update(new Position(4, 6), new Stone(self::COLOR_WHITE));
         $this->assertSame($expected, $updated->toArray());
     }
 }

@@ -2,24 +2,33 @@
 
 namespace Packages\Domain\Color;
 
+use http\Exception\InvalidArgumentException;
+
 /**
  * Enum風に実装
+ * TODO: enum化
  */
 class Color
 {
     const COLOR_WHITE = 1;
     const COLOR_BLACK = 2;
 
-    private $colorList = [
+    private static $colorList = [
         self::COLOR_WHITE => '白',
-        self::COLOR_WHITE => '黒',
+        self::COLOR_BLACK => '黒',
     ];
 
     private $color;
 
     public function __construct($color)
     {
+        if (!self::isColor($color)) throw new InvalidArgumentException();
         $this->color = $color;
+    }
+
+    public static function isColor($color): bool
+    {
+        return key_exists($color, self::$colorList);
     }
 
     public function toCode()
@@ -29,10 +38,17 @@ class Color
 
     public function opposite(): Color
     {
-        foreach($this->colorList as $colorCode => $colorName) {
-            if ($colorCode != $this->color) {
-                return new Color($colorCode);
-            }
-        }
+        $oppositeColor = $this->color == self::COLOR_WHITE ? self::COLOR_BLACK : self::COLOR_WHITE;
+        return new Color($oppositeColor);
+    }
+
+    public function equals($color): bool
+    {
+        return $this->color == $color;
+    }
+
+    public function isOpposite($color): bool
+    {
+        return $color == $this->opposite()->toCode();
     }
 }

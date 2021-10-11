@@ -57,6 +57,31 @@ class MatrixTest extends TestCase
         $this->assertSame([[], []], $matrix->getDiagDown([1, 4], true));
     }
 
+    public function test_getLinesClockwise()
+    {
+        $matrix = Matrix::make($this->getArrayOfId());
+        $this->assertSame([[34], [24], [23, 13], [22, 11], [32, 31], [42], [43], [44]], $matrix->getLinesClockwise([3, 3], true));
+        $this->assertSame([[], [], [34, 24, 14], [33, 22, 11], [43,42,41], [], [], []], $matrix->getLinesClockwise([4, 4], true));
+    }
+
+    public function test_setLinesClockwise()
+    {
+        $matrix = Matrix::init(4, 4, 0);
+        $matrix->setLinesClockwise([[34], [24], [23, 13], [22, 11], [32, 31], [42], [43], [44]], [3, 3], true);
+        $this->assertSame([[34], [24], [23, 13], [22, 11], [32, 31], [42], [43], [44]], $matrix->getLinesClockwise([3, 3], true));
+
+        // 端(4,4)においた場合
+        $matrix = Matrix::init(4, 4, 0);
+        $matrix->setLinesClockwise([[], [], [34, 24, 14], [33, 22, 11], [43,42,41], [], [], []], [4, 4], true);
+        $this->assertSame([[], [], [34, 24, 14], [33, 22, 11], [43,42,41], [], [], []], $matrix->getLinesClockwise([4, 4], true));
+    }
+
+    public function test_getSuroundings()
+    {
+        $matrix = Matrix::make($this->getArrayOfId());
+        $this->assertSame([[34], [24], [23], [22], [32], [42], [43], [44]], $matrix->getSuroundings([3, 3], true));
+        $this->assertSame([[], [], [34], [33], [43], [], [], []], $matrix->getSuroundings([4, 4], true));
+    }
 
     public function test_fill()
     {

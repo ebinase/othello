@@ -3,7 +3,7 @@
 namespace Packages\Domain\Position;
 
 /**
- * 
+ *
  */
 class Position
 {
@@ -18,7 +18,7 @@ class Position
 
     public function toArray()
     {
-        return ['x' => $this->x, 'y' => $this->y];
+        return [$this->x, $this->y];
     }
 
     // インデックスでの取得
@@ -53,7 +53,7 @@ class Position
     public function positionsInMove($step, $direction): array
     {
         $posions = [];
-        for ($i=1; $i <= $step; $i++) { 
+        for ($i=1; $i <= $step; $i++) {
             $posions[] = $this->move($i, $direction);
         }
         return $posions;
@@ -69,12 +69,12 @@ class Position
      */
     public function checkPoints(Position $goal)
     {
-        
+
         // return new Position($x, $y);
     }
 
     public function diff(Position $position)
     {
-        
+
     }
 }

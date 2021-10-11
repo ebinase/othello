@@ -10,6 +10,7 @@ use http\Exception\InvalidArgumentException;
  * 配列のキーの始めの値や配列のサイズなどの概念・用語を統一する。
  * また、配列の任意の要素やその要素の周囲の要素を直線的に取得する機能も提供する
  * HACK: 車輪の再発明感が否めない。。。数学的な行列計算に振り切って、https://github.com/markrogoyski/math-phpを利用してもいいかも
+ * FIXME: 座標系の概念がバラバラ。統一した基準を作る
  */
 class Matrix implements MatrixInterface
 {
@@ -20,6 +21,12 @@ class Matrix implements MatrixInterface
     // 原点
     private $origin = 1;
     private $emptySign;
+
+    // [row, col] 配列の添字基準
+    const VECTOR_HORIZONTAL = [0, 1];
+    const VECTOR_VERTICAL   = [-1, 0];
+    const VECTOR_DIAG_UP    = [-1, 1];
+    const VECTOR_DIAG_DOWN  = [1, 1];
 
     /**
      * シングルトンで実装
@@ -70,7 +77,7 @@ class Matrix implements MatrixInterface
     {
         // TODO: 範囲チェック
         list($row, $col) = $this->convert([$row, $col]);
-        return $this->container[$row][$col] ?? null;
+        return $this->container[$row][$col]; // デフォルト値 or 例外を設定？
     }
 
     public function toArray(): array
@@ -94,7 +101,7 @@ class Matrix implements MatrixInterface
 
         $base = $this->convert($position);
         $vector = [0, 1];
-        return $this->getLineAll($base, $vector, $split);
+        return $this->getAllInLine($base, $vector, $split);
     }
 
     public function getCol(array|int $position, bool $split = false): array
@@ -110,7 +117,7 @@ class Matrix implements MatrixInterface
 
         $base = $this->convert($position);
         $vector = [1, 0];
-        return $this->getLineAll($base, $vector, $split);
+        return $this->getAllInLine($base, $vector, $split);
     }
 
     /**
@@ -123,7 +130,7 @@ class Matrix implements MatrixInterface
         $base = $this->convert($position);
         $vector = [-1, 1];
         // 左下から右上に向かう方向(-->>) or 左上と右下に向かう方向(<-->)
-        return $this->getLineAll($base, $vector, $split);
+        return $this->getAllInLine($base, $vector, $split);
     }
 
     public function getDiagDown(array $position, bool $split = false): array
@@ -131,16 +138,74 @@ class Matrix implements MatrixInterface
         $base = $this->convert($position);
         $vector = [1, 1];
         // 左上から右下に向かう方向(-->>) or 左上と右下に向かう方向(<-->)
-        return $this->getLineAll($base, $vector, $split);
-
+        return $this->getAllInLine($base, $vector, $split);
     }
 
-    public function getLineAll(array $base, array $vector, bool $split = false): array
+    /**
+     * 時計回り(もしくは反時計回り)に基準点の周辺の要素を取得する
+     *
+     * @param array $position
+     * @param bool $split
+     * @return array[]
+     */
+    public function getLinesClockwise(array $position, bool $reverse = false): array
+    {
+        $base = $this->convert($position);
+        $result = [];
+        foreach ($this->getClockwiseVectors(true) as $vector) {
+            $result[] = $this->getLineFrom($base, $vector);
+        }
+        return $result;
+    }
+
+    public function setLinesClockwise(array $lineDataList, array $position, bool $reverse = false): void
+    {
+        // データ数が単位ベクトルの数と一致しない場合はエラー
+        if (count($lineDataList) !== 8) throw new InvalidArgumentException;
+        // 添字をリセット
+        $lineDataList = array_values($lineDataList);
+        $base = $this->convert($position);
+        foreach ($this->getClockwiseVectors(true) as $key => $vector) {
+            $this->setLineData($lineDataList[$key], $base, $vector);
+        }
+    }
+
+    public function getSuroundings(array $position, bool $reverse = false): array
+    {
+        $base = $this->convert($position);
+        $result = [];
+        foreach ($this->getClockwiseVectors(true) as $vector) {
+            $result[] = $this->getLineFrom($base, $vector, 1);
+        }
+        return $result;
+    }
+
+    private function getClockwiseVectors(bool $reverse = false): array
+    {
+        $base = self::VECTOR_HORIZONTAL;
+        // HACK: 三角関数で書き直す？？それに合わせてスタート位置を変更できるようにしてもいいかも
+        $clockwiseVectors = [
+            self::VECTOR_DIAG_DOWN,
+            $this->inverse(self::VECTOR_VERTICAL),
+            $this->inverse(self::VECTOR_DIAG_UP),
+            $this->inverse(self::VECTOR_HORIZONTAL),
+            $this->inverse(self::VECTOR_DIAG_DOWN),
+            self::VECTOR_VERTICAL,
+            self::VECTOR_DIAG_UP,
+        ];
+
+        return array_merge(
+            [$base],
+            $reverse ? array_reverse($clockwiseVectors) : $clockwiseVectors
+        );
+    }
+
+    private function getAllInLine(array $base, array $vector, bool $split = false): array
     {
         // ベクトルの方向
-        $vectorDir = $this->getOneWayLine($base, $vector);
+        $vectorDir = $this->getLineFrom($base, $vector);
         // 逆ベクトルの方向
-        $inverseDir  = $this->getOneWayLine($base, $this->inverse($vector));
+        $inverseDir  = $this->getLineFrom($base, $this->inverse($vector));
 
         if ($split) {
             return [$vectorDir, $inverseDir]; // 指定された場所から外側に向かう方向(<-->)
@@ -153,21 +218,21 @@ class Matrix implements MatrixInterface
 
 
     /**
-     * @param int[] $indexes インデックス形式(0スタート)の座標
+     * @param int[] $base インデックス形式(0スタート)の座標
      * @param int[] $vector 進行方向のベクトル
      * @param int|null $limit 取得する要素数
      * @return array
      */
-    private function getOneWayLine(array $indexes, array $vector, ?int $limit = null): array
+    private function getLineFrom(array $base, array $vector, ?int $limit = null): array
     {
         // 隣のマスに移動
-        $indexes = $this->move($indexes, $vector);
+        $target = $this->move($base, $vector);
 
         $lineData = [];
         $count = 1;
-        while ($this->isValid($indexes)) { // 厳密に配列の範囲外を取得した場合のみループを抜ける
-            $lineData[] = $this->get($indexes);
-            $indexes = $this->move($indexes , $vector);
+        while ($this->isValid($target)) { // 厳密に配列の範囲外を取得した場合のみループを抜ける
+            $lineData[] = $this->get($target);
+            $target = $this->move($target , $vector);
             // limitのチェック
             if (isset($limit) && $count <= $limit) break;
             // limitに問題がなければ次のマスへ
@@ -175,6 +240,30 @@ class Matrix implements MatrixInterface
         }
 
         return $lineData;
+    }
+
+    private function setLineData(array $lineData, array $base, array $vector, $fillWith = null): bool
+    {
+        // TODO: 要素数チェック、足りない場合は埋める機能など実装？
+        // if (count($lineData) != $this->getLineFrom($base, $vector)) throw new InvalidArgumentException();
+
+        // 隣のマスに移動
+        $target = $this->move($base, $vector);
+        foreach ($lineData as $data) {
+            if ($this->isValid($target)) { // OPTIMIZE: そもそもNOTICEが発生するためチェック不要かも
+                $this->set($data, $target);
+                $target = $this->move($target, $vector);
+            } else {
+                break;
+            }
+        }
+
+        // 終わったあとにさらに置くところがないか確認
+//        if ($this->isValid($this->move($target, $vector))) {
+//            return false;
+//        }
+
+        return true;
     }
 
     /**
@@ -189,16 +278,6 @@ class Matrix implements MatrixInterface
         $row = $indexes[0] + $vector[0] * $steps;
         $col = $indexes[1] + $vector[1] * $steps;
         return [$row, $col];
-    }
-
-    public function getAllDirection(array $position, bool $split = false): array
-    {
-        return [
-            $this->getRow($position, $split),
-            $this->getCol($position, $split),
-            $this->getDiagUp($position, $split),
-            $this->getDiagDown($position, $split),
-        ];
     }
 
     public function fill($value): MatrixInterface

@@ -1,4 +1,4 @@
-@startuml othello
+@startuml
 skinparam PackageStyle rectangle
 
 package ゲーム集約 {
@@ -7,9 +7,18 @@ package ゲーム集約 {
         白プレイヤー
         黒プレイヤー
         ゲームステータス
+        セーブデータID
+    }
+}
+
+package セーブデータ集約 {
+    object セーブデータ{
+        ID
+        ゲームID
+        更新日時
     }
 
-    object ターン {
+    object ターン情報 {
         ターン数
         スキップ数
         行動可能な色
@@ -19,21 +28,16 @@ package ゲーム集約 {
         マス<List>
     }
 
-    object マス {
-        状態
-        座標
-    }
-
     object コマ {
         カラー
     }
 }
 
 
-ゲーム "1" *-down- "1" ターン
-ターン "1" *-down- "1" 盤面
-盤面 "1" *-down- "0..n" マス
-マス "1" *-- "0..1" コマ
+ゲーム "1" -down- "1..n" セーブデータ
+セーブデータ "1" *-down- "1" ターン情報
+セーブデータ "1" *-down- "1" 盤面
+盤面 "1" *-down- "0..n" コマ
 
 note right of ゲーム
     * プレイヤーにはゲスト/登録ユーザ/CPUを設定できる
@@ -71,7 +75,7 @@ note right of ゲームルール
     * 途中経過の石の数は勝敗に影響しない
 end note
 
-note right of ターン
+note left of ターン情報
     * ターン数は1から始まり、必ず1ずつ増える
     * 行動(変更)できるのは1ターンに1回だけ
     * 行動できない場合はスキップ数が増える
@@ -83,25 +87,15 @@ note right of 盤面
     * 同じ色で連続する別の色をはさむことができるときだけ置くことができる
     * はさまれた石は色が反転する
     * 盤面は原則8x8マス
-    * 盤面外には置けない  
+    * 盤面外には置けない
 end note
-
-' note bottom of スキップカウント
-'     * 1ずつアップする
-'     * 値はリセット可能
-' end note
-
-' note bottom of ターンカウント
-'     * 1ずつアップする
-'     * 値はリセット不可能
-' end note
 
 ' package ターンフロー集約 {
 '     object ターンフロー {
 '         現在のターン
 '         次のターン
 '     }
-    
+
 ' }
 
 ' note right of ターンフロー
@@ -129,5 +123,4 @@ end note
 '         人間orCPU
 '     }
 ' }
-
 @enduml

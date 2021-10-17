@@ -42,9 +42,9 @@ class OthelloCommand extends Command
             $emptyRow,
             $emptyRow,
             $emptyRow,
-//            collect($emptyRow)->put(3, self::COLOR_WHITE)->put(4, self::COLOR_BLACK)->toArray(),
-//            collect($emptyRow)->put(3, self::COLOR_BLACK)->put(4, self::COLOR_WHITE)->toArray(),
-            $emptyRow,$emptyRow,$emptyRow,
+            collect($emptyRow)->put(3, self::COLOR_WHITE)->put(4, self::COLOR_BLACK)->toArray(),
+            collect($emptyRow)->put(3, self::COLOR_BLACK)->put(4, self::COLOR_WHITE)->toArray(),
+            $emptyRow,
             $emptyRow,
             $emptyRow,
         ];

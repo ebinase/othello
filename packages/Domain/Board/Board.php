@@ -105,12 +105,21 @@ class Board
         return $flipCount;
     }
 
+    public function isValid(Position $position, Stone $stone): bool
+    {
+        if ($this->getFlipCount($position->toArray(), $stone) > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public function update(Position $position, Stone $stone): Board
     {
         // 置けない場合は盤面に変更を加えず返す
-        if (!$this->isPlayable($stone)) {
+        if (!$this->isValid($position, $stone)) {
             return $this;
         }
+
         // 更新された盤面を返す
         $updatedBoard = $this->flipStones($position, $stone);
         return new Board($updatedBoard);

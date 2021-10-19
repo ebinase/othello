@@ -20,10 +20,25 @@ class Color
 
     private $color;
 
-    public function __construct($color)
+    public static function white(): Color
     {
-        if (!self::isColor($color)) throw new InvalidArgumentException();
-        $this->color = $color;
+        return new Color(self::COLOR_WHITE);
+    }
+
+    public static function black(): Color
+    {
+        return new Color(self::COLOR_BLACK);
+    }
+
+    public function make($colorCode): Color
+    {
+        return new Color($colorCode);
+    }
+
+    public function __construct($colorCode)
+    {
+        if (!self::isColor($colorCode)) throw new InvalidArgumentException();
+        $this->color = $colorCode;
     }
 
     public static function isColor($color): bool

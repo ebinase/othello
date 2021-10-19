@@ -4,8 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Packages\Domain\Board\Board;
-use Packages\Domain\Position\Position;
-use Packages\Domain\Stone\Stone;
+use Packages\Domain\Color\Color;
 
 class OthelloCommand extends Command
 {
@@ -80,14 +79,14 @@ class OthelloCommand extends Command
             $this->table(['', 1,2,3,4,5,6,7,8], $view);
             $this->info(($turn%2 == 1 ? '◯' : '●') . 'のターンです。');
 
-            if ($this->board->isPlayable(new Stone($activeColor))) {
+            if ($this->board->isPlayable(Color::make($activeColor))) {
                 while (true) {
                     $row = $this->ask('行を入力してください');
                     $col = $this->ask('列を入力してください');
 
 //                    if (!$this->confirm($row . ', ' . $col . 'でよろしいですか？')) continue;
 
-                    if (!$this->board->isValid(new Position($row, $col), new Stone($activeColor))) {
+                    if (!$this->board->isValid([$row, $col], new Color($activeColor))) {
                         $this->error('その場所には置くことができません。');
                         continue;
                     }
@@ -95,7 +94,7 @@ class OthelloCommand extends Command
                     break;
                 }
 
-                $this->board = $this->board->update(new Position($row, $col), new Stone($activeColor));
+                $this->board = $this->board->update([$row, $col], new Color($activeColor));
             } else {
                 $this->confirm('置ける場所がないためスキップしました。');
             }

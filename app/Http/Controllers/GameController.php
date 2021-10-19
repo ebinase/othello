@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GameRequest;
-use Packages\Domain\Position\Position;
 use Packages\UseCases\Turn\GameProcessUsecase;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -18,7 +17,7 @@ class GameController extends BaseController
 
     public function show()
     {
-        
+
     }
 
     public function process(GameRequest $request)
@@ -26,7 +25,7 @@ class GameController extends BaseController
         $gameID = $request->session()->get('game_id');
         $params = $request->getProcessParams();
 
-        $playerMove = new Position($params['x'], $params['y']);
+        $playerMove = [$params['x'], $params['y']];
 
         $this->turnProcessUsecase->process($gameID, $playerMove);
 

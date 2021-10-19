@@ -3,7 +3,6 @@
 namespace Packages\Domain\Game;
 
 use Packages\Domain\Turn\Turn;
-use Packages\Domain\Position\Position;
 
 class Game
 {

@@ -4,8 +4,6 @@ namespace Packages\Domain\Turn;
 
 use Packages\Domain\Board\Board;
 use Packages\Domain\Color\Color;
-use Packages\Domain\Position\Position;
-use Packages\Domain\Stone\Stone;
 
 class Turn
 {
@@ -28,26 +26,54 @@ class Turn
 
     /**
      * 次のターンへ
-     *
-     * @param Stone $stone
-     * @return void
      */
-    public function next(Position $position)
+    public function next(array $position)
     {
-        $stone = app()->make('Stone', [$this->playableColor, $position]);
-
-        return new Turn(
-            $this->turnNumber + 1,
-            $this->playableColor->opposite(),
-            $this->board->update($stone),
-            $this->board->isPlayable($this->playableColor) ? 0 : $this->skipCount + 1
-        );
+//        $stone = app()->make('Stone', [$this->playableColor, $position]);
+//
+//        return new Turn(
+//            $this->turnNumber + 1,
+//            $this->playableColor->opposite(),
+//            $this->board->update($stone),
+//            $this->board->isPlayable($this->playableColor) ? 0 : $this->skipCount + 1
+//        );
     }
 
     // HACK: TurnFlowServiceに移す？
     public function diff($board)
     {
-        
+
     }
 
+    /**
+     * @return int
+     */
+    public function getTurnNumber(): int
+    {
+        return $this->turnNumber;
+    }
+
+    /**
+     * @return Color
+     */
+    public function getPlayableColor(): Color
+    {
+        return $this->playableColor;
+    }
+
+    /**
+     * @return Board
+     */
+    public function getBoard(): Board
+    {
+        return $this->board;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSkipCount(): int
+    {
+        return $this->skipCount;
+    }
 }

@@ -2,7 +2,6 @@
 
 namespace Packages\UseCases\Turn;
 
-use Packages\Domain\Position\Position;
 use Packages\Domain\Game\GameRepositoryInterface;
 
 class GameProcessUsecase

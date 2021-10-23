@@ -4,10 +4,15 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Packages\Domain\Board\Board;
+use Packages\Domain\Bot\Strategies\Random\RandomBot;
 use Packages\Domain\Color\Color;
+use Packages\Domain\Common\Position\PositionConverterTrait;
+use Packages\Domain\Player\BotPlayer;
 
 class OthelloCommand extends Command
 {
+    use PositionConverterTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -26,6 +31,20 @@ class OthelloCommand extends Command
 
     const COLOR_WHITE = 1;
     const COLOR_BLACK = 2;
+
+    private string $gameMode;
+    const MODE_PVP = '01';
+    const MODE_BOT = '02';
+
+    private int $botColor;
+
+    private array $botList = [
+        1 => [1, 'さいじゃく', 'わざと負けるBot'],
+        2 => [2, 'よわい', 'ランダムボット'],
+        3 => [3, 'そこそこ', '開放度ボット'],
+        4 => [4, '強め', '先読みボット'],
+        5 => [5, '強め', '戦況分析ボット'],
+    ];
 
     /**
      * Create a new command instance.
@@ -58,6 +77,20 @@ class OthelloCommand extends Command
      */
     public function handle()
     {
+        if ($this->confirm('Bot対戦を行いますか？', true)) {
+            $this->gameMode = self::MODE_BOT;
+
+            $this->info('対戦するボットを選んでください。');
+            $this->table(['id', '強さ', '名前'], $this->botList);
+            $id = $this->ask('id');
+
+
+            $choice = $this->choice("プレー順を選んでください", [1 => 'プレイヤー先攻', 2 => 'Bot先攻'], 1);
+            $this->botColor = $choice === 'プレイヤー先攻' ? self::COLOR_BLACK : self::COLOR_WHITE;
+        } else {
+            $this->gameMode = self::MODE_PVP;
+        }
+
         $turn = 1;
         while (true) {
             $activeColor = $turn%2 == 1 ? self::COLOR_WHITE : self::COLOR_BLACK;
@@ -77,26 +110,52 @@ class OthelloCommand extends Command
             }
 
             $this->table(['', 1,2,3,4,5,6,7,8], $view);
-            $this->info(($turn%2 == 1 ? '◯' : '●') . 'のターンです。');
+            $this->info(($turn%2 == 1 ? '◯' : '●') . 'のターンです。'. "\033[5A");
 
-            if ($this->board->isPlayable(Color::make($activeColor))) {
-                while (true) {
-                    $row = $this->ask('行を入力してください');
-                    $col = $this->ask('列を入力してください');
+            if (!$this->board->isPlayable(Color::make($activeColor))) {
+                $this->confirm('置ける場所がないためスキップします。', true);
+            } else {
+                // ボットのターンか判定
+                if ($this->gameMode === self::MODE_BOT && $activeColor === $this->botColor) {
+                    $this->info('Bot思考中・・・');
 
-//                    if (!$this->confirm($row . ', ' . $col . 'でよろしいですか？')) continue;
+                    $bot = new RandomBot(Color::make($activeColor), $this->board);
+//                $bot = new BotPlayer();
+//                $bot->getMove();
 
-                    if (!$this->board->isValid([$row, $col], new Color($activeColor))) {
-                        $this->error('その場所には置くことができません。');
-                        continue;
+                    $bar = $this->output->createProgressBar(10);
+                    $bar->start();
+                    $count = 1;
+                    while ($count <= 10) {
+                        if ($count === 5) {
+                            $action = $bot->culculate();
+                        }
+                        usleep(100000);
+                        $bar->advance();
+                        $count++;
                     }
+                    $bar->finish();
+                    echo "\n\n\n";
+                    $this->error($action);
+                    usleep(700000);
+                    echo "\n\n\n";
 
-                    break;
+                    $action = $this->toMatrixPosition($action);
+                } else {
+                    while (true) {
+                        $row = $this->ask('行を入力してください');
+                        $col = $this->ask('列を入力してください');
+
+                        if (!$this->board->isValid([$row, $col], Color::make($activeColor))) {
+                            $this->error('その場所には置くことができません。');
+                            continue;
+                        }
+                        break;
+                    }
+                    $action = [$row, $col];
                 }
 
-                $this->board = $this->board->update([$row, $col], new Color($activeColor));
-            } else {
-                $this->confirm('置ける場所がないためスキップしました。');
+                $this->board = $this->board->update($action, Color::make($activeColor));
             }
 
             $turn++;

@@ -4,16 +4,26 @@ namespace Packages\Domain\Board;
 
 use Packages\Domain\Color\Color;
 use Packages\Domain\Common\Matrix\Matrix;
+use Packages\Domain\Common\Position\PositionConverterTrait;
 
 class Board
 {
+    use PositionConverterTrait;
+
+    /**
+     * @var Matrix
+     */
     private Matrix $board;
-    private Matrix $flipScoreMap;
+
+    /**
+     * @var array<int, int>
+     */
+    private array $flipScores;
 
     const BOARD_EMPTY = 0;
 
-    const BOARD_SIZE_X = 8;
-    const BOARD_SIZE_Y = 8;
+    const BOARD_SIZE_ROWS = 8;
+    const BOARD_SIZE_COLS = 8;
 
     public function __construct(array $board)
     {
@@ -22,9 +32,9 @@ class Board
         $matrix = Matrix::make($board);
 
         // 行数チェック
-        if ($matrix->dim() != self::BOARD_SIZE_Y) throw new \Exception('lack of row');
+        if ($matrix->dim() != self::BOARD_SIZE_ROWS) throw new \Exception('lack of row');
         // 各行の列数チェック{
-        if ($matrix->size() != self::BOARD_SIZE_X) throw new \Exception('lack of column');
+        if ($matrix->size() != self::BOARD_SIZE_COLS) throw new \Exception('lack of column');
 
         $this->board = $matrix;
     }
@@ -67,7 +77,7 @@ class Board
      *
      *
      * @param Color $color
-     * @return boolean
+     * @return bool
      */
     public function isPlayable(Color $color): bool
     {
@@ -82,16 +92,13 @@ class Board
 
     /**
      * @param Color $color
-     * @return Position[]
+     * @return array
      */
     public function playablePositions(Color $color): array
     {
-        if (empty($this->flipScoreMap)) $this->analyze($color);
+        if (empty($this->flipScores)) $this->analyze($color);
 
-        $filterd = array_filter($this->flipScoreMap->flatten(), function ($value) {
-            return $value > 0;
-        });
-        return $filterd;
+        return array_keys($this->flipScores); // ひっくり返せる場所のidだけ返す
     }
 
     private function getFlipScore(array $position, Color $color): int
@@ -218,13 +225,17 @@ class Board
 
     public function analyze(Color $color)
     {
-        $flipScoreMap = [];
+        $flipScores = [];
         for ($row = 1; $row < $this->board->dim(); $row++) {
             for ($col = 1; $col < $this->board->size(); $col++) {
-                $flipScoreMap[$row][$col] = $this->getFlipScore([$row, $col], $color);
+                $score = $this->getFlipScore([$row, $col], $color);
+                if ($score > 0) {
+                    $positionId = $this->toPositionId([$row, $col]);
+                    $flipScores[$positionId] = $score;
+                }
             }
         }
 
-        $this->flipScoreMap = Matrix::make($flipScoreMap);
+        $this->flipScores = $flipScores;
     }
 }

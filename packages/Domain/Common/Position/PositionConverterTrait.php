@@ -7,7 +7,7 @@ trait PositionConverterTrait
     private int $_positionConverterRows = 8;
     private int $_positionConverterColumns = 8;
 
-    public function toMatrix(string|int $positionId): ?array
+    public function toMatrixPosition(int $positionId): ?array
     {
         if ($positionId < 1 || $positionId > $this->_positionConverterRows * $this->_positionConverterColumns) {
             return null;
@@ -28,7 +28,7 @@ trait PositionConverterTrait
         return [$row, $column];
     }
 
-    public function toId(array $matrixPosition): string|int|null
+    public function toPositionId(array $matrixPosition): ?int
     {
         $matrixPosition = array_values($matrixPosition);
         foreach ($matrixPosition as $value) {

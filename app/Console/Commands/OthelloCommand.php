@@ -8,6 +8,8 @@ use Packages\Domain\Bot\Strategies\Random\RandomBot;
 use Packages\Domain\Color\Color;
 use Packages\Domain\Common\Position\PositionConverterTrait;
 use Packages\Domain\Player\BotPlayer;
+use Packages\Domain\Player\Player;
+use Packages\Domain\Player\PlayerInterface;
 
 class OthelloCommand extends Command
 {
@@ -27,18 +29,31 @@ class OthelloCommand extends Command
      */
     protected $description = 'Command description';
 
-    private Board $board;
-
+    // ---------------------------------------
+    // 設定値
+    // ---------------------------------------
     const COLOR_WHITE = 1;
     const COLOR_BLACK = 2;
 
-    private string $gameMode;
     const MODE_PVP = '01';
     const MODE_BOT = '02';
 
-    private int $botColor;
+    // ---------------------------------------
+    // データ永続化
+    // ---------------------------------------
+    private string $gameMode;
 
-    private array $botList = [
+    private Board $board;
+
+    private PlayerInterface $whitePlayer;
+    private PlayerInterface $blackPlayer;
+
+    /**
+     * @var PlayerInterface[]
+     */
+    private array $playerList;
+
+    private static array $botList = [
         1 => [1, 'さいじゃく', 'わざと負けるBot'],
         2 => [2, 'よわい', 'ランダムボット'],
         3 => [3, 'そこそこ', '開放度ボット'],
@@ -77,19 +92,32 @@ class OthelloCommand extends Command
      */
     public function handle()
     {
-        if ($this->confirm('Bot対戦を行いますか？', true)) {
-            $this->gameMode = self::MODE_BOT;
+//        if ($this->confirm('Bot対戦を行いますか？', true)) {
+//            $this->gameMode = self::MODE_BOT;
+//
+//            $this->info('対戦するボットを選んでください。');
+//            $this->table(['id', '強さ', '名前'], self::$botList);
+//            $id = $this->ask('id');
+//
+//
+//            $choice = $this->choice("プレー順を選んでください", [1 => 'プレイヤー先攻', 2 => 'Bot先攻'], 1);
+//            if ($choice === 'プレイヤー先攻') {
+//                $this->whitePlayer = new Player('01', 'player_01');
+//                $this->blackPlayer = new BotPlayer('02', 'player_02');
+//            } else {
+//                $this->whitePlayer = new BotPlayer('01', 'player_01');
+//                $this->blackPlayer = new Player('02', 'player_02');
+//            }
+//        } else {
+//            $this->gameMode = self::MODE_PVP;
+//            $this->whitePlayer = new Player('01', 'player_01');
+//            $this->blackPlayer = new Player('02', 'player_02');
+//        }
 
-            $this->info('対戦するボットを選んでください。');
-            $this->table(['id', '強さ', '名前'], $this->botList);
-            $id = $this->ask('id');
-
-
-            $choice = $this->choice("プレー順を選んでください", [1 => 'プレイヤー先攻', 2 => 'Bot先攻'], 1);
-            $this->botColor = $choice === 'プレイヤー先攻' ? self::COLOR_BLACK : self::COLOR_WHITE;
-        } else {
-            $this->gameMode = self::MODE_PVP;
-        }
+        $this->playerList = [
+            self::COLOR_WHITE => new BotPlayer('01', 'player_01'),
+            self::COLOR_BLACK => new BotPlayer('02', 'player_02'),
+        ];
 
         $turn = 1;
         while (true) {
@@ -110,18 +138,16 @@ class OthelloCommand extends Command
             }
 
             $this->table(['', 1,2,3,4,5,6,7,8], $view);
-            $this->info(($turn%2 == 1 ? '◯' : '●') . 'のターンです。'. "\033[5A");
+            $this->info(($turn%2 == 1 ? '◯' : '●') . 'のターンです。');
 
             if (!$this->board->isPlayable(Color::make($activeColor))) {
                 $this->confirm('置ける場所がないためスキップします。', true);
             } else {
                 // ボットのターンか判定
-                if ($this->gameMode === self::MODE_BOT && $activeColor === $this->botColor) {
+                if ($this->playerList[$activeColor]->isBot()) {
                     $this->info('Bot思考中・・・');
 
                     $bot = new RandomBot(Color::make($activeColor), $this->board);
-//                $bot = new BotPlayer();
-//                $bot->getMove();
 
                     $bar = $this->output->createProgressBar(10);
                     $bar->start();
@@ -130,17 +156,16 @@ class OthelloCommand extends Command
                         if ($count === 5) {
                             $action = $bot->culculate();
                         }
-                        usleep(100000);
+                        usleep(50000);
                         $bar->advance();
                         $count++;
                     }
                     $bar->finish();
                     echo "\n\n\n";
-                    $this->error($action);
-                    usleep(700000);
-                    echo "\n\n\n";
-
                     $action = $this->toMatrixPosition($action);
+                    $this->error($action[0] . ',' . $action[1]);
+                    $this->confirm('確認した', true);
+
                 } else {
                     while (true) {
                         $row = $this->ask('行を入力してください');
@@ -159,6 +184,7 @@ class OthelloCommand extends Command
             }
 
             $turn++;
+//            echo "\033[2J";
         }
         return 0;
     }

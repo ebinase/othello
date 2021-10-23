@@ -7,17 +7,13 @@ use Packages\Domain\Bot\BotStrategyInterface;
 /**
  * プレイヤーとしてのBotを表すクラス
  */
-final class BotPlayer implements PlayerInterface
+final class BotPlayer extends BasePlayer
 {
     private BotStrategyInterface $bot;
 
-    public function __construct($bot)
+    public function __construct($id, $name)
     {
-        if ($bot instanceof BotStrategyInterface) {
-            $this->bot = $bot;
-        }
-
-
+        parent::__construct($id, $name, self::PLAYER_TYPE_BOT);
     }
 
     function getMove(): int

@@ -39,7 +39,7 @@ class LevelFactory
         self::BOT_LEVEL_05 => self::BOT_LEVEL_DESCRIPTION_05,
     ];
 
-    public function make(string $levelCode)
+    public static function make(string $levelCode): BotLevel
     {
         return new BotLevel(
             $levelCode,

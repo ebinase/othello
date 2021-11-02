@@ -2,22 +2,20 @@
 
 namespace Packages\Domain\Player;
 
-use Packages\Domain\Bot\BotStrategyInterface;
+use http\Exception\InvalidArgumentException;
+use Packages\Domain\Bot\BotFactory;
 
 /**
  * プレイヤーとしてのBotを表すクラス
  */
 final class BotPlayer extends BasePlayer
 {
-    private BotStrategyInterface $bot;
-
-    public function __construct($id, $name)
+    public function __construct($id, $name = 'ボット', $type = BotFactory::BOT_ID_RANDOM)
     {
-        parent::__construct($id, $name, self::PLAYER_TYPE_BOT);
-    }
+        $type = self::PLAYER_TYPE_PREFIX_BOT . $type;
 
-    function getMove(): int
-    {
-        return $this->bot->culculate();
+        parent::__construct($id, $name, $type);
+
+        if (!$this->isBot()) throw new InvalidArgumentException();
     }
 }

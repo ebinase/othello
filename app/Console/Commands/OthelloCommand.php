@@ -4,12 +4,17 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Packages\Domain\Board\Board;
-use Packages\Domain\Bot\Strategies\Random\RandomBot;
+use Packages\Domain\Bot\BotFactory;
+use Packages\Domain\Bot\BotList;
+use Packages\Domain\Bot\Levels\BotLevel;
+use Packages\Domain\Bot\Levels\LevelFactory;
+use Packages\Domain\Bot\Calculators\Random\RandomCalculator;
 use Packages\Domain\Color\Color;
 use Packages\Domain\Common\Position\PositionConverterTrait;
 use Packages\Domain\Player\BotPlayer;
-use Packages\Domain\Player\Player;
+use Packages\Domain\Player\NormalPlayer;
 use Packages\Domain\Player\PlayerInterface;
+use Packages\Domain\Turn\Turn;
 
 class OthelloCommand extends Command
 {
@@ -36,7 +41,8 @@ class OthelloCommand extends Command
     const COLOR_BLACK = 2;
 
     const MODE_PVP = '01';
-    const MODE_BOT = '02';
+    const MODE_VS_BOT = '02';
+    const MODE_BOT_ONLY = '03';
 
     // ---------------------------------------
     // データ永続化
@@ -53,14 +59,6 @@ class OthelloCommand extends Command
      */
     private array $playerList;
 
-    private static array $botList = [
-        1 => [1, 'さいじゃく', 'わざと負けるBot'],
-        2 => [2, 'よわい', 'ランダムボット'],
-        3 => [3, 'そこそこ', '開放度ボット'],
-        4 => [4, '強め', '先読みボット'],
-        5 => [5, '強め', '戦況分析ボット'],
-    ];
-
     /**
      * Create a new command instance.
      *
@@ -69,6 +67,49 @@ class OthelloCommand extends Command
     public function __construct()
     {
         parent::__construct();
+
+
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        $gameMode = $this->choice("ゲームモードを選択してください。", [1 => 'プレイヤー対戦', 2 => 'Bot対戦', 3 => 'Bot対Bot(観戦)'], 1);
+        if ($gameMode === '1') {
+            $this->gameMode = self::MODE_PVP;
+            $this->whitePlayer = new NormalPlayer('01', 'player_01');
+            $this->blackPlayer = new NormalPlayer('02', 'player_02');
+        } elseif ($gameMode === '2') {
+            $this->gameMode = self::MODE_VS_BOT;
+
+            $this->info('対戦するボットを選んでください。');
+
+            $this->table(['id', '強さ', '名前'], [[BotFactory::BOT_ID_RANDOM, LevelFactory::BOT_LEVEL_DESCRIPTION_01, 'ランダムボット']]);
+            $id = $this->ask('id');
+
+            $choice = $this->choice("プレー順を選んでください", [1 => 'プレイヤー先攻', 2 => 'Bot先攻'], 1);
+            if ($choice === 'プレイヤー先攻') {
+                $this->whitePlayer = new NormalPlayer('01', 'player_01');
+                $this->blackPlayer = new BotPlayer('02', 'player_02', $id);
+            } else {
+                $this->whitePlayer = new BotPlayer('01', 'player_01');
+                $this->blackPlayer = new NormalPlayer('02', 'player_02', $id);
+            }
+        } else {
+            $this->info('対戦するボットを選んでください。');
+
+            $this->table(['id', '強さ', '名前'], [[BotFactory::BOT_ID_RANDOM, LevelFactory::BOT_LEVEL_DESCRIPTION_01, 'ランダムボット']]);
+            $id = $this->ask('id');
+
+            $this->playerList = [
+                self::COLOR_WHITE => new BotPlayer('01', 'player_01', $id),
+                self::COLOR_BLACK => new BotPlayer('02', 'player_02', $id),
+            ];
+        }
 
         $emptyRow = collect()->pad(8, 0)->toArray();
         $initBoard = [
@@ -83,41 +124,6 @@ class OthelloCommand extends Command
         ];
 
         $this->board = new Board($initBoard);
-    }
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
-    {
-//        if ($this->confirm('Bot対戦を行いますか？', true)) {
-//            $this->gameMode = self::MODE_BOT;
-//
-//            $this->info('対戦するボットを選んでください。');
-//            $this->table(['id', '強さ', '名前'], self::$botList);
-//            $id = $this->ask('id');
-//
-//
-//            $choice = $this->choice("プレー順を選んでください", [1 => 'プレイヤー先攻', 2 => 'Bot先攻'], 1);
-//            if ($choice === 'プレイヤー先攻') {
-//                $this->whitePlayer = new Player('01', 'player_01');
-//                $this->blackPlayer = new BotPlayer('02', 'player_02');
-//            } else {
-//                $this->whitePlayer = new BotPlayer('01', 'player_01');
-//                $this->blackPlayer = new Player('02', 'player_02');
-//            }
-//        } else {
-//            $this->gameMode = self::MODE_PVP;
-//            $this->whitePlayer = new Player('01', 'player_01');
-//            $this->blackPlayer = new Player('02', 'player_02');
-//        }
-
-        $this->playerList = [
-            self::COLOR_WHITE => new BotPlayer('01', 'player_01'),
-            self::COLOR_BLACK => new BotPlayer('02', 'player_02'),
-        ];
 
         $turn = 1;
         while (true) {
@@ -144,19 +150,22 @@ class OthelloCommand extends Command
                 $this->confirm('置ける場所がないためスキップします。', true);
             } else {
                 // ボットのターンか判定
-                if ($this->playerList[$activeColor]->isBot()) {
+                $activePlayer = $this->playerList[$activeColor];
+                if ($activePlayer->isBot()) {
                     $this->info('Bot思考中・・・');
 
-                    $bot = new RandomBot(Color::make($activeColor), $this->board);
+//                    $activePlayer->getPlayerType();
+                    $turnObj = new Turn($turn, Color::make($activeColor), $this->board, 0);
+                    $bot = BotFactory::make($id, $turnObj);
 
                     $bar = $this->output->createProgressBar(10);
                     $bar->start();
                     $count = 1;
                     while ($count <= 10) {
                         if ($count === 5) {
-                            $action = $bot->culculate();
+                            $action = $bot->execute();
                         }
-                        usleep(50000);
+//                        usleep(50000);
                         $bar->advance();
                         $count++;
                     }
@@ -184,8 +193,16 @@ class OthelloCommand extends Command
             }
 
             $turn++;
-//            echo "\033[2J";
+
+            info($this->board->getRest());
+            if ($this->board->getRest() == 0) {
+                break;
+            }
         }
+        $whitePoint = $this->board->getPoint(Color::white());
+        $blackPoint = $this->board->getPoint(Color::black());
+        info( "◯：$whitePoint 対 ●：$blackPoint");
+        echo $whitePoint > $blackPoint ? '◯の勝ち' : '●の勝ち';
         return 0;
     }
 }

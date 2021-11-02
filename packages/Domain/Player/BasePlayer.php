@@ -32,11 +32,11 @@ class BasePlayer implements PlayerInterface
 
     public function isBot(): bool
     {
-        return $this->type === self::PLAYER_TYPE_BOT;
+        return  str_starts_with($this->type, self::PLAYER_TYPE_PREFIX_BOT);
     }
 
-    public function isHuman(): bool
+    public function isPerson(): bool
     {
-        return $this->type === self::PLAYER_TYPE_HUMAN;
+        return  str_starts_with($this->type, self::PLAYER_TYPE_PREFIX_PERSON);
     }
 }

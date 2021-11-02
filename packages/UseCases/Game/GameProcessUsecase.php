@@ -2,6 +2,7 @@
 
 namespace Packages\UseCases\Turn;
 
+use Illuminate\Http\JsonResponse;
 use Packages\Domain\Game\GameRepositoryInterface;
 
 class GameProcessUsecase
@@ -13,15 +14,37 @@ class GameProcessUsecase
         $this->gameRepository = $gameRepository;
     }
 
-    public function process($gameId, $playerMove)
+    public function process($gameId, $playerMove): JsonResponse
     {
         $game = $this->gameRepository->find($gameId);
+
 
         $game->process($playerMove);
         // 保存
         $$this->gameRepository->save($game);
 
-        // viewModelに詰め替えて返却
-        return;
+        return response()->json([
+            'turn_num',
+            'board',
+            'next_player',
+            'status' => 'playable, skip, bot_turn'
+        ]);
+    }
+
+    public function botProcess($gameId, $playerMove): JsonResponse
+    {
+        $game = $this->gameRepository->find($gameId);
+
+
+        $game->process($playerMove);
+        // 保存
+        $$this->gameRepository->save($game);
+
+        return response()->json([
+            'turn_num',
+            'board',
+            'next_player',
+            'status' => 'playable, skip, bot_turn'
+        ]);
     }
 }

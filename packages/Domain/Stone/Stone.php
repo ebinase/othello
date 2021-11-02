@@ -3,7 +3,6 @@
 namespace Packages\Domain\Stone;
 
 use Packages\Domain\Color\Color;
-use Packages\Domain\Position\Position;
 
 /**
  * コマを表すクラス(仮)
@@ -38,8 +37,8 @@ class Stone
         return new Stone($this->color->opposite());
     }
 
-    public function equals(Stone $stone)
+    public function equals(Color $color)
     {
-        return $this->colorEquals($stone->colorCode());
+        return $this->colorEquals($color->toCode());
     }
 }

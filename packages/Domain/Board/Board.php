@@ -2,32 +2,39 @@
 
 namespace Packages\Domain\Board;
 
+use Packages\Domain\Color\Color;
 use Packages\Domain\Common\Matrix\Matrix;
-use Packages\Domain\Position\Position;
-use Packages\Domain\Stone\Stone;
+use Packages\Domain\Common\Position\PositionConverterTrait;
 
 class Board
 {
+    use PositionConverterTrait;
+
+    /**
+     * @var Matrix
+     */
     private Matrix $board;
+
+    /**
+     * @var array<int, int>
+     */
+    private array $flipScores;
 
     const BOARD_EMPTY = 0;
 
-    const BOARD_SIZE_X = 8;
-    const BOARD_SIZE_Y = 8;
+    const BOARD_SIZE_ROWS = 8;
+    const BOARD_SIZE_COLS = 8;
 
     public function __construct(array $board)
     {
-//        TODO: 色以外の要素があったら全てBOARD_EMPTYで埋める
-//        array_map(function ($row) {
-//            return ;
-//        }, $board);
+        // TODO: 色以外の要素があったら全てBOARD_EMPTYで埋める
 
         $matrix = Matrix::make($board);
 
         // 行数チェック
-        if ($matrix->dim() != self::BOARD_SIZE_Y) throw new \Exception('lack of row');
+        if ($matrix->dim() != self::BOARD_SIZE_ROWS) throw new \Exception('lack of row');
         // 各行の列数チェック{
-        if ($matrix->size() != self::BOARD_SIZE_X) throw new \Exception('lack of column');
+        if ($matrix->size() != self::BOARD_SIZE_COLS) throw new \Exception('lack of column');
 
         $this->board = $matrix;
     }
@@ -57,7 +64,7 @@ class Board
      * @param Color $color
      * @return int
      */
-    public function getScore(Color $color): int
+    public function getPoint(Color $color): int
     {
         $filterd = array_filter($this->board->flatten(), function ($value) use ($color) {
             return $color->equals($value);
@@ -69,59 +76,68 @@ class Board
     /**
      *
      *
-     * @param Stone $stone
-     * @return boolean
+     * @param Color $color
+     * @return bool
      */
-    public function isPlayable(Stone $stone): bool
+    public function isPlayable(Color $color): bool
     {
         for ($row = 1; $row < $this->board->dim(); $row++) {
             for ($col = 1; $col < $this->board->size(); $col++) {
                 // 一つでもおけるマスがあったらtrueを返す
-                if ($this->getFlipCount([$row, $col], $stone) > 0) {
-                    return true;
-                }
+                if ($this->isValid([$row, $col], $color)) return true;
             }
         }
         return false;
     }
 
-    private function getFlipCount(array $position, Stone $stone): int
+    /**
+     * @param Color $color
+     * @return array
+     */
+    public function playablePositions(Color $color): array
     {
-        $flipCount = 0;
+        if (empty($this->flipScores)) $this->analyze($color);
+
+        return array_keys($this->flipScores); // ひっくり返せる場所のidだけ返す
+    }
+
+    private function getFlipScore(array $position, Color $color): int
+    {
+        $flipScore = 0;
 
         // 調査するマスが空白ではないときは取れないので0を返す
         $fieldItem = $this->board->getData($position[0], $position[1]);
         if ($fieldItem) {
-            return $flipCount;
+            return $flipScore;
         }
 
         $lineDataList = $this->board->getLinesClockwise($position, true);
         foreach ($lineDataList as $lineData) {
             // 何個裏返すことができるか計算
-            $lineCount = $this->flipCountInLine($lineData, $stone);
+            $lineCount = $this->flipCountInLine($lineData, $color);
             // 裏返したコマの数を追加
-            $flipCount += $lineCount;
+            $flipScore += $lineCount;
         }
-        return $flipCount;
+        return $flipScore;
     }
 
-    public function isValid(Position $position, Stone $stone): bool
+    public function isValid(array $position, Color $color): bool
     {
-        if ($this->getFlipCount($position->toArray(), $stone) > 0) {
+        if ($this->getFlipScore($position, $color) > 0) {
             return true;
         }
         return false;
     }
 
-    public function update(Position $position, Stone $stone): Board
+    public function update(array $position, Color $color): Board
     {
         // 置けない場合は盤面に変更を加えず返す
-        if (!$this->isValid($position, $stone)) {
+        if (!$this->isValid($position, $color)) {
             return $this;
         }
 
         // 更新された盤面を返す
-        $updatedBoard = $this->flipStones($position, $stone);
+        $updatedBoard = $this->flipStones($position, $color);
         return new Board($updatedBoard);
     }
 
@@ -129,25 +145,25 @@ class Board
      * Undocumented function
      *
      * @param array $board
-     * @param Stone $stone
+     * @param Color $color
      * @return array
      */
-    private function flipStones(Position $position, Stone $stone): array
+    private function flipStones(array $position, Color $color): array
     {
         // TODO: #6 番兵などでパフォーマンス改善
 
         $board = clone $this->board;
         // HACK: 毎回全要素を取得しているとオーバーヘッドが大きいかもなので、位置だけ取得してデータは必要なときに都度取得する形式の方がいいかも
-        $lineDataList = $board->getLinesClockwise($position->toArray(), true);
+        $lineDataList = $board->getLinesClockwise($position, true);
         $totalCount = 0;
         $updatedLines = [];
         foreach ($lineDataList as $lineData) {
             // 何個裏返すことができるか計算
-            $flipCount = $this->flipCountInLine($lineData, $stone);
+            $flipCount = $this->flipCountInLine($lineData, $color);
             if ($flipCount > 0) {
                 // 裏返せるコマがあったら裏返す
                 for ($i = 0; $i < $flipCount; $i++) {
-                    $lineData[$i] = $stone->colorCode();
+                    $lineData[$i] = $color->toCode();
                 }
             }
             $updatedLines[] = $lineData;
@@ -157,8 +173,8 @@ class Board
 
         if ($totalCount > 0) {
             // ひとつでも裏返せていたらコマを置く
-            $board->setData($stone->colorCode(), $position->x(), $position->y());
-            $board->setLinesClockwise($updatedLines, $position->toArray(), true);
+            $board->setData($color->toCode(), $position[0], $position[1]);
+            $board->setLinesClockwise($updatedLines, $position, true);
         }
 
         return $board->toArray();
@@ -168,10 +184,10 @@ class Board
      * Undocumented function
      *
      * @param array $lineData
-     * @param Stone $stone
+     * @param Color $color
      * @return int $length
      */
-    private function flipCountInLine(array $lineData, Stone $stone): int
+    private function flipCountInLine(array $lineData, Color $color): int
     {
         if (empty($lineData)) return 0;
 
@@ -181,14 +197,14 @@ class Board
         $lastKey = 0;
         foreach ($lineData as $key => $field) {
             // 反対の色以外が出たらその位置のキーを記録
-            if (!$stone->isOppositeColor($field)) {
+            if (!$color->isOpposite($field)) {
                 $lastKey = $key;
                 break;
             }
         }
 
         // ループが終了したマスの状態に応じて処理分岐
-        if ($stone->colorEquals($lineData[$lastKey])) {
+        if ($color->equals($lineData[$lastKey])) {
             // 同じ色があったらカウント数を返す
             return $lastKey; // 0の場合も含む
         } else {
@@ -205,5 +221,21 @@ class Board
     public function diff(Board $board)
     {
         //
+    }
+
+    public function analyze(Color $color)
+    {
+        $flipScores = [];
+        for ($row = 1; $row < $this->board->dim(); $row++) {
+            for ($col = 1; $col < $this->board->size(); $col++) {
+                $score = $this->getFlipScore([$row, $col], $color);
+                if ($score > 0) {
+                    $positionId = $this->toPositionId([$row, $col]);
+                    $flipScores[$positionId] = $score;
+                }
+            }
+        }
+
+        $this->flipScores = $flipScores;
     }
 }

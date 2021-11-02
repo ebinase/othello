@@ -6,8 +6,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Packages\Domain\Board\Board;
 use Packages\Domain\Color\Color;
-use Packages\Domain\Position\Position;
-use Packages\Domain\Stone\Stone;
 use Tests\TestCase;
 
 class BoardUpdateTest extends TestCase
@@ -55,7 +53,7 @@ class BoardUpdateTest extends TestCase
         $expected[3][5] = self::COLOR_WHITE;
 
         $board = new Board($initBoard);
-        $updated = $board->update(new Position(4, 6), new Stone(self::COLOR_WHITE));
+        $updated = $board->update([4, 6], Color::white());
         $this->assertSame($expected, $updated->toArray());
     }
 }

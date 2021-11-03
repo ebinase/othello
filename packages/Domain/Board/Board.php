@@ -2,9 +2,9 @@
 
 namespace Packages\Domain\Board;
 
+use Packages\Domain\Board\Position\PositionConverterTrait;
 use Packages\Domain\Color\Color;
 use Packages\Domain\Common\Matrix\Matrix;
-use Packages\Domain\Common\Position\PositionConverterTrait;
 
 class Board
 {
@@ -33,7 +33,7 @@ class Board
 
         // 行数チェック
         if ($matrix->dim() != self::BOARD_SIZE_ROWS) throw new \Exception('lack of row');
-        // 各行の列数チェック{
+        // 各行の列数チェック
         if ($matrix->size() != self::BOARD_SIZE_COLS) throw new \Exception('lack of column');
 
         $this->board = $matrix;
@@ -241,7 +241,7 @@ class Board
             for ($col = 1; $col < $this->board->size(); $col++) {
                 $score = $this->getFlipScore([$row, $col], $color);
                 if ($score > 0) {
-                    $positionId = $this->toPositionId([$row, $col]);
+                    $positionId = $this->convertToPositionId([$row, $col]);
                     $flipScores[$positionId] = $score;
                 }
             }

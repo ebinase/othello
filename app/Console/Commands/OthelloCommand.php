@@ -4,13 +4,10 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Packages\Domain\Board\Board;
+use Packages\Domain\Board\Position\PositionConverterTrait;
 use Packages\Domain\Bot\BotFactory;
-use Packages\Domain\Bot\BotList;
-use Packages\Domain\Bot\Levels\BotLevel;
 use Packages\Domain\Bot\Levels\LevelFactory;
-use Packages\Domain\Bot\Calculators\Random\RandomCalculator;
 use Packages\Domain\Color\Color;
-use Packages\Domain\Common\Position\PositionConverterTrait;
 use Packages\Domain\Player\BotPlayer;
 use Packages\Domain\Player\NormalPlayer;
 use Packages\Domain\Player\PlayerInterface;
@@ -159,7 +156,7 @@ class OthelloCommand extends Command
                     }
                     $bar->finish();
                     echo "\n\n\n";
-                    $action = $this->toMatrixPosition($action);
+                    $action = $this->convertToMatrixPosition($action);
                     $this->error($action[0] . ',' . $action[1]);
                     $this->confirm('確認した', true);
 

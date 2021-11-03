@@ -39,6 +39,17 @@ class Board
         $this->board = $matrix;
     }
 
+    public static function init(): Board
+    {
+        $matrix = Matrix::init(self::BOARD_SIZE_COLS, self::BOARD_SIZE_ROWS, self::BOARD_EMPTY);
+        $matrix->setData(Color::COLOR_WHITE, 4, 4);
+        $matrix->setData(Color::COLOR_BLACK, 4, 5);
+        $matrix->setData(Color::COLOR_BLACK, 5, 4);
+        $matrix->setData(Color::COLOR_WHITE, 5, 5);
+
+        return new Board($matrix->toArray());
+    }
+
     public function toArray(): array
     {
         return $this->board->toArray();
@@ -213,9 +224,9 @@ class Board
         }
     }
 
-    public function equals(Board $board)
+    public function equals(Board $board): bool
     {
-        //
+        return $this->board->toArray() === $board->toArray();
     }
 
     public function diff(Board $board)

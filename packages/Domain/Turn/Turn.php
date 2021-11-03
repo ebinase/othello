@@ -24,6 +24,16 @@ class Turn
         $this->skipCount     = $skipCount;
     }
 
+    public static function init(): Turn
+    {
+        return new Turn(
+            turnNumber:    1,
+            playableColor: Color::white(),
+            board:         Board::init(),
+            skipCount:     0,
+        );
+    }
+
     /**
      * 次のターンへ
      */

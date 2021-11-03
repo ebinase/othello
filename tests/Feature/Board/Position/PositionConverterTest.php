@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Board\Position;
 
-use Packages\Domain\Board\Position\PositionConverterTrait;
+use Packages\Models\Board\Position\PositionConverterTrait;
 use Tests\TestCase;
 use function PHPUnit\Framework\assertSame;
 

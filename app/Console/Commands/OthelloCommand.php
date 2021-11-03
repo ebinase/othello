@@ -3,15 +3,15 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Packages\Domain\Board\Board;
-use Packages\Domain\Board\Position\PositionConverterTrait;
-use Packages\Domain\Bot\BotFactory;
-use Packages\Domain\Bot\Levels\LevelFactory;
-use Packages\Domain\Color\Color;
-use Packages\Domain\Player\BotPlayer;
-use Packages\Domain\Player\NormalPlayer;
-use Packages\Domain\Player\PlayerInterface;
-use Packages\Domain\Turn\Turn;
+use Packages\Models\Board\Board;
+use Packages\Models\Board\Position\PositionConverterTrait;
+use Packages\Models\Bot\BotFactory;
+use Packages\Models\Bot\Levels\LevelFactory;
+use Packages\Models\Board\Color;
+use Packages\Models\Player\BotPlayer;
+use Packages\Models\Player\NormalPlayer;
+use Packages\Models\Player\PlayerInterface;
+use Packages\Models\Turn\Turn;
 
 class OthelloCommand extends Command
 {

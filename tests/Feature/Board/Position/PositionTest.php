@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Board\Position;
 
-use Packages\Domain\Board\Position\Position;
+use Packages\Models\Board\Position\Position;
 use Tests\TestCase;
 
 class PositionTest extends TestCase

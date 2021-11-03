@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Turn;
 
-use Packages\Domain\Board\Board;
-use Packages\Domain\Color\Color;
-use Packages\Domain\Turn\Turn;
+use Packages\Models\Board\Board;
+use Packages\Models\Board\Color;
+use Packages\Models\Turn\Turn;
 use Tests\TestCase;
 
 class TurnTest extends TestCase

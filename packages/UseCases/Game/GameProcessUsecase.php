@@ -3,7 +3,7 @@
 namespace Packages\UseCases\Turn;
 
 use Illuminate\Http\JsonResponse;
-use Packages\Domain\Game\GameRepositoryInterface;
+use Packages\Models\Game\GameRepositoryInterface;
 
 class GameProcessUsecase
 {

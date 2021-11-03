@@ -4,7 +4,7 @@ namespace Tests\Feature\Common\Matrix;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Packages\Domain\Common\Matrix\Matrix;
+use Packages\Models\Common\Matrix\Matrix;
 use Tests\TestCase;
 
 class MatrixTest extends TestCase

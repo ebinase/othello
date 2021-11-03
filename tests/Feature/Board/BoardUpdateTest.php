@@ -4,8 +4,8 @@ namespace Tests\Feature\Board;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Packages\Domain\Board\Board;
-use Packages\Domain\Color\Color;
+use Packages\Models\Board\Board;
+use Packages\Models\Board\Color;
 use Tests\TestCase;
 
 class BoardUpdateTest extends TestCase

@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Board;
 
-use Packages\Domain\Board\Board;
-use Packages\Domain\Color\Color;
+use Packages\Models\Board\Board;
+use Packages\Models\Board\Color;
 use Tests\TestCase;
 
 class BoardInitializingTest extends TestCase
@@ -19,8 +19,8 @@ class BoardInitializingTest extends TestCase
             [0,0,0,0,0,0,0,0,],
             [0,0,0,0,0,0,0,0,],
             [0,0,0,0,0,0,0,0,],
-            [0,0,0,Color::COLOR_WHITE,Color::COLOR_BLACK,0,0,0,],
-            [0,0,0,Color::COLOR_BLACK,Color::COLOR_WHITE,0,0,0,],
+            [0,0,0,Color::COLOR_CODE_WHITE,Color::COLOR_CODE_BLACK,0,0,0,],
+            [0,0,0,Color::COLOR_CODE_BLACK,Color::COLOR_CODE_WHITE,0,0,0,],
             [0,0,0,0,0,0,0,0,],
             [0,0,0,0,0,0,0,0,],
             [0,0,0,0,0,0,0,0,],

@@ -3,7 +3,7 @@
 namespace Packages\Models\Turn;
 
 use Packages\Models\Board\Board;
-use Packages\Models\Board\Color;
+use Packages\Models\Board\Color\Color;
 
 class Turn
 {

@@ -2,8 +2,8 @@
 
 namespace Packages\Models\Board;
 
+use Packages\Models\Board\Color\Color;
 use Packages\Models\Board\Position\PositionConverterTrait;
-use Packages\Models\Board\Color;
 use Packages\Models\Common\Matrix\Matrix;
 
 class Board
@@ -40,10 +40,10 @@ class Board
     public static function init(): Board
     {
         $matrix = Matrix::init(self::BOARD_SIZE_COLS, self::BOARD_SIZE_ROWS, self::BOARD_EMPTY);
-        $matrix->setData(Color::COLOR_CODE_WHITE, 4, 4);
-        $matrix->setData(Color::COLOR_CODE_BLACK, 4, 5);
-        $matrix->setData(Color::COLOR_CODE_BLACK, 5, 4);
-        $matrix->setData(Color::COLOR_CODE_WHITE, 5, 5);
+        $matrix->setData(Color::white()->toCode(), 4, 4);
+        $matrix->setData(Color::black()->toCode(), 4, 5);
+        $matrix->setData(Color::black()->toCode(), 5, 4);
+        $matrix->setData(Color::white()->toCode(), 5, 5);
 
         return new Board($matrix->toArray());
     }
@@ -76,7 +76,7 @@ class Board
     public function getPoint(Color $color): int
     {
         $filterd = array_filter($this->board->flatten(), function ($value) use ($color) {
-            return $color->equals($value);
+            return $color->codeEquals($value);
         });
 
         return count($filterd);
@@ -206,14 +206,14 @@ class Board
         $lastKey = 0;
         foreach ($lineData as $key => $field) {
             // 反対の色以外が出たらその位置のキーを記録
-            if (!$color->isOpposite($field)) {
+            if (!$color->isOppositeCode($field)) {
                 $lastKey = $key;
                 break;
             }
         }
 
         // ループが終了したマスの状態に応じて処理分岐
-        if ($color->equals($lineData[$lastKey])) {
+        if ($color->codeEquals($lineData[$lastKey])) {
             // 同じ色があったらカウント数を返す
             return $lastKey; // 0の場合も含む
         } else {

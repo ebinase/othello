@@ -8,7 +8,7 @@ use Packages\Models\Board\Board;
 use Packages\Models\Bot\BotFactory;
 use Packages\Models\Bot\Calculators\Random\RandomCalculator;
 use Packages\Models\Bot\Levels\LevelFactory;
-use Packages\Models\Board\Color;
+use Packages\Models\Board\Color\Color;
 use Packages\Models\Turn\Turn;
 use Tests\TestCase;
 use function PHPUnit\Framework\assertSame;

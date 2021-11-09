@@ -7,7 +7,7 @@ use Packages\Models\Board\Board;
 use Packages\Models\Board\Position\PositionConverterTrait;
 use Packages\Models\Bot\BotFactory;
 use Packages\Models\Bot\Levels\LevelFactory;
-use Packages\Models\Board\Color;
+use Packages\Models\Board\Color\Color;
 use Packages\Models\Player\BotPlayer;
 use Packages\Models\Player\NormalPlayer;
 use Packages\Models\Player\PlayerInterface;

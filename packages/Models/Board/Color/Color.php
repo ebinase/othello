@@ -1,6 +1,6 @@
 <?php
 
-namespace Packages\Models\Board;
+namespace Packages\Models\Board\Color;
 
 /**
  * Enum風に実装
@@ -8,6 +8,11 @@ namespace Packages\Models\Board;
  */
 class Color
 {
+    private string $colorCode;
+
+    // ---------------------------------------
+    // Settings
+    // ---------------------------------------
     const COLOR_CODE_WHITE = '01';
     const COLOR_CODE_BLACK = '02';
 
@@ -16,14 +21,18 @@ class Color
         self::COLOR_CODE_BLACK => '黒',
     ];
 
-    private string $colorCode;
-
+    // ---------------------------------------
+    // Constructor
+    // ---------------------------------------
     public function __construct(string $colorCode)
     {
-        if (!self::isColor($colorCode)) throw new \RuntimeException();
+        if (!self::isColorCode($colorCode)) throw new \RuntimeException();
         $this->colorCode = $colorCode;
     }
 
+    // ---------------------------------------
+    // Factory
+    // ---------------------------------------
     public static function white(): Color
     {
         return new Color(self::COLOR_CODE_WHITE);
@@ -39,11 +48,9 @@ class Color
         return new Color($colorCode);
     }
 
-    public static function isColor($color): bool
-    {
-        return key_exists($color, self::$colorNameList);
-    }
-
+    // ---------------------------------------
+    // Converter
+    // ---------------------------------------
     public function toCode(): string
     {
         return $this->colorCode;
@@ -55,14 +62,12 @@ class Color
         return new Color($oppositeColor);
     }
 
-    public function equals(Color $color): bool
+    // ---------------------------------------
+    // Comparison
+    // ---------------------------------------
+    public static function isColorCode(string $color): bool
     {
-        return $this->colorCode === $color->toCode();
-    }
-
-    public function isOpposite(Color $color): bool
-    {
-        return $this->opposite()->toCode() === $color->toCode();
+        return key_exists($color, self::$colorNameList);
     }
 
     public function codeEquals(string $colorCode): bool
@@ -73,5 +78,15 @@ class Color
     public function isOppositeCode(string $colorCode): bool
     {
         return $this->opposite()->toCode() === $colorCode;
+    }
+
+    public function equals(Color $color): bool
+    {
+        return $this->colorCode === $color->toCode();
+    }
+
+    public function isOpposite(Color $color): bool
+    {
+        return $this->opposite()->toCode() === $color->toCode();
     }
 }

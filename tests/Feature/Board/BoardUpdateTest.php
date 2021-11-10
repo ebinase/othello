@@ -4,8 +4,8 @@ namespace Tests\Feature\Board;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Packages\Domain\Board\Board;
-use Packages\Domain\Color\Color;
+use Packages\Models\Board\Board;
+use Packages\Models\Board\Color\Color;
 use Tests\TestCase;
 
 class BoardUpdateTest extends TestCase
@@ -25,8 +25,6 @@ class BoardUpdateTest extends TestCase
      *
      */
 
-    const COLOR_WHITE = 1;
-    const COLOR_BLACK = 2;
     /**
      * 盤面更新処理のテスト
      *
@@ -34,26 +32,25 @@ class BoardUpdateTest extends TestCase
      */
     public function testFirstTurn()
     {
-        $emptyRow = collect()->pad(8, 0)->toArray();
-
-        // 初期盤面
-        $initBoard = [
-            $emptyRow,
-            $emptyRow,
-            $emptyRow,
-            collect($emptyRow)->put(3, self::COLOR_WHITE)->put(4, self::COLOR_BLACK)->toArray(),
-            collect($emptyRow)->put(3, self::COLOR_BLACK)->put(4, self::COLOR_WHITE)->toArray(),
-            $emptyRow,
-            $emptyRow,
-            $emptyRow,
-        ];
+        // given:
+        $w = Color::white()->toCode();
+        $b = Color::black()->toCode();
+        $initialBoard = Board::init();
+        // when:
+        $updated = $initialBoard->update([4, 6], Color::white());
+        // then:
         // [4,5]に白を置いたときの盤面
-        $expected = $initBoard;
-        $expected[3][4] = self::COLOR_WHITE;
-        $expected[3][5] = self::COLOR_WHITE;
+        $expected = [
+            [0,0,0,0,0,0,0,0,],
+            [0,0,0,0,0,0,0,0,],
+            [0,0,0,0,0,0,0,0,],
+            [0,0,0,$w,$w,$w,0,0,],
+            [0,0,0,$b,$w,0,0,0,],
+            [0,0,0,0,0,0,0,0,],
+            [0,0,0,0,0,0,0,0,],
+            [0,0,0,0,0,0,0,0,],
+        ];
 
-        $board = new Board($initBoard);
-        $updated = $board->update([4, 6], Color::white());
         $this->assertSame($expected, $updated->toArray());
     }
 }

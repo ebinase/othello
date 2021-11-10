@@ -4,12 +4,12 @@ namespace Tests\Feature\Bot;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Packages\Domain\Board\Board;
-use Packages\Domain\Bot\BotFactory;
-use Packages\Domain\Bot\Calculators\Random\RandomCalculator;
-use Packages\Domain\Bot\Levels\LevelFactory;
-use Packages\Domain\Color\Color;
-use Packages\Domain\Turn\Turn;
+use Packages\Models\Board\Board;
+use Packages\Models\Bot\BotFactory;
+use Packages\Models\Bot\Calculators\Random\RandomCalculator;
+use Packages\Models\Bot\Levels\LevelFactory;
+use Packages\Models\Board\Color\Color;
+use Packages\Models\Turn\Turn;
 use Tests\TestCase;
 use function PHPUnit\Framework\assertSame;
 

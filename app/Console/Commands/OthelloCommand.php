@@ -3,18 +3,15 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Packages\Domain\Board\Board;
-use Packages\Domain\Bot\BotFactory;
-use Packages\Domain\Bot\BotList;
-use Packages\Domain\Bot\Levels\BotLevel;
-use Packages\Domain\Bot\Levels\LevelFactory;
-use Packages\Domain\Bot\Calculators\Random\RandomCalculator;
-use Packages\Domain\Color\Color;
-use Packages\Domain\Common\Position\PositionConverterTrait;
-use Packages\Domain\Player\BotPlayer;
-use Packages\Domain\Player\NormalPlayer;
-use Packages\Domain\Player\PlayerInterface;
-use Packages\Domain\Turn\Turn;
+use Packages\Models\Board\Board;
+use Packages\Models\Board\Position\PositionConverterTrait;
+use Packages\Models\Bot\BotFactory;
+use Packages\Models\Bot\Levels\LevelFactory;
+use Packages\Models\Board\Color\Color;
+use Packages\Models\Player\BotPlayer;
+use Packages\Models\Player\NormalPlayer;
+use Packages\Models\Player\PlayerInterface;
+use Packages\Models\Turn\Turn;
 
 class OthelloCommand extends Command
 {
@@ -111,19 +108,7 @@ class OthelloCommand extends Command
             ];
         }
 
-        $emptyRow = collect()->pad(8, 0)->toArray();
-        $initBoard = [
-            $emptyRow,
-            $emptyRow,
-            $emptyRow,
-            collect($emptyRow)->put(3, self::COLOR_WHITE)->put(4, self::COLOR_BLACK)->toArray(),
-            collect($emptyRow)->put(3, self::COLOR_BLACK)->put(4, self::COLOR_WHITE)->toArray(),
-            $emptyRow,
-            $emptyRow,
-            $emptyRow,
-        ];
-
-        $this->board = new Board($initBoard);
+        $this->board = Board::init();
 
         $turn = 1;
         while (true) {
@@ -171,7 +156,7 @@ class OthelloCommand extends Command
                     }
                     $bar->finish();
                     echo "\n\n\n";
-                    $action = $this->toMatrixPosition($action);
+                    $action = $this->convertToMatrixPosition($action);
                     $this->error($action[0] . ',' . $action[1]);
                     $this->confirm('確認した', true);
 

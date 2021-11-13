@@ -48,6 +48,21 @@ class Turn
 //            $this->board->isPlayable($this->playableColor) ? 0 : $this->skipCount + 1
 //        );
     }
+    public function mustSkip(): bool
+    {
+
+    }
+
+
+    public function isPlayable()
+    {
+//        正常終了
+        // (包含条件)空のマスがない
+        //　・つまりrest===0
+        //  ・mustSkip
+        // スキップカウントが2 == その色が置ける場所がない
+
+    }
 
     // HACK: TurnFlowServiceに移す？
     public function diff($board)

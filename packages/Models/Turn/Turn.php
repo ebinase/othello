@@ -71,7 +71,7 @@ class Turn
         // 必須チェック
         if (!isset($position)) throw new \Exception('コマを置くことができるマスがある場合、スキップはできません。');
         // 指定された場所にコマを置くことができるか確認
-        if ($this->board->isValid($position, $this->playableColor)) throw new \Exception();
+        if (!$this->board->isValid($position, $this->playableColor)) throw new \Exception();
 
         return new Turn(
             $this->turnNumber + 1,
@@ -104,7 +104,7 @@ class Turn
 
     public function mustSkip(): bool
     {
-        return $this->board->isPlayable($this->playableColor);
+        return !$this->board->hasPlayablePosition($this->playableColor);
     }
 
     // HACK: TurnFlowServiceに移す？

@@ -94,12 +94,12 @@ class Board
      * @param Color $color
      * @return bool
      */
-    public function isPlayable(Color $color): bool
+    public function hasPlayablePosition(Color $color): bool
     {
         for ($row = 1; $row < $this->board->dim(); $row++) {
             for ($col = 1; $col < $this->board->size(); $col++) {
                 // 一つでもおけるマスがあったらtrueを返す
-                if ($this->isValid([$row, $col], $color)) return true;
+                if ($this->isValid(Position::make([$row, $col]), $color)) return true;
             }
         }
         return false;
@@ -136,9 +136,9 @@ class Board
         return $flipScore;
     }
 
-    public function isValid(array $position, Color $color): bool
+    public function isValid(Position $position, Color $color): bool
     {
-        if ($this->getFlipScore($position, $color) > 0) {
+        if ($this->getFlipScore($position->toMatrixPosition(), $color) > 0) {
             return true;
         }
         return false;
@@ -152,7 +152,7 @@ class Board
         }
 
         // 更新された盤面を返す
-        $updatedBoard = $this->flipStones($position, $color);
+        $updatedBoard = $this->flipStones($position->toMatrixPosition(), $color);
         return new Board($updatedBoard);
     }
 

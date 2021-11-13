@@ -31,17 +31,16 @@ class TurnTest extends TestCase
     {
         // given:
         $turn = Turn::init(); // 1ターン目
-        $move = Position::make([4, 5]); // 先行プレイヤーの1ターン目の指した場所
+        $move = Position::make([4, 6]); // 先行プレイヤーの1ターン目の指した場所
         // when:
-        $turn->next($move); // ターンを進める
+        $next = $turn->next($move); // ターンを進める
         // then:
         // 2ターン目の盤面
         $boardAtSecondTurn = Board::init()->update($move, Color::white());
-
-        self::assertSame(2, $turn->getTurnNumber(), 'ターン数は2');
-        self::assertSame(true, Color::Black()->equals($turn->getPlayableColor()), '後攻のプレイヤーに交代');
-        self::assertSame(true, $boardAtSecondTurn->equals($turn->getBoard()), '盤面更新');
-        self::assertSame(0, $turn->getSkipCount(), 'スキップカウントは0');
+        self::assertSame(2, $next->getTurnNumber(), 'ターン数は2');
+        self::assertSame(true, Color::Black()->equals($next->getPlayableColor()), '後攻のプレイヤーに交代');
+        self::assertSame(true, $boardAtSecondTurn->equals($next->getBoard()), '盤面更新');
+        self::assertSame(0, $next->getSkipCount(), 'スキップカウントは0');
     }
 
     /** @test */
@@ -77,7 +76,7 @@ class TurnTest extends TestCase
     public function スキップが2ターン続いたらそれ以降は一切更新不可()
     {
         // given:
-        $position = Position::make([4, 5]);
+        $position = Position::make([4, 6]);
 
         // when:
         $turnSkip0 = Turn::make(20, Color::white(), Board::init(), 0);

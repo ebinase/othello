@@ -37,8 +37,8 @@ class BotFactoryTest extends TestCase
             $emptyRow,
             $emptyRow,
         ];
-        $board = new Board($initBoard);
-        $turn = new Turn(1, Color::white(), $board, 0);
+        $board = Board::make($initBoard);
+        $turn = Turn::make(1, Color::white(), $board, 0);
         // when:
         $bot = BotFactory::make(BotFactory::BOT_ID_RANDOM, $turn);
         // then:

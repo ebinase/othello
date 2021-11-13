@@ -2,6 +2,7 @@
 
 namespace Packages\Models\Bot\Calculators\Random;
 
+use Packages\Models\Board\Position\Position;
 use Packages\Models\Bot\Calculators\CalculatorInterface;
 use Packages\Models\Turn\Turn;
 
@@ -16,9 +17,9 @@ class RandomCalculator implements CalculatorInterface
         $this->playablePositions = $board->playablePositions($color);
     }
 
-    public function culculate(): int
+    public function culculate(): Position
     {
         $key = array_rand($this->playablePositions);
-        return $this->playablePositions[$key];
+        return Position::make($this->playablePositions[$key]);
     }
 }

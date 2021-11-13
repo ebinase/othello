@@ -53,7 +53,7 @@ class Turn
     public function next(?Position $position = null): Turn
     {
         // ゲームが終了している場合
-        if ($this->isLastTurn()) throw new \RuntimeException();
+        if ($this->finishedLastTurn()) throw new \RuntimeException();
         // ゲームが続行不能な場合
         if (!$this->isContinuable()) throw new \RuntimeException();
 
@@ -71,7 +71,7 @@ class Turn
         // 必須チェック
         if (!isset($position)) throw new \Exception('コマを置くことができるマスがある場合、スキップはできません。');
         // 指定された場所にコマを置くことができるか確認
-        if (!$this->board->isValid($position, $this->playableColor)) throw new \Exception();
+        if (!$this->board->isValid($position, $this->playableColor)) throw new \Exception('指定された場所に置くことはできません。');
 
         return new Turn(
             $this->turnNumber + 1,
@@ -82,12 +82,11 @@ class Turn
     }
 
     /**
-     * 最後のターンかどうかを判定
+     * 最終ターンが終了しているか(=ゲームが正常終了しているか)判定
      * @return bool
      */
-    public function isLastTurn(): bool
+    public function finishedLastTurn(): bool
     {
-        // TODO: メソッド名を変更(厳密には「最後のターンの次」なので)
         return $this->board->getRest() === 0;
     }
 

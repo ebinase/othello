@@ -68,8 +68,8 @@ class TurnTest extends TestCase
         $firstTurn = Turn::init();
         $lastTurn = Turn::make(20, Color::white(), $fullBoard, 0);
         // then:
-        self::assertSame(false, $firstTurn->isLastTurn());
-        self::assertSame(true, $lastTurn->isLastTurn());
+        self::assertSame(false, $firstTurn->finishedLastTurn());
+        self::assertSame(true, $lastTurn->finishedLastTurn());
     }
 
     /** @test */

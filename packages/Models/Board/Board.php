@@ -96,8 +96,8 @@ class Board
      */
     public function hasPlayablePosition(Color $color): bool
     {
-        for ($row = 1; $row < $this->board->dim(); $row++) {
-            for ($col = 1; $col < $this->board->size(); $col++) {
+        for ($row = 1; $row <= $this->board->dim(); $row++) {
+            for ($col = 1; $col <= $this->board->size(); $col++) {
                 // 一つでもおけるマスがあったらtrueを返す
                 if ($this->isValid(Position::make([$row, $col]), $color)) return true;
             }
@@ -241,8 +241,8 @@ class Board
     public function analyze(Color $color)
     {
         $flipScores = [];
-        for ($row = 1; $row < $this->board->dim(); $row++) {
-            for ($col = 1; $col < $this->board->size(); $col++) {
+        for ($row = 1; $row <= $this->board->dim(); $row++) {
+            for ($col = 1; $col <= $this->board->size(); $col++) {
                 $score = $this->getFlipScore([$row, $col], $color);
                 if ($score > 0) {
                     $positionId = $this->convertToPositionId([$row, $col]);

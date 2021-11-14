@@ -14,7 +14,7 @@ class BotFactory
      * @var array<string, CalculatorInterface>
      */
     private static array $botList = [
-        self::BOT_ID_RANDOM => \Packages\Domain\Bot\Bots\RandomBot::class
+        self::BOT_ID_RANDOM => \Packages\Models\Bot\Bots\RandomBot::class
     ];
 
     public static function make(string $botId, Turn $turn): BotInterface

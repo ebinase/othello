@@ -2,12 +2,13 @@
 
 namespace Packages\Models\Bot;
 
+use Packages\Models\Board\Position\Position;
 use Packages\Models\Bot\Calculators\CalculatorInterface;
 use Packages\Models\Bot\Levels\BotLevel;
 
 interface BotInterface
 {
-    public function execute(): int;
+    public function execute(): Position;
 
     public static function getName(): string;
     public static function getDescription(): string;

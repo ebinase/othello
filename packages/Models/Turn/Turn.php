@@ -4,24 +4,23 @@ namespace Packages\Models\Turn;
 
 use Packages\Models\Board\Board;
 use Packages\Models\Board\Color\Color;
+use Packages\Models\Board\Position\Position;
 
 class Turn
 {
-    private int    $turnNumber;
-    private Color  $playableColor;
-    private Board  $board;
-    private int    $skipCount;
+    // スキップの連続を許容する回数
+    const MAX_CONTINUOUS_SKIP_COUNT = 1;
 
-    public function __construct(int $turnNumber, Color $playableColor, Board $board, int $skipCount)
+    private function __construct(
+        private int $turnNumber,
+        private Color $playableColor,
+        private Board $board,
+        private int $skipCount
+    )
     {
         if ($turnNumber < 0) {
             throw new \InvalidArgumentException();
         }
-
-        $this->turnNumber    = $turnNumber;
-        $this->playableColor = $playableColor;
-        $this->board         = $board;
-        $this->skipCount     = $skipCount;
     }
 
     public static function init(): Turn
@@ -34,19 +33,77 @@ class Turn
         );
     }
 
+    public static function make(int $turnNumber, Color $playableColor, Board $board, int $skipCount): Turn
+    {
+        return new Turn(
+            turnNumber:    $turnNumber,
+            playableColor: $playableColor,
+            board:         $board,
+            skipCount:     $skipCount,
+        );
+    }
+
     /**
      * 次のターンへ
+     * ターン数：+1
+     * 色：反対の色へ
+     * 盤面：コマを置いて更新。スキップの場合は現在のものをそのまま設定
+     * 連続スキップ数：スキップ時+1。スキップしない場合は0にリセット
      */
-    public function next(array $position)
+    public function next(?Position $position = null): Turn
     {
-//        $stone = app()->make('Stone', [$this->playableColor, $position]);
-//
-//        return new Turn(
-//            $this->turnNumber + 1,
-//            $this->playableColor->opposite(),
-//            $this->board->update($stone),
-//            $this->board->isPlayable($this->playableColor) ? 0 : $this->skipCount + 1
-//        );
+        // ゲームが終了している場合
+        if ($this->finishedLastTurn()) throw new \RuntimeException();
+        // ゲームが続行不能な場合
+        if (!$this->isContinuable()) throw new \RuntimeException();
+
+        // スキップするときは盤面はそのままで、スキップカウントを加算する
+        if ($this->mustSkip()) {
+            return new Turn(
+                $this->turnNumber + 1,
+                $this->playableColor->opposite(),
+                $this->board,
+                $this->skipCount + 1
+            );
+        }
+
+        // コマを置くことができる場合、盤面を更新してスキップカウントをリセット
+        // 必須チェック
+        if (!isset($position)) throw new \Exception('コマを置くことができるマスがある場合、スキップはできません。');
+        // 指定された場所にコマを置くことができるか確認
+        if (!$this->board->isValid($position, $this->playableColor)) throw new \Exception('指定された場所に置くことはできません。');
+
+        return new Turn(
+            $this->turnNumber + 1,
+            $this->playableColor->opposite(),
+            $this->board->update($position, $this->playableColor),
+            0
+        );
+    }
+
+    /**
+     * 最終ターンが終了しているか(=ゲームが正常終了しているか)判定
+     * @return bool
+     */
+    public function finishedLastTurn(): bool
+    {
+        return $this->board->getRest() === 0;
+    }
+
+    /**
+     * ゲームが継続可能か判定
+     * 決着(最後のターン到達)以外のゲームの途中終了条件の判定をする
+     * @return bool
+     */
+    public function isContinuable(): bool
+    {
+        if ($this->skipCount > self::MAX_CONTINUOUS_SKIP_COUNT) return false;
+        return true;
+    }
+
+    public function mustSkip(): bool
+    {
+        return !$this->board->hasPlayablePosition($this->playableColor);
     }
 
     // HACK: TurnFlowServiceに移す？

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Packages\Models\Board\Board;
 use Packages\Models\Board\Color\Color;
+use Packages\Models\Board\Position\Position;
 use Tests\TestCase;
 
 class BoardUpdateTest extends TestCase
@@ -37,7 +38,7 @@ class BoardUpdateTest extends TestCase
         $b = Color::black()->toCode();
         $initialBoard = Board::init();
         // when:
-        $updated = $initialBoard->update([4, 6], Color::white());
+        $updated = $initialBoard->update(Position::make([4, 6]), Color::white());
         // then:
         // [4,5]に白を置いたときの盤面
         $expected = [

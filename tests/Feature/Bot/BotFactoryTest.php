@@ -26,19 +26,7 @@ class BotFactoryTest extends TestCase
     {
         // given:
         // 初期盤面
-        $emptyRow = collect()->pad(8, 0)->toArray();
-        $initBoard = [
-            $emptyRow,
-            $emptyRow,
-            $emptyRow,
-            collect($emptyRow)->put(3, self::COLOR_WHITE)->put(4, self::COLOR_BLACK)->toArray(),
-            collect($emptyRow)->put(3, self::COLOR_BLACK)->put(4, self::COLOR_WHITE)->toArray(),
-            $emptyRow,
-            $emptyRow,
-            $emptyRow,
-        ];
-        $board = new Board($initBoard);
-        $turn = new Turn(1, Color::white(), $board, 0);
+        $turn = Turn::init();
         // when:
         $bot = BotFactory::make(BotFactory::BOT_ID_RANDOM, $turn);
         // then:

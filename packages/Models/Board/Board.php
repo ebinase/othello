@@ -3,6 +3,7 @@
 namespace Packages\Models\Board;
 
 use Packages\Models\Board\Color\Color;
+use Packages\Models\Board\Position\Position;
 use Packages\Models\Board\Position\PositionConverterTrait;
 use Packages\Models\Common\Matrix\Matrix;
 
@@ -25,14 +26,14 @@ class Board
     const BOARD_SIZE_ROWS = 8;
     const BOARD_SIZE_COLS = 8;
 
-    public function __construct(array $board)
+    private function __construct(array $board)
     {
         $matrix = Matrix::make($board);
 
         // 行数チェック
-        if ($matrix->dim() != self::BOARD_SIZE_ROWS) throw new \Exception('lack of row');
+        if ($matrix->dim() != self::BOARD_SIZE_ROWS) throw new \RuntimeException('lack of row');
         // 各行の列数チェック
-        if ($matrix->size() != self::BOARD_SIZE_COLS) throw new \Exception('lack of column');
+        if ($matrix->size() != self::BOARD_SIZE_COLS) throw new \RuntimeException('lack of column');
 
         $this->board = $matrix;
     }
@@ -46,6 +47,11 @@ class Board
         $matrix->setData(Color::white()->toCode(), 5, 5);
 
         return new Board($matrix->toArray());
+    }
+
+    public static function make(array $board): Board
+    {
+        return new Board($board);
     }
 
     public function toArray(): array
@@ -88,12 +94,12 @@ class Board
      * @param Color $color
      * @return bool
      */
-    public function isPlayable(Color $color): bool
+    public function hasPlayablePosition(Color $color): bool
     {
-        for ($row = 1; $row < $this->board->dim(); $row++) {
-            for ($col = 1; $col < $this->board->size(); $col++) {
+        for ($row = 1; $row <= $this->board->dim(); $row++) {
+            for ($col = 1; $col <= $this->board->size(); $col++) {
                 // 一つでもおけるマスがあったらtrueを返す
-                if ($this->isValid([$row, $col], $color)) return true;
+                if ($this->isValid(Position::make([$row, $col]), $color)) return true;
             }
         }
         return false;
@@ -130,23 +136,23 @@ class Board
         return $flipScore;
     }
 
-    public function isValid(array $position, Color $color): bool
+    public function isValid(Position $position, Color $color): bool
     {
-        if ($this->getFlipScore($position, $color) > 0) {
+        if ($this->getFlipScore($position->toMatrixPosition(), $color) > 0) {
             return true;
         }
         return false;
     }
 
-    public function update(array $position, Color $color): Board
+    public function update(Position $position, Color $color): Board
     {
-        // 置けない場合は盤面に変更を加えず返す
+        // 置けない場合
         if (!$this->isValid($position, $color)) {
-            return $this;
+            throw new \Exception();
         }
 
         // 更新された盤面を返す
-        $updatedBoard = $this->flipStones($position, $color);
+        $updatedBoard = $this->flipStones($position->toMatrixPosition(), $color);
         return new Board($updatedBoard);
     }
 
@@ -235,8 +241,8 @@ class Board
     public function analyze(Color $color)
     {
         $flipScores = [];
-        for ($row = 1; $row < $this->board->dim(); $row++) {
-            for ($col = 1; $col < $this->board->size(); $col++) {
+        for ($row = 1; $row <= $this->board->dim(); $row++) {
+            for ($col = 1; $col <= $this->board->size(); $col++) {
                 $score = $this->getFlipScore([$row, $col], $color);
                 if ($score > 0) {
                     $positionId = $this->convertToPositionId([$row, $col]);

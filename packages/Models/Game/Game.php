@@ -6,21 +6,14 @@ use Packages\Models\Turn\Turn;
 
 class Game
 {
-    private $id;
-    private $whitePlayer;
-    private $blackPlayer;
-    private $gameStatus;
-    private Turn $turn;
-
-
-    public function __construct($id, $whitePlayer, $blackPlayer, $gameStatus, Turn $turn)
-    {
-        $this->id = $id;
-        $this->whitePlayer = $whitePlayer;
-        $this->blackPlayer = $blackPlayer;
-        $this->gameStatus = $gameStatus;
-        $this->turn = $turn;
-    }
+    private function __construct(
+        private string $id,
+        private GameMode $gameMode,
+        private PlayerList $playerList,
+        private GameStatus $gameStatus,
+        private Turn $turn,
+    )
+    {}
 
     public function process(Position $playerMove)
     {

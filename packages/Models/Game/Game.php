@@ -13,12 +13,47 @@ class Game
         private GameStatus $gameStatus,
         private Turn $turn,
     )
-    {}
-
-    public function process(Position $playerMove)
     {
-        // TODO: 処理追加　
-        // HACK: ゲームの進行とゲーム情報の分離を検討
+    }
+
+    public function process(?Position $playerMove = null)
+    {
+
+
         $this->turn = $this->turn->next($playerMove);
+    }
+
+//    /**
+//     * ゲームを終了する
+//     */
+//    public function terminate()
+//    {
+//
+//    }
+
+//    /**
+//     * 一時中止する
+//     */
+//    public function suspend()
+//    {
+//
+//    }
+//
+//    /**
+//     * 一時中止していたゲームを再開する
+//     */
+//    public function restart()
+//    {
+//
+//    }
+
+    public function isGameOver(): bool
+    {
+
+    }
+
+    public function getResult()
+    {
+
     }
 }

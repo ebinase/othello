@@ -35,8 +35,8 @@ class BasePlayer implements PlayerInterface
         return  str_starts_with($this->type, self::PLAYER_TYPE_PREFIX_BOT);
     }
 
-    public function isPerson(): bool
+    public function isPlayer(): bool
     {
-        return  str_starts_with($this->type, self::PLAYER_TYPE_PREFIX_PERSON);
+        return  str_starts_with($this->type, self::PLAYER_TYPE_PREFIX_PLAYER);
     }
 }

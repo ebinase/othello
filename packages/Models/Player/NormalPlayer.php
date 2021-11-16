@@ -9,11 +9,11 @@ use http\Exception\InvalidArgumentException;
  */
 final class NormalPlayer extends BasePlayer
 {
-    public function __construct($id, $name = 'プレイヤー', $type = self::PLAYER_TYPE_PREFIX_PERSON . '01')
+    public function __construct($id, $name = 'プレイヤー', $type = self::PLAYER_TYPE_PREFIX_PLAYER . '01')
     {
         parent::__construct($id, $name, $type);
 
-        if (!$this->isPerson()) throw new InvalidArgumentException();
+        if (!$this->isPlayer()) throw new InvalidArgumentException();
 
     }
 }

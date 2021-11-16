@@ -8,7 +8,7 @@ use Packages\Models\Bot\BotFactory;
 /**
  * プレイヤーとしてのBotを表すクラス
  */
-final class BotPlayer extends BasePlayer
+final class Bot extends BasePlayer
 {
     public function __construct($id, $name = 'ボット', $type = BotFactory::BOT_ID_RANDOM)
     {

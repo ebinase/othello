@@ -7,11 +7,11 @@ use Packages\Models\Turn\Turn;
 class Game
 {
     private function __construct(
-        private string $id,
-        private GameMode $gameMode,
-        private PlayerList $playerList,
-        private GameStatus $gameStatus,
-        private Turn $turn,
+        private string       $id,
+        private GameMode     $gameMode,
+        private Participants $participants,
+        private GameStatus   $gameStatus,
+        private Turn         $turn,
     )
     {
     }

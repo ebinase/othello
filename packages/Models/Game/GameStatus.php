@@ -38,7 +38,7 @@ class GameStatus
         return new GameStatus($statusCode);
     }
 
-    public static function start(): GameStatus
+    public static function playing(): GameStatus
     {
         return new GameStatus(self::GAME_STATUS_PLAYING);
     }
@@ -64,6 +64,11 @@ class GameStatus
     // ---------------------------------------
     // getter
     // ---------------------------------------
+    public function toCode()
+    {
+        return $this->statusCode;
+    }
+
     public function getName(): string
     {
         return self::$statusNameList[$this->statusCode];

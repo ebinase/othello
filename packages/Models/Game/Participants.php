@@ -7,6 +7,8 @@ use Packages\Models\Player\PlayerInterface;
 
 class Participants
 {
+    const MAX_PARTICIPANTS = 2;
+
     /**
      * ゲームへの参加者のリスト
      * 人間は"Player", ボットは"Bot"
@@ -20,6 +22,9 @@ class Participants
         $this->participants[Color::black()->toCode()] = $blackPlayer;
     }
 
+    // ---------------------------------------
+    // 生成系
+    // ---------------------------------------
     /**
      * @param PlayerInterface $whitePlayer
      * @param PlayerInterface $blackPlayer
@@ -30,6 +35,32 @@ class Participants
         return new Participants($whitePlayer, $blackPlayer);
     }
 
+    // ---------------------------------------
+    // 判定系
+    // ---------------------------------------
+    public function hasOnlyPlayers(): bool
+    {
+        return $this->countPlayers() === self::MAX_PARTICIPANTS;
+    }
+
+    public function hasOnlyBots(): bool
+    {
+        return $this->countBots() === self::MAX_PARTICIPANTS;
+    }
+
+    public function countPlayers(): int
+    {
+        return count($this->players());
+    }
+
+    public function countBots(): int
+    {
+        return count($this->bots());
+    }
+
+    // ---------------------------------------
+    // getter
+    // ---------------------------------------
     public function whitePlayer(): PlayerInterface
     {
         return $this->participants[Color::white()->toCode()];
@@ -52,16 +83,5 @@ class Participants
         return array_filter($this->participants, function ($player) {
             $player->isBot();
         });
-    }
-
-
-    public function countPlayers(): int
-    {
-        return count($this->players());
-    }
-
-    public function countBots(): int
-    {
-        return count($this->bots());
     }
 }

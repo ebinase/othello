@@ -7,7 +7,7 @@ use http\Exception\InvalidArgumentException;
 /**
  * プレイヤーを表すクラス
  */
-final class NormalPlayer extends BasePlayer
+final class Player extends BasePlayer
 {
     public function __construct($id, $name = 'プレイヤー', $type = self::PLAYER_TYPE_PREFIX_PLAYER . '01')
     {

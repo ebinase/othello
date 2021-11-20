@@ -15,18 +15,18 @@ class Game
     )
     {
         // ゲームモードと実際の参加者の組み合わせをチェック
-        switch (true) {
-            // プレイヤー対戦時に参加者がプレイヤーのみであること
-            case $this->gameMode->isVsPlayerMode() && !$this->participants->hasOnlyPlayers():
-            // ボット対戦時に参加者にプレイヤーとボットが両方いること(偏りがないこと)
-            case $this->gameMode->isVsBotMode() && ($this->participants->hasOnlyPlayers() || $this->participants->hasOnlyBots()):
-            // 観戦時に参加者がボットのみであること
-            case $this->gameMode->isViewingMode() && !$this->participants->hasOnlyBots():
-                throw new \RuntimeException('ゲームモードと参加者の種類の組み合わせが正しくありません');
-            default:
-                break;
+        // プレイヤー対戦時に参加者がプレイヤーのみであること
+        if ($this->gameMode->isVsPlayerMode() && !$this->participants->hasOnlyPlayers()) {
+            throw new \RuntimeException('ゲームモードと参加者の種類の組み合わせが正しくありません');
         }
-
+        // ボット対戦時に参加者にプレイヤーとボットが両方いること(偏りがないこと)
+        if ($this->gameMode->isVsBotMode() && ($this->participants->hasOnlyPlayers() || $this->participants->hasOnlyBots())) {
+            throw new \RuntimeException('ゲームモードと参加者の種類の組み合わせが正しくありません');
+        }
+        // 観戦時に参加者がボットのみであること
+        if ($this->gameMode->isViewingMode() && !$this->participants->hasOnlyBots()) {
+            throw new \RuntimeException('ゲームモードと参加者の種類の組み合わせが正しくありません');
+        }
     }
 
     public static function init(string $id, GameMode $gameMode, Participants $participants)

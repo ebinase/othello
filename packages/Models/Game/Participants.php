@@ -74,14 +74,14 @@ class Participants
     public function players(): array
     {
         return array_filter($this->participants, function ($player) {
-            $player->isPlayer();
+            return $player->isPlayer();
         });
     }
 
     public function bots(): array
     {
         return array_filter($this->participants, function ($player) {
-            $player->isBot();
+            return $player->isBot();
         });
     }
 }

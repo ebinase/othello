@@ -1,6 +1,5 @@
 ## 概要
-オセロゲームをlaravel, Vue.jsで開発する。
-下記技術とモデリングについて実践を通して学ぶ。
+オセロゲームをドメイン駆動設計を中心に作成し、技術とモデリングについて実践を通して学ぶ。
 
 一部のコードは過去に作成したコードを再利用する。
 https://github.com/ebinase/othello-old
@@ -14,10 +13,11 @@ https://github.com/ebinase/othello-old
 
 ## 技術等(予定)
 ### バックエンド
-* laravel
+* php + Laravel
 
 ### フロントエンド
-* Vue.js
+* TypeScript
+* React.js or Vue.js
 
 ### インフラ
 * AWS
@@ -25,4 +25,8 @@ https://github.com/ebinase/othello-old
 
 ### 設計・プロジェクト管理
 * ドメイン駆動設計
-* issueドリブン開発(GitHub)
+* issues, projects(GitHub)
+
+### その他トピック
+* TDD
+* CI

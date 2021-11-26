@@ -2,6 +2,7 @@
 
 namespace Packages\Models\Game;
 
+use Packages\Models\Board\Position\Position;
 use Packages\Models\Turn\Turn;
 
 class Game
@@ -27,6 +28,14 @@ class Game
         if ($this->gameMode->isViewingMode() && !$this->participants->hasOnlyBots()) {
             throw new \RuntimeException('ゲームモードと参加者の種類の組み合わせが正しくありません');
         }
+
+        // ゲームステータスとターンの状態チェック
+        if ($this->gameStatus->isPlaying() && $this->isGameOver()) {
+            throw new \RuntimeException('ゲームステータスとターンの状態が一致しません');
+        }
+        if ($this->gameStatus->isFinished() && !$this->isGameOver()) {
+            throw new \RuntimeException('ゲームステータスとターンの状態が一致しません');
+        }
     }
 
     public static function init(string $id, GameMode $gameMode, Participants $participants)
@@ -40,21 +49,36 @@ class Game
         );
     }
 
+    public static function make(string $id, GameMode $gameMode, Participants $participants, GameStatus $status, Turn $turn)
+    {
+        return new Game(
+            id:           $id,
+            gameMode:     $gameMode,
+            participants: $participants,
+            gameStatus:   $status,
+            turn:         $turn
+        );
+    }
+
     public function process(?Position $playerMove = null)
     {
-
+        if (!$this->gameStatus->isPlaying()) throw new \RuntimeException();
 
         $this->turn = $this->turn->next($playerMove);
+
+        if (!$this->turn->isContinuable() || $this->turn->finishedLastTurn()) {
+            $this->gameStatus = GameStatus::finish();
+        }
     }
 
     public function isGameOver(): bool
     {
-
+        return $this->gameStatus->isFinished();
     }
 
     public function determinResult()
     {
-
+        if (!$this->isGameOver()) throw new \RuntimeException();
     }
 
     /**

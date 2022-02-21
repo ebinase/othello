@@ -8,16 +8,14 @@ use Illuminate\Routing\Controller as BaseController;
 
 class GameController extends BaseController
 {
-    private $turnProcessUsecase;
 
-    public function  __construct(GameProcessUsecase $turnProcessUsecase)
+    public function index()
     {
-        $this->turnProcessUsecase = $turnProcessUsecase;
+        return 'hoge';
     }
 
-    public function show()
+    public function start()
     {
-
     }
 
     public function process(GameRequest $request)
@@ -29,6 +27,6 @@ class GameController extends BaseController
 
         $this->turnProcessUsecase->process($gameID, $playerMove);
 
-        return redirect()->route('match.show');
+        return redirect()->route('game.show');
     }
 }

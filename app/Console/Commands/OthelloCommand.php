@@ -9,8 +9,8 @@ use Packages\Models\Board\Position\PositionConverterTrait;
 use Packages\Models\Bot\BotFactory;
 use Packages\Models\Bot\Levels\LevelFactory;
 use Packages\Models\Board\Color\Color;
-use Packages\Models\Player\BotPlayer;
-use Packages\Models\Player\NormalPlayer;
+use Packages\Models\Player\Bot;
+use Packages\Models\Player\Player;
 use Packages\Models\Player\PlayerInterface;
 use Packages\Models\Turn\Turn;
 
@@ -75,8 +75,8 @@ class OthelloCommand extends Command
         if ($gameMode === 'プレイヤー対戦') {
             $this->gameMode = self::MODE_PVP;
             $this->playerList = [
-                Color::white()->toCode() => new NormalPlayer('01', 'player_01'),
-                Color::black()->toCode() => new NormalPlayer('02', 'player_02'),
+                Color::white()->toCode() => new Player('01', 'player_01'),
+                Color::black()->toCode() => new Player('02', 'player_02'),
             ];
         } elseif ($gameMode === 'Bot対戦') {
             $this->gameMode = self::MODE_VS_BOT;
@@ -89,13 +89,13 @@ class OthelloCommand extends Command
             $choice = $this->choice("プレー順を選んでください", [1 => 'プレイヤー先攻', 2 => 'Bot先攻'], 1);
             if ($choice === 'プレイヤー先攻') {
                 $this->playerList = [
-                    Color::white()->toCode() => new NormalPlayer('01', 'player_01'),
-                    Color::black()->toCode() => new BotPlayer('02', 'player_02', $id),
+                    Color::white()->toCode() => new Player('01', 'player_01'),
+                    Color::black()->toCode() => new Bot('02', 'player_02', $id),
                 ];
             } else {
                 $this->playerList = [
-                    Color::white()->toCode() => new BotPlayer('01', 'player_01', $id),
-                    Color::black()->toCode() => new NormalPlayer('02', 'player_02'),
+                    Color::white()->toCode() => new Bot('01', 'player_01', $id),
+                    Color::black()->toCode() => new Player('02', 'player_02'),
                 ];
             }
         } else {
@@ -105,8 +105,8 @@ class OthelloCommand extends Command
             $id = $this->ask('id');
 
             $this->playerList = [
-                Color::white()->toCode() => new BotPlayer('01', 'player_01', $id),
-                Color::black()->toCode() => new BotPlayer('02', 'player_02', $id),
+                Color::white()->toCode() => new Bot('01', 'player_01', $id),
+                Color::black()->toCode() => new Bot('02', 'player_02', $id),
             ];
         }
 

@@ -3,11 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GameRequest;
-use Packages\UseCases\Turn\GameProcessUsecase;
+use Packages\UseCases\Game\GameInitializeUsecase;
 use Illuminate\Routing\Controller as BaseController;
 
 class GameController extends BaseController
 {
+    private GameInitializeUsecase $initializeUsecase;
+
+    public function __construct()
+    {
+        $this->initializeUsecase = new GameInitializeUsecase();
+    }
 
     public function index()
     {
@@ -16,6 +22,9 @@ class GameController extends BaseController
 
     public function start()
     {
+        $game = $this->initializeUsecase->initialize();
+        // todo: viewModelに詰め替え
+        return view('game.start', ['board' => $game->getTurn()->getBoard()->toArray()]);
     }
 
     public function process(GameRequest $request)

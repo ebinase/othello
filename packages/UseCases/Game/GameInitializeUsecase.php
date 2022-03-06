@@ -10,7 +10,10 @@ use Packages\Models\Player\Player;
 
 class GameInitializeUsecase
 {
-    public function initialize()
+    /**
+     * @return Game
+     */
+    public function initialize(): Game
     {
         // todo: 適切なクラスに移動
         $gameId = Str::uuid();

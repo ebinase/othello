@@ -5,37 +5,30 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GameRequest;
 use Packages\UseCases\Game\GameInitializeUsecase;
 use Illuminate\Routing\Controller as BaseController;
+use Packages\UseCases\Game\GameProcessUsecase;
 
 class GameController extends BaseController
 {
-    private GameInitializeUsecase $initializeUsecase;
-
-    public function __construct()
-    {
-        $this->initializeUsecase = new GameInitializeUsecase();
-    }
-
     public function index()
     {
         return 'hoge';
     }
 
-    public function start()
+    public function start(GameInitializeUsecase $initializeUsecase)
     {
-        $game = $this->initializeUsecase->initialize();
+        $game = $initializeUsecase->initialize();
         // todo: viewModelに詰め替え
-        return view('game.start', ['board' => $game->getTurn()->getBoard()->toArray()]);
+        return view('game.board', ['board' => $game->getTurn()->getBoard()->toArray()]);
     }
 
-    public function process(GameRequest $request)
+    public function process(GameRequest $request, GameProcessUsecase $gameProcessUsecase)
     {
         $gameID = $request->session()->get('game_id');
-        $params = $request->getProcessParams();
+        list($x, $y) = $request->getProcessParams();
+        $playerMove = [$x, $y];
 
-        $playerMove = [$params['x'], $params['y']];
+        $processedGame = $gameProcessUsecase->process($gameID, $playerMove);
 
-        $this->turnProcessUsecase->process($gameID, $playerMove);
-
-        return redirect()->route('game.show');
+        return view('game.board', ['board' => $processedGame->getTurn()->getBoard()->toArray()]);
     }
 }

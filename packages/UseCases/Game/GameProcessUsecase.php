@@ -1,9 +1,11 @@
 <?php
 
-namespace Packages\UseCases\Turn;
+namespace Packages\UseCases\Game;
 
 use Illuminate\Http\JsonResponse;
-use Packages\Models\Game\GameRepositoryInterface;
+use Packages\Models\Board\Position\Position;
+use Packages\Models\Game\Game;
+use Packages\Repositories\Game\GameRepositoryInterface;
 
 class GameProcessUsecase
 {
@@ -14,37 +16,16 @@ class GameProcessUsecase
         $this->gameRepository = $gameRepository;
     }
 
-    public function process($gameId, $playerMove): JsonResponse
+    public function process($gameId, $playerMove): Game
     {
         $game = $this->gameRepository->find($gameId);
 
-
-        $game->process($playerMove);
+        // TODO: moveとpositionの定義が曖昧なので生理
+        $movedPosition = Position::make($playerMove);
+        $processedGame = $game->process($movedPosition);
         // 保存
-        $$this->gameRepository->save($game);
+        $this->gameRepository->save($processedGame);
 
-        return response()->json([
-            'turn_num',
-            'board',
-            'next_player',
-            'status' => 'playable, skip, bot_turn'
-        ]);
-    }
-
-    public function botProcess($gameId, $playerMove): JsonResponse
-    {
-        $game = $this->gameRepository->find($gameId);
-
-
-        $game->process($playerMove);
-        // 保存
-        $$this->gameRepository->save($game);
-
-        return response()->json([
-            'turn_num',
-            'board',
-            'next_player',
-            'status' => 'playable, skip, bot_turn'
-        ]);
+        return $processedGame;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use JetBrains\PhpStorm\ArrayShape;
+
 class GameRequest extends AbstractRequest
 {
     /**
@@ -59,6 +61,7 @@ class GameRequest extends AbstractRequest
         return [];
     }
 
+    #[ArrayShape(['x' => "mixed", 'y' => "mixed"])]
     public function getProcessParams()
     {
         $params = [

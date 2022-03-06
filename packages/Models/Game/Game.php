@@ -60,15 +60,22 @@ class Game
         );
     }
 
-    public function process(?Position $playerMove = null)
+    public function process(?Position $playerMove = null): Game
     {
         if (!$this->gameStatus->isPlaying()) throw new \RuntimeException();
 
-        $this->turn = $this->turn->next($playerMove);
+        $nextTurn = $this->turn->next($playerMove);
 
-        if (!$this->turn->isContinuable() || $this->turn->finishedLastTurn()) {
-            $this->gameStatus = GameStatus::finish();
+        if (!$nextTurn->isContinuable() || $nextTurn->finishedLastTurn()) {
+            $nextGameStatus = GameStatus::finish();
         }
+        return new Game(
+            $this->id,
+            $this->gameMode,
+            $this->participants,
+            $nextGameStatus ?? $this->gameStatus,
+            $nextTurn
+        );
     }
 
     public function isGameOver(): bool

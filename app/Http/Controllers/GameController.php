@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GameRequest;
+use Packages\Models\Board\Color\Color;
 use Packages\Repositories\Game\GameRepositoryInterface;
 use Packages\UseCases\Game\GameInitializeUsecase;
 use Illuminate\Routing\Controller as BaseController;
@@ -19,10 +20,13 @@ class GameController extends BaseController
     public function show(Request $request, GameRepositoryInterface $gameRepository)
     {
         // FIXME: いったん表示用としてrepositoryをそのまま使用中
-        $gameID = $request->input('game_id');
-        $game = $gameRepository->find($gameID);
+        $gameID = $request->route()->parameter('game_id');
+        $game = $gameRepository->findById($gameID);
         // TODO: viewModelに詰め替え
-        return view('game.board', ['board' => $game->getTurn()->getBoard()->toArray()]);
+        return view('game.board', [
+            'board' => $game->getTurn()->getBoard()->toArray(),
+            'activeColor' => $game->getTurn()->getPlayableColor()->toCode() === Color::COLOR_CODE_WHITE ? '◯' : '●',
+        ]);
     }
 
     public function start(GameInitializeUsecase $initializeUsecase)
@@ -35,11 +39,12 @@ class GameController extends BaseController
     public function process(GameRequest $request, GameProcessUsecase $gameProcessUsecase)
     {
         $gameID = $request->input('game_id');
-        list($x, $y) = $request->getProcessParams();
-        $playerMove = [$x, $y];
+        $playerMove = $request->getProcessParams();
 
-        $processedGame = $gameProcessUsecase->process($gameID, $playerMove);
-
-        return redirect()->route('game.show', ['game_id' => $processedGame->getId()]);
+        $result = $gameProcessUsecase->process($gameID, $playerMove);
+        if (!$result['success']) {
+            session()->flash('error', $result['message']);
+        }
+        return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
     }
 }

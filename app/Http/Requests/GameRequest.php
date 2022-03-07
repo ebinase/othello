@@ -13,7 +13,7 @@ class GameRequest extends AbstractRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**

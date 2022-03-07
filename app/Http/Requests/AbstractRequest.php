@@ -21,20 +21,6 @@ abstract class AbstractRequest extends FormRequest
     abstract function rules();
 
     /**
-     * Get custom messages for validator errors.
-     *
-     * @return array
-     */
-    abstract function messages();
-
-    /**
-     * Get custom attributes for validator errors.
-     *
-     * @return array
-     */
-    abstract function attributes();
-
-    /**
      * 現在呼び出されているコントローラのアクション名を取得する
      *
      * @return string

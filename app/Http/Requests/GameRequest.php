@@ -25,9 +25,6 @@ class GameRequest extends AbstractRequest
     {
         $rules = [];
         switch($this->getCurrentActionMethod()) {
-            case 'show':
-                break;
-
             case 'process':
                 $rules = [
                     'x'     => 'required',

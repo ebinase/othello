@@ -20,7 +20,7 @@ class GameProcessUsecase
     {
         $game = $this->gameRepository->find($gameId);
 
-        // TODO: moveとpositionの定義が曖昧なので生理
+        // TODO: moveとpositionの定義が曖昧なので整理
         $movedPosition = Position::make($playerMove);
         $processedGame = $game->process($movedPosition);
         // 保存

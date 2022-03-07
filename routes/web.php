@@ -25,17 +25,17 @@ Route::prefix('game')->group(function() {
             'uses' => 'App\Http\Controllers\GameController@index'
         ]);
         // ゲーム画面を表示
+        Route::get('/show/{game_id}', [
+            'as' => 'show',
+            'uses' => 'App\Http\Controllers\GameController@show'
+        ]);
+        // ゲームを初期化
         Route::get('/start', [
             'as' => 'start',
             'uses' => 'App\Http\Controllers\GameController@start'
         ]);
-        // ゲーム画面を表示
-        Route::get('/{game_id}', [
-            'as' => 'show',
-            'uses' => 'App\Http\Controllers\GameController@show'
-        ]);
         // ターンを更新する
-        Route::get('/', [
+        Route::post('/process', [
             'as' => 'process',
             'uses' => 'App\Http\Controllers\GameController@process'
         ]);

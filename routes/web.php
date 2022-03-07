@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('top.index');
-});
+})->name('top');
 
 Route::prefix('game')->group(function() {
     Route::name('game.')->group(function() {

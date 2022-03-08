@@ -1,15 +1,13 @@
+# Laravel Othello
+
+[![LaravelTest](https://github.com/ebinase/othello/actions/workflows/laravel.yml/badge.svg)](https://github.com/ebinase/othello/actions/workflows/laravel.yml)
+![Issues](https://img.shields.io/github/issues/ebinase/othello)
+
+
+<img src="https://3.bp.blogspot.com/-hRiScUsWZHk/VA7mVasETMI/AAAAAAAAmOg/OHTyO2Zjxck/s800/othello_game.png" width="20%">
+
 ## 概要
-オセロゲームをドメイン駆動設計を中心に作成し、技術とモデリングについて実践を通して学ぶ。
-
-一部のコードは過去に作成したコードを再利用する。
-https://github.com/ebinase/othello-old
-
-## 進捗
-バックエンドの開発中
-
-簡易的に下記コマンドからコンソールで遊べます。
-
-`` php artisan command:othello``
+オセロゲームをドメイン駆動設計を中心に作成してみる。
 
 ## 技術等(予定)
 ### バックエンド
@@ -29,4 +27,4 @@ https://github.com/ebinase/othello-old
 
 ### その他トピック
 * TDD
-* CI
+* CI/CD(Github Actions)

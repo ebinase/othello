@@ -1,4 +1,4 @@
-name: Laravel
+name: LaravelTest
 
 on: [push, pull_request]
 

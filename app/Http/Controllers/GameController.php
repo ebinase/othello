@@ -12,11 +12,6 @@ use Packages\UseCases\Game\GameShowBoardUsecase;
 
 class GameController extends BaseController
 {
-    public function index()
-    {
-        return '';
-    }
-
     public function show(Request $request, GameShowBoardUsecase $showBoardUsecase)
     {
         $gameID = $request->route()->parameter('game_id');

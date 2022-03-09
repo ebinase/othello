@@ -2,6 +2,7 @@
 
 namespace Packages\UseCases\Game;
 
+use JetBrains\PhpStorm\ArrayShape;
 use Packages\Repositories\Game\GameRepositoryInterface;
 
 class GameShowBoardUsecase
@@ -17,22 +18,15 @@ class GameShowBoardUsecase
      * @param $gameId
      * @return array
      */
-    public function handle($gameId): array
+    #[ArrayShape(['success' => "bool", 'data' => "\Packages\Models\Game\Game", 'message' => "string", 'isFinished' => "bool"])] public function handle($gameId): array
     {
-        try {
-            $game = $this->gameRepository->findById($gameId);
-            // TODO: DTO導入
-            return [
-                'success' => true,
-                'data' => $game,
-                'message' => '',
-            ];
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'data' => null,
-                'message' => $e->getMessage(),
-            ];
-        }
+        $game = $this->gameRepository->findById($gameId);
+
+        return [
+            'success' => true,
+            'data' => $game,
+            'message' => '',
+            'isFinished' => $game->getStatus()->isFinished(),
+        ];
     }
 }

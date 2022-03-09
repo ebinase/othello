@@ -14,7 +14,7 @@ class GameController extends BaseController
 {
     public function index()
     {
-        return 'hoge';
+        return '';
     }
 
     public function show(Request $request, GameShowBoardUsecase $showBoardUsecase)
@@ -23,12 +23,14 @@ class GameController extends BaseController
 
         $result = $showBoardUsecase->handle($gameID);
 
-        // TODO: viewModelに詰め替え
-        if (!$result['success']) return response($result['message'], 500);
+        if ($result['isFinished']) {
+            return redirect()->route('game.showResult', ['game_id' => $result['data']->getId()]);
+        }
 
+        // TODO: viewModelに詰め替え
         return view('game.board', [
             'board' => $result['data']->getTurn()->getBoard()->toArray(),
-            'activeColor' => $result['data']->getTurn()->getPlayableColor()->toCode() === Color::COLOR_CODE_WHITE ? '◯' : '●',
+            'statusMessage' => $result['data']->getTurn()->getPlayableColor()->toCode() === Color::COLOR_CODE_WHITE ? '◯' : '●',
         ]);
     }
 
@@ -49,5 +51,23 @@ class GameController extends BaseController
             session()->flash('error', $result['message']);
         }
         return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
+    }
+
+    public function showResult(Request $request, GameShowBoardUsecase $showBoardUsecase)
+    {
+        $gameID = $request->route()->parameter('game_id');
+
+        // TODO: ユースケース作成?
+        $result = $showBoardUsecase->handle($gameID);
+
+        if (!$result['isFinished']) {
+            session()->flash('error', 'まだ諦めるには早いかも');
+            return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
+        }
+
+        return view('game.board', [
+            'board' => $result['data']->getTurn()->getBoard()->toArray(),
+            'statusMessage' => $result['data']->getWinner()?->getName() . 'の勝利！',
+        ]);
     }
 }

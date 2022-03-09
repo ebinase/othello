@@ -3,7 +3,7 @@
 @section('CONTENTS')
     <div class="flex justify-center" style="height: 1rem; margin-bottom: 0.5rem">
         <div class="text-gray-600 dark:text-gray-400 text-sm">
-            {{ $activeColor }}
+            {{ $statusMessage }}
         </div>
     </div>
 

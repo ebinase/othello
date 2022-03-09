@@ -25,8 +25,8 @@ class GameInitializeUsecase
     {
         // todo: 適切なクラスに移動
         $gameId = Str::uuid();
-        $whitePlayer = new Player('01', 'player_white');
-        $blackPlayer = new Player('02', 'player_black');
+        $whitePlayer = new Player('01', '白プレイヤー');
+        $blackPlayer = new Player('02', '黒プレイヤー');
         $newGame = Game::init($gameId, GameMode::vsPlayerMode(), Participants::make($whitePlayer, $blackPlayer));
 
         $this->gameRepository->save($newGame);

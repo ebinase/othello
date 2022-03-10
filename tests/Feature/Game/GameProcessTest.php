@@ -29,7 +29,7 @@ class GameProcessTest extends TestCase
         $game = Game::init($gameId, $mode, $participants);
         $move = Position::make([4, 6]); // 先行プレイヤーが1ターン目に指す場所
         // when:
-        $game->process($move);
+        $game = $game->process($move);
 
         // then:
         self::assertSame($gameId, $game->getId());

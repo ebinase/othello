@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use JetBrains\PhpStorm\ArrayShape;
+
 class GameRequest extends AbstractRequest
 {
     /**
@@ -11,7 +13,7 @@ class GameRequest extends AbstractRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,9 +25,6 @@ class GameRequest extends AbstractRequest
     {
         $rules = [];
         switch($this->getCurrentActionMethod()) {
-            case 'show':
-                break;
-
             case 'process':
                 $rules = [
                     'x'     => 'required',
@@ -59,6 +58,7 @@ class GameRequest extends AbstractRequest
         return [];
     }
 
+    #[ArrayShape(['x' => "mixed", 'y' => "mixed"])]
     public function getProcessParams()
     {
         $params = [

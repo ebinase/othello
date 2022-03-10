@@ -3,32 +3,66 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GameRequest;
-use Packages\UseCases\Turn\GameProcessUsecase;
+use Packages\Models\Board\Color\Color;
+use Packages\UseCases\Game\GameInitializeUsecase;
 use Illuminate\Routing\Controller as BaseController;
+use Packages\UseCases\Game\GameProcessUsecase;
+use Illuminate\Http\Request;
+use Packages\UseCases\Game\GameShowBoardUsecase;
 
 class GameController extends BaseController
 {
-    private $turnProcessUsecase;
-
-    public function  __construct(GameProcessUsecase $turnProcessUsecase)
+    public function show(Request $request, GameShowBoardUsecase $showBoardUsecase)
     {
-        $this->turnProcessUsecase = $turnProcessUsecase;
+        $gameID = $request->route()->parameter('game_id');
+
+        $result = $showBoardUsecase->handle($gameID);
+
+        if ($result['isFinished']) {
+            return redirect()->route('game.showResult', ['game_id' => $result['data']->getId()]);
+        }
+
+        // TODO: viewModelに詰め替え
+        return view('game.board', [
+            'board' => $result['data']->getTurn()->getBoard()->toArray(),
+            'statusMessage' => $result['data']->getTurn()->getPlayableColor()->toCode() === Color::COLOR_CODE_WHITE ? '◯' : '●',
+        ]);
     }
 
-    public function show()
+    public function start(GameInitializeUsecase $initializeUsecase)
     {
+        $game = $initializeUsecase->initialize();
 
+        return redirect()->route('game.show', ['game_id' => $game->getId()]);
     }
 
-    public function process(GameRequest $request)
+    public function process(GameRequest $request, GameProcessUsecase $gameProcessUsecase)
     {
-        $gameID = $request->session()->get('game_id');
-        $params = $request->getProcessParams();
+        $gameID = $request->input('game_id');
+        $playerMove = $request->getProcessParams();
 
-        $playerMove = [$params['x'], $params['y']];
+        $result = $gameProcessUsecase->process($gameID, $playerMove);
+        if (!$result['success']) {
+            session()->flash('error', $result['message']);
+        }
+        return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
+    }
 
-        $this->turnProcessUsecase->process($gameID, $playerMove);
+    public function showResult(Request $request, GameShowBoardUsecase $showBoardUsecase)
+    {
+        $gameID = $request->route()->parameter('game_id');
 
-        return redirect()->route('match.show');
+        // TODO: ユースケース作成?
+        $result = $showBoardUsecase->handle($gameID);
+
+        if (!$result['isFinished']) {
+            session()->flash('error', 'まだ諦めるには早いかも');
+            return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
+        }
+
+        return view('game.board', [
+            'board' => $result['data']->getTurn()->getBoard()->toArray(),
+            'statusMessage' => $result['data']->getWinner()?->getName() . 'の勝利！',
+        ]);
     }
 }

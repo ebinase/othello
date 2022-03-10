@@ -1,9 +1,12 @@
 <?php
 
-namespace Packages\UseCases\Turn;
+namespace Packages\UseCases\Game;
 
 use Illuminate\Http\JsonResponse;
-use Packages\Models\Game\GameRepositoryInterface;
+use JetBrains\PhpStorm\ArrayShape;
+use Packages\Models\Board\Position\Position;
+use Packages\Models\Game\Game;
+use Packages\Repositories\Game\GameRepositoryInterface;
 
 class GameProcessUsecase
 {
@@ -14,37 +17,34 @@ class GameProcessUsecase
         $this->gameRepository = $gameRepository;
     }
 
-    public function process($gameId, $playerMove): JsonResponse
+
+    /**
+     * @param $gameId
+     * @param $playerMove
+     * @return array{success: bool, data: Game, message: string}
+     */
+    public function process($gameId, $playerMove): array
     {
-        $game = $this->gameRepository->find($gameId);
+        $game = $this->gameRepository->findById($gameId);
+        try {
+            // TODO: moveとpositionの定義が曖昧なので整理
+            $movedPosition = Position::make($playerMove);
+            $processedGame = $game->process($movedPosition);
+            // 保存
+            $this->gameRepository->save($processedGame);
 
-
-        $game->process($playerMove);
-        // 保存
-        $$this->gameRepository->save($game);
-
-        return response()->json([
-            'turn_num',
-            'board',
-            'next_player',
-            'status' => 'playable, skip, bot_turn'
-        ]);
-    }
-
-    public function botProcess($gameId, $playerMove): JsonResponse
-    {
-        $game = $this->gameRepository->find($gameId);
-
-
-        $game->process($playerMove);
-        // 保存
-        $$this->gameRepository->save($game);
-
-        return response()->json([
-            'turn_num',
-            'board',
-            'next_player',
-            'status' => 'playable, skip, bot_turn'
-        ]);
+            // TODO: DTO導入
+            return [
+                'success' => true,
+                'data' => $processedGame,
+                'message' => '',
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'data' => $game,
+                'message' => $e->getMessage(),
+            ];
+        }
     }
 }

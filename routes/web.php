@@ -14,14 +14,36 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('top.index');
+})->name('top');
 
-Route::group(['game'], function() {
+Route::prefix('game')->group(function() {
     Route::name('game.')->group(function() {
+        // ゲームメニューを表示
+        Route::get('/', [
+            'as' => 'index',
+            'uses' => 'App\Http\Controllers\GameController@index'
+        ]);
+        // ゲームを初期化
+        Route::get('/start', [
+            'as' => 'start',
+            'uses' => 'App\Http\Controllers\GameController@start'
+        ]);
         // ゲーム画面を表示
-        Route::get('show', 'GameController@show')->name('show');
+        Route::get('/{game_id}/show', [
+            'as' => 'show',
+            'uses' => 'App\Http\Controllers\GameController@show'
+        ]);
+        // ゲームの結果
+        Route::get('/{game_id}/result', [
+            'as' => 'showResult',
+            'uses' => 'App\Http\Controllers\GameController@showResult'
+        ]);
+
         // ターンを更新する
-        Route::post('process', 'GameController@process')->name('process');
+        Route::post('/process', [
+            'as' => 'process',
+            'uses' => 'App\Http\Controllers\GameController@process'
+        ]);
     });
 });

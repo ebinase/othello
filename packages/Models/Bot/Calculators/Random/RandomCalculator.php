@@ -8,18 +8,13 @@ use Packages\Models\Turn\Turn;
 
 class RandomCalculator implements CalculatorInterface
 {
-    private array $playablePositions;
-
-    public function __construct(Turn $turn)
+    public static function culculate(Turn $turn): Position
     {
         $board = $turn->getBoard();
         $color = $turn->getPlayableColor();
-        $this->playablePositions = $board->playablePositions($color);
-    }
+        $playablePositions = $board->playablePositions($color);
 
-    public function culculate(): Position
-    {
-        $key = array_rand($this->playablePositions);
-        return Position::make($this->playablePositions[$key]);
+        $key = array_rand($playablePositions);
+        return Position::make($playablePositions[$key]);
     }
 }

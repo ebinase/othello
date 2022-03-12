@@ -18,18 +18,14 @@ use function PHPUnit\Framework\assertSame;
 
 class BotTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @test
-     * @return void
-     */
-    public function RandomBotが生成される()
+    /** @test */
+    public function ボット実行()
     {
         // given:
         $bot = BotFactory::make(BotFactory::BOT_ID_RANDOM);
+        $turn = Turn::init();
         // when:
-        $result = $bot->run();
+        $result = $bot->run($turn);
         // then:
         self::assertTrue($result instanceof Position);
     }

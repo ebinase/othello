@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Packages\Models\Board\Board;
 use Packages\Models\Bot\BotFactory;
 use Packages\Models\Bot\BotInterface;
+use Packages\Models\Bot\Bots\RandomBot;
 use Packages\Models\Bot\Calculators\Random\RandomCalculator;
 use Packages\Models\Bot\Levels\LevelFactory;
 use Packages\Models\Board\Color\Color;
@@ -29,7 +30,6 @@ class BotFactoryTest extends TestCase
         // when:
         $bot = BotFactory::make($botID);
         // then:
-        self::assertTrue($bot instanceof BotInterface);
-        assertSame($botID, $bot->getId());
+        self::assertTrue($bot instanceof RandomBot);
     }
 }

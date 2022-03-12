@@ -18,6 +18,12 @@ class GameController extends BaseController
 
         $result = $showBoardUsecase->handle($gameID);
 
+
+        if (!$result['success']) {
+            // TODO: エラー文言追加
+            return redirect()->route('top');
+        }
+
         if ($result['isFinished']) {
             return redirect()->route('game.showResult', ['game_id' => $result['data']->getId()]);
         }

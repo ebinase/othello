@@ -16,14 +16,14 @@ class SessionGameRepository implements GameRepositoryInterface
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function findById(string $gameId = null): Game
+    public function findById(string $gameId = null): ?Game
     {
         $gameData = unserialize(session()->get(self::SESSION_STORE_KEY_GAME_DATA));
         if ($gameData instanceof Game) {
             return $gameData;
         }
-        // TODO:例外処理
-        throw new \Exception();
+
+        return null;
     }
 
     public function save(Game $game): void

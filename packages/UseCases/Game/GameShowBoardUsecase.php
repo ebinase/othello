@@ -22,11 +22,17 @@ class GameShowBoardUsecase
     {
         $game = $this->gameRepository->findById($gameId);
 
+        if (isset($game)) {
+            return [
+                'success' => true,
+                'data' => $game,
+                'message' => '',
+                'isFinished' => $game->getStatus()->isFinished(),
+            ];
+        }
+
         return [
-            'success' => true,
-            'data' => $game,
-            'message' => '',
-            'isFinished' => $game->getStatus()->isFinished(),
+            'success' => false,
         ];
     }
 }

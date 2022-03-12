@@ -69,7 +69,6 @@ class Game
 
         $nextTurn = $this->turn->next($playerMove);
 
-        // TODO: スキップで終了する場合にも対応
         if (!$nextTurn->isContinuable() || $nextTurn->finishedLastTurn()) {
             $nextGameStatus = GameStatus::finish();
         }

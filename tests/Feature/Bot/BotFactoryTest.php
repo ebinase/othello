@@ -2,21 +2,13 @@
 
 namespace Tests\Feature\Bot;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Packages\Models\Board\Board;
 use Packages\Models\Bot\BotFactory;
-use Packages\Models\Bot\Calculators\Random\RandomCalculator;
+use Packages\Models\Bot\Bots\RandomBot;
 use Packages\Models\Bot\Levels\LevelFactory;
-use Packages\Models\Board\Color\Color;
-use Packages\Models\Turn\Turn;
 use Tests\TestCase;
-use function PHPUnit\Framework\assertSame;
 
 class BotFactoryTest extends TestCase
 {
-    const COLOR_WHITE = 1;
-    const COLOR_BLACK = 2;
     /**
      * A basic feature test example.
      *
@@ -25,12 +17,10 @@ class BotFactoryTest extends TestCase
     public function testRandomBotが生成される()
     {
         // given:
-        // 初期盤面
-        $turn = Turn::init();
+        $botID = BotFactory::BOT_ID_RANDOM;
         // when:
-        $bot = BotFactory::make(BotFactory::BOT_ID_RANDOM, $turn);
+        $bot = BotFactory::make($botID);
         // then:
-        self::assertEquals($bot->getLevel()->getLevelCode(),  LevelFactory::make(LevelFactory::BOT_LEVEL_01)->getLevelCode());
-//        assertSame($bot->getCalculator(),  (new RandomCalculator($turn)));
+        self::assertTrue($bot instanceof RandomBot);
     }
 }

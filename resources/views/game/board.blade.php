@@ -9,9 +9,10 @@
 
     <div class="flex justify-center">
         <form action="{{ route('game.process') }}" method="post">
+            <input id="action" type="hidden" name="action" value="{{ $action }}">
+            <input id="x" type="hidden" name="x" value="">
+            <input id="y" type="hidden" name="y" value="">
             <table style="border: #4a5568 2px solid; border-collapse: collapse;">
-                <input id="x" type="hidden" name="x" value="">
-                <input id="y" type="hidden" name="y" value="">
                 @csrf
                 @foreach($board as $rowNum => $rowData)
                     <tr>
@@ -40,11 +41,39 @@
         $(function(){
             $('.field').on('click', function () {
                 const [x, y] = [$(this).data('position-x'), $(this).data('position-y')];
-                console.log(x,y)
                 $('#x').val(x);
                 $('#y').val(y);
                 $('form').submit();
-            })
+            });
         });
+
+        $(window).on('load', function () {
+            const action =  $('#action').val();
+            if (action === '') return false;
+
+            let options;
+            if (action === '01') {
+                options = {
+                    position: 'bottom',
+                    title: '置ける場所がありません...',
+                    showConfirmButton: true,
+                    confirmButtonText: 'スキップする',
+                    background: 'lightgray',
+                    backdrop: `rgba(0,0,0,0)`
+                };
+            } else {
+                options = {
+                    position: 'bottom',
+                    showConfirmButton: true,
+                    confirmButtonText: '相手のターンへ',
+                    background: 'lightgray',
+                    backdrop: `rgba(0,0,0,0)`,
+                };
+            }
+
+            Swal.fire(options).then(function () {
+                $('form').submit();
+            })
+        })
     </script>
 @endsection

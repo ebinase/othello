@@ -25,17 +25,17 @@ Route::prefix('game')->group(function() {
             'uses' => 'App\Http\Controllers\GameController@index'
         ]);
         // ゲームを初期化
-        Route::get('/start', [
+        Route::get('/start/{game_mode}', [
             'as' => 'start',
             'uses' => 'App\Http\Controllers\GameController@start'
         ]);
         // ゲーム画面を表示
-        Route::get('/{game_id}/show', [
+        Route::get('/show/{game_id}', [
             'as' => 'show',
             'uses' => 'App\Http\Controllers\GameController@show'
         ]);
         // ゲームの結果
-        Route::get('/{game_id}/result', [
+        Route::get('/result/{game_id}', [
             'as' => 'showResult',
             'uses' => 'App\Http\Controllers\GameController@showResult'
         ]);

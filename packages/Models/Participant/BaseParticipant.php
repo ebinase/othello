@@ -1,8 +1,8 @@
 <?php
 
-namespace Packages\Models\Player;
+namespace Packages\Models\Participant;
 
-class BasePlayer implements PlayerInterface
+class BaseParticipant implements ParticipantInterface
 {
     private string $id;
     private string $name;
@@ -15,7 +15,7 @@ class BasePlayer implements PlayerInterface
         $this->name = $name;
     }
 
-    public function getid(): string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -32,11 +32,16 @@ class BasePlayer implements PlayerInterface
 
     public function isBot(): bool
     {
-        return  str_starts_with($this->type, self::PLAYER_TYPE_PREFIX_BOT);
+        return $this->type === self::PARTICIPANT_TYPE_BOT;
     }
 
     public function isPlayer(): bool
     {
-        return  str_starts_with($this->type, self::PLAYER_TYPE_PREFIX_PLAYER);
+        return $this->type === self::PARTICIPANT_TYPE_PLAYER;
+    }
+
+    public function equals(ParticipantInterface $participant): bool
+    {
+        $this->id === $participant->getId();
     }
 }

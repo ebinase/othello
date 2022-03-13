@@ -10,7 +10,7 @@ use Packages\Models\Game\Game;
 use Packages\Models\Game\GameMode;
 use Packages\Models\Game\GameStatus;
 use Packages\Models\Game\Participants;
-use Packages\Models\Player\Player;
+use Packages\Models\Participant\Player;
 use Packages\Models\Turn\Turn;
 use Tests\TestCase;
 

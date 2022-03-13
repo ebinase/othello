@@ -11,23 +11,17 @@ class BotFactory
     const BOT_ID_RANDOM = '01';
 
     /**
-     * @var array<string, CalculatorInterface>
+     * @var array<string, BotInterface>
      */
     private static array $botList = [
         self::BOT_ID_RANDOM => \Packages\Models\Bot\Bots\RandomBot::class
     ];
 
-    public static function make(string $botId, Turn $turn): BotInterface
+    public static function make(string $botId): BotInterface
     {
-        $calculators = [];
-
         $botClass = self::$botList[$botId];
-        $level = LevelFactory::make($botClass::getLevelCode());
-        foreach ($botClass::getCalculators() as $calculatorClass) {
-            $calculators[] = new $calculatorClass($turn);
-        }
 
-        return new $botClass($level, $calculators[0]);
+        return app()->make($botClass, ['id' => $botId]);
     }
 
 }

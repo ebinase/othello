@@ -18,6 +18,12 @@ class GameController extends BaseController
 
         $result = $showBoardUsecase->handle($gameID);
 
+
+        if (!$result['success']) {
+            // TODO: エラー文言追加
+            return redirect()->route('top');
+        }
+
         if ($result['isFinished']) {
             return redirect()->route('game.showResult', ['game_id' => $result['data']->getId()]);
         }
@@ -26,14 +32,20 @@ class GameController extends BaseController
         return view('game.board', [
             'board' => $result['data']->getTurn()->getBoard()->toArray(),
             'statusMessage' => $result['data']->getTurn()->getPlayableColor()->toCode() === Color::COLOR_CODE_WHITE ? '◯' : '●',
+            'action' => $result['action'], // TODO: ユーザーイベント発行とかにする
         ]);
     }
 
-    public function start(GameInitializeUsecase $initializeUsecase)
+    public function start(GameRequest $request, GameInitializeUsecase $initializeUsecase)
     {
-        $game = $initializeUsecase->initialize();
+        $gameMode = $request->route()->parameter('game_mode');
+        $result = $initializeUsecase->initialize($gameMode);
 
-        return redirect()->route('game.show', ['game_id' => $game->getId()]);
+        if (!$result['success']) {
+            return redirect()->route('top');
+        }
+
+        return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
     }
 
     public function process(GameRequest $request, GameProcessUsecase $gameProcessUsecase)
@@ -41,7 +53,8 @@ class GameController extends BaseController
         $gameID = $request->input('game_id');
         $playerMove = $request->getProcessParams();
 
-        $result = $gameProcessUsecase->process($gameID, $playerMove);
+        $result = $gameProcessUsecase->handle($gameID, $playerMove);
+
         if (!$result['success']) {
             session()->flash('error', $result['message']);
         }
@@ -60,9 +73,12 @@ class GameController extends BaseController
             return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
         }
 
+        $winner = $result['data']->getWinner();
+
         return view('game.board', [
             'board' => $result['data']->getTurn()->getBoard()->toArray(),
-            'statusMessage' => $result['data']->getWinner()?->getName() . 'の勝利！',
+            'statusMessage' => !empty($winner) ? $winner->getName() . 'の勝利！' : '引き分け！',
+            'action' => null
         ]);
     }
 }

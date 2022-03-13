@@ -3,7 +3,7 @@
 namespace Packages\Models\Game;
 
 use Packages\Models\Board\Color\Color;
-use Packages\Models\Player\PlayerInterface;
+use Packages\Models\Participant\ParticipantInterface;
 
 class Participants
 {
@@ -11,28 +11,28 @@ class Participants
 
     /**
      * ゲームへの参加者のリスト
-     * 人間は"Player", ボットは"Bot"
-     * @var array<string, PlayerInterface>
+     * 人間は"Player", ボットは"BotParticipant"
+     * @var array<string, ParticipantInterface>
      */
     private array $participants;
 
-    private function __construct(PlayerInterface $whitePlayer, PlayerInterface $blackPlayer,)
+    private function __construct(ParticipantInterface $whiteParticipant, ParticipantInterface $blackParticipant,)
     {
-        $this->participants[Color::white()->toCode()] = $whitePlayer;
-        $this->participants[Color::black()->toCode()] = $blackPlayer;
+        $this->participants[Color::white()->toCode()] = $whiteParticipant;
+        $this->participants[Color::black()->toCode()] = $blackParticipant;
     }
 
     // ---------------------------------------
     // 生成系
     // ---------------------------------------
     /**
-     * @param PlayerInterface $whitePlayer
-     * @param PlayerInterface $blackPlayer
+     * @param ParticipantInterface $whiteParticipant
+     * @param ParticipantInterface $blackParticipant
      * @return Participants
      */
-    public static function make(PlayerInterface $whitePlayer, PlayerInterface $blackPlayer): Participants
+    public static function make(ParticipantInterface $whiteParticipant, ParticipantInterface $blackParticipant): Participants
     {
-        return new Participants($whitePlayer, $blackPlayer);
+        return new Participants($whiteParticipant, $blackParticipant);
     }
 
     // ---------------------------------------
@@ -61,27 +61,32 @@ class Participants
     // ---------------------------------------
     // getter
     // ---------------------------------------
-    public function whitePlayer(): PlayerInterface
+    public function whitePlayer(): ParticipantInterface
     {
         return $this->participants[Color::white()->toCode()];
     }
 
-    public function blackPlayer(): PlayerInterface
+    public function blackPlayer(): ParticipantInterface
     {
         return $this->participants[Color::black()->toCode()];
     }
 
     public function players(): array
     {
-        return array_filter($this->participants, function ($player) {
-            return $player->isPlayer();
+        return array_filter($this->participants, function ($participant) {
+            return $participant->isPlayer();
         });
     }
 
     public function bots(): array
     {
-        return array_filter($this->participants, function ($player) {
-            return $player->isBot();
+        return array_filter($this->participants, function ($participant) {
+            return $participant->isBot();
         });
+    }
+
+    public function findByColor(Color $color): ?ParticipantInterface
+    {
+        return $this->participants[$color->toCode()] ?? null;
     }
 }

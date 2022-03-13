@@ -18,15 +18,30 @@ class GameShowBoardUsecase
      * @param $gameId
      * @return array
      */
-    #[ArrayShape(['success' => "bool", 'data' => "\Packages\Models\Game\Game", 'message' => "string", 'isFinished' => "bool"])] public function handle($gameId): array
+    #[ArrayShape(['success' => "bool", 'data' => "\Packages\Models\Game\Game", 'message' => "string", 'isFinished' => "bool", 'action' => "string|null"])] public function handle($gameId): array
     {
         $game = $this->gameRepository->findById($gameId);
 
+        if (isset($game)) {
+            if ($game->getTurn()->mustSkip()) {
+                $action = '01';
+            } elseif ($game->isBotTurn()) {
+                $action = '02';
+            } else {
+                $action = null;
+            }
+
+            return [
+                'success' => true,
+                'data' => $game,
+                'message' => '',
+                'isFinished' => $game->getStatus()->isFinished(),
+                'action' => $action
+            ];
+        }
+
         return [
-            'success' => true,
-            'data' => $game,
-            'message' => '',
-            'isFinished' => $game->getStatus()->isFinished(),
+            'success' => false,
         ];
     }
 }

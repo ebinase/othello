@@ -4,8 +4,8 @@ namespace Packages\Models\Game;
 
 use Packages\Models\Board\Color\Color;
 use Packages\Models\Board\Position\Position;
-use Packages\Models\Player\Player;
-use Packages\Models\Player\PlayerInterface;
+use Packages\Models\Bot\BotFactory;
+use Packages\Models\Participant\ParticipantInterface;
 use Packages\Models\Turn\Turn;
 
 class Game
@@ -67,9 +67,17 @@ class Game
     {
         if (!$this->gameStatus->isPlaying()) throw new \RuntimeException();
 
+        if ($this->isBotTurn() && !$this->turn->mustSkip()) {
+            // TODO: ターンとプレイヤーの行動制限についてもう少し検討する(更新と制限処理の分離など)
+            if (isset($playerMove)) throw new \RuntimeException('ボットのターンにプレイヤーが行動することはできません。');
+
+            // ボットを起動して置く場所を算出する
+            $bot = BotFactory::make($this->getCurrentPlayer()->getId());
+            $playerMove = $bot->run($this->turn);
+        }
+
         $nextTurn = $this->turn->next($playerMove);
 
-        // TODO: スキップで終了する場合にも対応
         if (!$nextTurn->isContinuable() || $nextTurn->finishedLastTurn()) {
             $nextGameStatus = GameStatus::finish();
         }
@@ -93,7 +101,7 @@ class Game
     }
 
     // TODO: あとでリファクタリング
-    public function getWinner(): ?PlayerInterface
+    public function getWinner(): ?ParticipantInterface
     {
         if (!$this->isGameOver()) throw new \RuntimeException();
 
@@ -108,6 +116,22 @@ class Game
         }
         // 勝者がいない場合はnull
         return null;
+    }
+
+    public function isBotTurn(): bool
+    {
+        // プレイヤー同士の対戦にはボットが存在しない
+        if ($this->gameMode->isVsPlayerMode()) return false;
+        // 観戦モードではボットのターンしか存在しない
+        if ($this->gameMode->isViewingMode()) return true;
+
+        // ボット対戦モードの場合
+        return $this->getCurrentPlayer()->isBot();
+    }
+
+    public function getCurrentPlayer(): ParticipantInterface
+    {
+        return $this->participants->findByColor($this->turn->getPlayableColor());
     }
 
     /**

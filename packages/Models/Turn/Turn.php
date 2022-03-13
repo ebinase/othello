@@ -71,7 +71,7 @@ class Turn
         // 必須チェック
         if (!isset($position)) throw new \Exception('コマを置くことができるマスがある場合、スキップはできません。');
         // 指定された場所にコマを置くことができるか確認
-        if (!$this->board->isValid($position, $this->playableColor)) throw new \Exception('指定された場所に置くことはできません。');
+        if (!$this->board->isValid($position, $this->playableColor)) throw new \Exception('指定された場所に置くことができません。');
 
         return new Turn(
             $this->turnNumber + 1,

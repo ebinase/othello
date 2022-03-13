@@ -13,8 +13,6 @@ class SessionGameRepository implements GameRepositoryInterface
      *
      * @param string|null $gameId
      * @return Game
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function findById(string $gameId = null): ?Game
     {

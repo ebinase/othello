@@ -9,7 +9,7 @@ use http\Exception\InvalidArgumentException;
  */
 final class Player extends BasePlayer
 {
-    public function __construct($id, $name = 'プレイヤー', $type = self::PLAYER_TYPE_PREFIX_PLAYER . '01')
+    public function __construct($id, $name = 'プレイヤー', $type = self::PLAYER_TYPE_HUMAN . '01')
     {
         parent::__construct($id, $name, $type);
 

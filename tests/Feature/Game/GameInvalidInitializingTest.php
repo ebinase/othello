@@ -5,7 +5,7 @@ namespace Tests\Feature\Game;
 use Packages\Models\Game\Game;
 use Packages\Models\Game\GameMode;
 use Packages\Models\Game\Participants;
-use Packages\Models\Player\Bot;
+use Packages\Models\Player\BotPlayer;
 use Packages\Models\Player\Player;
 use Tests\TestCase;
 
@@ -25,8 +25,8 @@ class GameInvalidInitializingTest extends TestCase
         $mode = GameMode::vsPlayerMode();
 
         $player1 = new Player('01', 'player_1');
-        $bot1 = new Bot('03', 'bot_1');
-        $bot2 = new Bot('04', 'bot_2');
+        $bot1 = new BotPlayer('03', 'bot_1');
+        $bot2 = new BotPlayer('04', 'bot_2');
 
         $playerAndBot = Participants::make($player1, $bot1);
         $bots = Participants::make($bot1, $bot2);
@@ -46,8 +46,8 @@ class GameInvalidInitializingTest extends TestCase
         $mode = GameMode::vsBotMode();
         $player1 = new Player('01', 'player_1');
         $player2 = new Player('02', 'player_2');
-        $bot1 = new Bot('03', 'bot_1');
-        $bot2 = new Bot('04', 'bot_2');
+        $bot1 = new BotPlayer('03', 'bot_1');
+        $bot2 = new BotPlayer('04', 'bot_2');
         $players = Participants::make($player1, $player2);
         $bots = Participants::make($bot1, $bot2);
         // then:
@@ -67,7 +67,7 @@ class GameInvalidInitializingTest extends TestCase
 
         $player1 = new Player('01', 'player_1');
         $player2 = new Player('02', 'player_2');
-        $bot1 = new Bot('03', 'bot_1');
+        $bot1 = new BotPlayer('03', 'bot_1');
 
         $players = Participants::make($player1, $player2);
         $botAndPlayer = Participants::make($bot1, $player1);

@@ -11,7 +11,7 @@ class Participants
 
     /**
      * ゲームへの参加者のリスト
-     * 人間は"Player", ボットは"Bot"
+     * 人間は"Player", ボットは"BotPlayer"
      * @var array<string, PlayerInterface>
      */
     private array $participants;

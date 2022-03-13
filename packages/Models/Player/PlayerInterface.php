@@ -4,8 +4,8 @@ namespace Packages\Models\Player;
 
 interface PlayerInterface
 {
-    const PLAYER_TYPE_PREFIX_PLAYER = 'P';
-    const PLAYER_TYPE_PREFIX_BOT    = 'B';
+    const PLAYER_TYPE_HUMAN = 'HUMAN';
+    const PLAYER_TYPE_BOT   = 'BOT';
 
     public function getid(): string;
     public function getName(): string;

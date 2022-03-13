@@ -14,29 +14,6 @@ use Tests\TestCase;
 class GameInitializingTest extends TestCase
 {
     /** @test */
-    public function プレイヤー対戦モードでの初期化()
-    {
-        // given:
-        $gameId = 'test_id';
-
-        // when:
-        $mode = GameMode::vsPlayerMode();
-        $whitePlayer = new Player('01', 'player_white');
-        $blackPlayer = new Player('02', 'player_black');
-        $participants = Participants::make($whitePlayer, $blackPlayer);
-
-        $game = Game::init($gameId, $mode, $participants);
-
-        // then:
-        self::assertSame($gameId, $game->getId());
-        // HACK: equals()を生やして比較
-        self::assertSame(true, $mode == $game->getMode());
-        self::assertSame(true, $participants == $game->getParticipants());
-        self::assertSame(true, GameStatus::GAME_STATUS_PLAYING == $game->getStatus()->toCode());
-        self::assertSame(true, Turn::init() == $game->getTurn());
-    }
-
-    /** @test */
     public function プレイヤー対戦モードでの初期化でBotが呼ばれた場合はエラー()
     {
         // given:

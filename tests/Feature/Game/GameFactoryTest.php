@@ -20,7 +20,6 @@ class GameFactoryTest extends TestCase
         $whitePlayer = new Player('01', '白プレイヤー');
         $blackPlayer = new Player('02', '黒プレイヤー');
         // when:
-        /**@var Game $game*/
         $game = GameFactory::makeVsPlayerGame($whitePlayer, $blackPlayer);
 
         // then:

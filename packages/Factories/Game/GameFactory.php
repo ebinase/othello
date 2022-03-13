@@ -18,4 +18,22 @@ class GameFactory
             Participants::make($whitePlayer, $blackPlayer)
         );
     }
+
+    public static function makeVsBotGame(PlayerInterface $whitePlayer, PlayerInterface $blackPlayer): Game
+    {
+        return Game::init(
+            Str::uuid(),
+            GameMode::vsBotMode(),
+            Participants::make($whitePlayer, $blackPlayer)
+        );
+    }
+
+    public static function makeViewingGame(PlayerInterface $whitePlayer, PlayerInterface $blackPlayer): Game
+    {
+        return Game::init(
+            Str::uuid(),
+            GameMode::viewingMode(),
+            Participants::make($whitePlayer, $blackPlayer)
+        );
+    }
 }

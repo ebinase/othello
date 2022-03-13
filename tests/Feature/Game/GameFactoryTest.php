@@ -3,10 +3,10 @@
 namespace Tests\Feature\Game;
 
 use Packages\Factories\Game\GameFactory;
-use Packages\Models\Game\Game;
 use Packages\Models\Game\GameMode;
 use Packages\Models\Game\GameStatus;
 use Packages\Models\Game\Participants;
+use Packages\Models\Player\Bot;
 use Packages\Models\Player\Player;
 use Packages\Models\Turn\Turn;
 use Tests\TestCase;
@@ -35,10 +35,35 @@ class GameFactoryTest extends TestCase
         $whitePlayer = new Player('01', '白プレイヤー');
         $blackPlayer = new Player('02', '黒プレイヤー');
         // when:
-        /**@var Game $game*/
         $game = GameFactory::makeVsPlayerGame($whitePlayer, $blackPlayer);
 
         self::assertTrue($game->getMode() == GameMode::vsPlayerMode());
         self::assertTrue($game->getParticipants() == Participants::make($whitePlayer, $blackPlayer));
+    }
+
+    /** @test */
+    public function Bot対戦モードの初期化()
+    {
+        // given
+        $whiteBot = new Bot('01', '白ボット');
+        $blackPlayer = new Player('02', '黒プレイヤー');
+        // when:
+        $game = GameFactory::makeVsBotGame($whiteBot, $blackPlayer);
+
+        self::assertTrue($game->getMode() == GameMode::vsBotMode());
+        self::assertTrue($game->getParticipants() == Participants::make($whiteBot, $blackPlayer));
+    }
+
+    /** @test */
+    public function Bot観戦モードの初期化()
+    {
+        // given
+        $whiteBot = new Bot('01', '白ボット');
+        $blackBot = new Bot('02', '黒ボット');
+        // when:
+        $game = GameFactory::makeViewingGame($whiteBot, $blackBot);
+
+        self::assertTrue($game->getMode() == GameMode::viewingMode());
+        self::assertTrue($game->getParticipants() == Participants::make($whiteBot, $blackBot));
     }
 }

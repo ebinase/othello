@@ -67,7 +67,7 @@ class Game
     {
         if (!$this->gameStatus->isPlaying()) throw new \RuntimeException();
 
-        if ($this->isBotTurn()) {
+        if ($this->isBotTurn() && !$this->turn->mustSkip()) {
             // TODO: ターンとプレイヤーの行動制限についてもう少し検討する(更新と制限処理の分離など)
             if (isset($playerMove)) throw new \RuntimeException('ボットのターンにプレイヤーが行動することはできません。');
 

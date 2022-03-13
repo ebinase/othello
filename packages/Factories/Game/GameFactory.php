@@ -6,11 +6,11 @@ use Illuminate\Support\Str;
 use Packages\Models\Game\Game;
 use Packages\Models\Game\GameMode;
 use Packages\Models\Game\Participants;
-use Packages\Models\Player\PlayerInterface;
+use Packages\Models\Participant\ParticipantInterface;
 
 class GameFactory
 {
-    public static function makeVsPlayerGame(PlayerInterface $whitePlayer, PlayerInterface $blackPlayer): Game
+    public static function makeVsPlayerGame(ParticipantInterface $whitePlayer, ParticipantInterface $blackPlayer): Game
     {
         return Game::init(
             Str::uuid(),
@@ -19,7 +19,7 @@ class GameFactory
         );
     }
 
-    public static function makeVsBotGame(PlayerInterface $whitePlayer, PlayerInterface $blackPlayer): Game
+    public static function makeVsBotGame(ParticipantInterface $whitePlayer, ParticipantInterface $blackPlayer): Game
     {
         return Game::init(
             Str::uuid(),
@@ -28,7 +28,7 @@ class GameFactory
         );
     }
 
-    public static function makeViewingGame(PlayerInterface $whitePlayer, PlayerInterface $blackPlayer): Game
+    public static function makeViewingGame(ParticipantInterface $whitePlayer, ParticipantInterface $blackPlayer): Game
     {
         return Game::init(
             Str::uuid(),

@@ -6,8 +6,8 @@ use Packages\Factories\Game\GameFactory;
 use Packages\Models\Game\GameMode;
 use Packages\Models\Game\GameStatus;
 use Packages\Models\Game\Participants;
-use Packages\Models\Player\BotPlayer;
-use Packages\Models\Player\Player;
+use Packages\Models\Participant\BotParticipant;
+use Packages\Models\Participant\Player;
 use Packages\Models\Turn\Turn;
 use Tests\TestCase;
 
@@ -45,7 +45,7 @@ class GameFactoryTest extends TestCase
     public function Bot対戦モードの初期化()
     {
         // given
-        $whiteBot = new BotPlayer('01', '白ボット');
+        $whiteBot = new BotParticipant('01', '白ボット');
         $blackPlayer = new Player('02', '黒プレイヤー');
         // when:
         $game = GameFactory::makeVsBotGame($whiteBot, $blackPlayer);
@@ -58,8 +58,8 @@ class GameFactoryTest extends TestCase
     public function Bot観戦モードの初期化()
     {
         // given
-        $whiteBot = new BotPlayer('01', '白ボット');
-        $blackBot = new BotPlayer('02', '黒ボット');
+        $whiteBot = new BotParticipant('01', '白ボット');
+        $blackBot = new BotParticipant('02', '黒ボット');
         // when:
         $game = GameFactory::makeViewingGame($whiteBot, $blackBot);
 

@@ -1,19 +1,18 @@
 <?php
 
-namespace Packages\Models\Player;
+namespace Packages\Models\Participant;
 
 use http\Exception\InvalidArgumentException;
 
 /**
  * プレイヤーを表すクラス
  */
-final class Player extends BasePlayer
+final class Player extends BaseParticipant
 {
-    public function __construct($id, $name = 'プレイヤー', $type = self::PLAYER_TYPE_HUMAN . '01')
+    public function __construct($id, $name = 'プレイヤー', $type = self::PARTICIPANT_TYPE_PLAYER)
     {
         parent::__construct($id, $name, $type);
 
         if (!$this->isPlayer()) throw new InvalidArgumentException();
-
     }
 }

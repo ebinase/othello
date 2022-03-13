@@ -9,9 +9,9 @@ use Packages\Models\Board\Position\PositionConverterTrait;
 use Packages\Models\Bot\BotFactory;
 use Packages\Models\Bot\Levels\LevelFactory;
 use Packages\Models\Board\Color\Color;
-use Packages\Models\Player\BotPlayer;
-use Packages\Models\Player\Player;
-use Packages\Models\Player\PlayerInterface;
+use Packages\Models\Participant\BotParticipant;
+use Packages\Models\Participant\Player;
+use Packages\Models\Participant\ParticipantInterface;
 use Packages\Models\Turn\Turn;
 
 class OthelloCommand extends Command
@@ -44,11 +44,11 @@ class OthelloCommand extends Command
     // ---------------------------------------
     private string $gameMode;
 
-    private PlayerInterface $whitePlayer;
-    private PlayerInterface $blackPlayer;
+    private ParticipantInterface $whitePlayer;
+    private ParticipantInterface $blackPlayer;
 
     /**
-     * @var PlayerInterface[]
+     * @var ParticipantInterface[]
      */
     private array $playerList;
 
@@ -90,11 +90,11 @@ class OthelloCommand extends Command
             if ($choice === 'プレイヤー先攻') {
                 $this->playerList = [
                     Color::white()->toCode() => new Player('01', 'player_01'),
-                    Color::black()->toCode() => new BotPlayer('02', 'player_02', $id),
+                    Color::black()->toCode() => new BotParticipant('02', 'player_02', $id),
                 ];
             } else {
                 $this->playerList = [
-                    Color::white()->toCode() => new BotPlayer('01', 'player_01', $id),
+                    Color::white()->toCode() => new BotParticipant('01', 'player_01', $id),
                     Color::black()->toCode() => new Player('02', 'player_02'),
                 ];
             }
@@ -105,8 +105,8 @@ class OthelloCommand extends Command
             $id = $this->ask('id');
 
             $this->playerList = [
-                Color::white()->toCode() => new BotPlayer('01', 'player_01', $id),
-                Color::black()->toCode() => new BotPlayer('02', 'player_02', $id),
+                Color::white()->toCode() => new BotParticipant('01', 'player_01', $id),
+                Color::black()->toCode() => new BotParticipant('02', 'player_02', $id),
             ];
         }
 

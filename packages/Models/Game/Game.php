@@ -69,7 +69,7 @@ class Game
 
         if ($this->isBotTurn()) {
             // TODO: ターンとプレイヤーの行動制限についてもう少し検討する(更新と制限処理の分離など)
-//            if (isset($playerMove)) throw new \RuntimeException('ボットのターンにプレイヤーが行動することはできません。');
+            if (isset($playerMove)) throw new \RuntimeException('ボットのターンにプレイヤーが行動することはできません。');
 
             // ボットを起動して置く場所を算出する
             $bot = BotFactory::make($this->getCurrentPlayer()->getId());

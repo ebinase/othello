@@ -48,18 +48,33 @@
         });
 
         $(window).on('load', function () {
-            if ($('#action').val() === '01') {
-                const options = {
+            const action =  $('#action').val();
+            if (action === '') return false;
+
+            let options;
+            if (action === '01') {
+                options = {
                     position: 'bottom',
                     title: '置ける場所がありません...',
                     showConfirmButton: true,
                     confirmButtonText: 'スキップする',
+                    background: 'lightgray',
+                    backdrop: `rgba(0,0,0,0)`
                 };
-
-                Swal.fire(options).then(function (value) {
-                    $('form').submit();
-                })
+            } else {
+                options = {
+                    position: 'bottom',
+                    showConfirmButton: true,
+                    confirmButtonText: '相手のターンへ',
+                    background: 'lightgray',
+                    backdrop: `rgba(0,0,0,0)`,
+                    showClass: {}
+                };
             }
+
+            Swal.fire(options).then(function () {
+                $('form').submit();
+            })
         })
     </script>
 @endsection

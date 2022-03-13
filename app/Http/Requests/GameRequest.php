@@ -24,10 +24,6 @@ class GameRequest extends AbstractRequest
     public function rules()
     {
          return match ($this->getCurrentActionMethod()) {
-            'process' => [
-                    'x'     => 'required',
-                    'y'     => 'required',
-                ],
             default => []
         };
     }
@@ -52,9 +48,12 @@ class GameRequest extends AbstractRequest
         return [];
     }
 
-    #[ArrayShape(['x' => "mixed", 'y' => "mixed"])]
     public function getProcessParams()
     {
+        if (!empty($this->input('action'))) {
+            return null;
+        }
+
         $params = [
             'x' => $this->input('x'),
             'y' => $this->input('y'),

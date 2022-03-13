@@ -23,12 +23,12 @@ class GameProcessUsecase
      * @param $playerMove
      * @return array{success: bool, data: Game, message: string}
      */
-    public function process($gameId, $playerMove): array
+    public function handle($gameId, $playerMove): array
     {
         $game = $this->gameRepository->findById($gameId);
         try {
             // TODO: moveとpositionの定義が曖昧なので整理
-            $movedPosition = Position::make($playerMove);
+            $movedPosition = !empty($playerMove) ? Position::make($playerMove) : null;
             $processedGame = $game->process($movedPosition);
             // 保存
             $this->gameRepository->save($processedGame);
@@ -38,7 +38,6 @@ class GameProcessUsecase
                 'success' => true,
                 'data' => $processedGame,
                 'message' => '',
-                'isPlayableTurn' => !$processedGame->getTurn()->mustSkip()
             ];
         } catch (\Exception $e) {
             return [

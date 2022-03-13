@@ -32,7 +32,7 @@ class GameController extends BaseController
         return view('game.board', [
             'board' => $result['data']->getTurn()->getBoard()->toArray(),
             'statusMessage' => $result['data']->getTurn()->getPlayableColor()->toCode() === Color::COLOR_CODE_WHITE ? '◯' : '●',
-            'action' => $result['data']->getTurn()->mustSkip() ? '01' : '',
+            'action' => $result['action'], // TODO: ユーザーイベント発行とかにする
         ]);
     }
 
@@ -53,7 +53,8 @@ class GameController extends BaseController
         $gameID = $request->input('game_id');
         $playerMove = $request->getProcessParams();
 
-        $result = $gameProcessUsecase->process($gameID, $playerMove);
+        $result = $gameProcessUsecase->handle($gameID, $playerMove);
+
         if (!$result['success']) {
             session()->flash('error', $result['message']);
         }
@@ -72,9 +73,12 @@ class GameController extends BaseController
             return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
         }
 
+        $winner = $result['data']->getWinner();
+
         return view('game.board', [
             'board' => $result['data']->getTurn()->getBoard()->toArray(),
-            'statusMessage' => $result['data']->getWinner()?->getName() . 'の勝利！',
+            'statusMessage' => !empty($winner) ? $winner->getName() . 'の勝利！' : '引き分け！',
+            'action' => null
         ]);
     }
 }

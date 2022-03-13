@@ -13,4 +13,6 @@ interface PlayerInterface
 
     public function isPlayer(): bool;
     public function isBot(): bool;
+
+    public function equals(PlayerInterface $player): bool;
 }

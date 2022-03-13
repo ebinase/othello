@@ -73,15 +73,20 @@ class Participants
 
     public function players(): array
     {
-        return array_filter($this->participants, function ($player) {
-            return $player->isPlayer();
+        return array_filter($this->participants, function ($participant) {
+            return $participant->isPlayer();
         });
     }
 
     public function bots(): array
     {
-        return array_filter($this->participants, function ($player) {
-            return $player->isBot();
+        return array_filter($this->participants, function ($participant) {
+            return $participant->isBot();
         });
+    }
+
+    public function findByColor(Color $color): ?PlayerInterface
+    {
+        return $this->participants[$color->toCode()] ?? null;
     }
 }

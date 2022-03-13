@@ -39,4 +39,9 @@ class BasePlayer implements PlayerInterface
     {
         return  str_starts_with($this->type, self::PLAYER_TYPE_PREFIX_PLAYER);
     }
+
+    public function equals(PlayerInterface $player): bool
+    {
+        $this->id === $player->getid();
+    }
 }

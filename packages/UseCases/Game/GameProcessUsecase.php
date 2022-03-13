@@ -38,6 +38,7 @@ class GameProcessUsecase
                 'success' => true,
                 'data' => $processedGame,
                 'message' => '',
+                'isPlayableTurn' => !$processedGame->getTurn()->mustSkip()
             ];
         } catch (\Exception $e) {
             return [

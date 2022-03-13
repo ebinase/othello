@@ -32,6 +32,7 @@ class GameController extends BaseController
         return view('game.board', [
             'board' => $result['data']->getTurn()->getBoard()->toArray(),
             'statusMessage' => $result['data']->getTurn()->getPlayableColor()->toCode() === Color::COLOR_CODE_WHITE ? '◯' : '●',
+            'action' => $result['data']->getTurn()->mustSkip() ? '01' : '',
         ]);
     }
 

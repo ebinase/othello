@@ -78,4 +78,9 @@ class GameMode
     {
         return self::$modeNameList[$this->modeCode];
     }
+
+    public function toCode(): string
+    {
+        return $this->modeCode;
+    }
 }

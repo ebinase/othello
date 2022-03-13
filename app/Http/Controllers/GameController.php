@@ -36,11 +36,16 @@ class GameController extends BaseController
         ]);
     }
 
-    public function start(GameInitializeUsecase $initializeUsecase)
+    public function start(GameRequest $request, GameInitializeUsecase $initializeUsecase)
     {
-        $game = $initializeUsecase->initialize();
+        $gameMode = $request->route()->parameter('game_mode');
+        $result = $initializeUsecase->initialize($gameMode);
 
-        return redirect()->route('game.show', ['game_id' => $game->getId()]);
+        if (!$result['success']) {
+            return redirect()->route('top');
+        }
+
+        return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
     }
 
     public function process(GameRequest $request, GameProcessUsecase $gameProcessUsecase)

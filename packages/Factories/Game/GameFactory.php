@@ -10,30 +10,30 @@ use Packages\Models\Participant\ParticipantInterface;
 
 class GameFactory
 {
-    public static function makeVsPlayerGame(ParticipantInterface $whitePlayer, ParticipantInterface $blackPlayer): Game
+    public static function makeVsPlayerGame(ParticipantInterface $whiteParticipant, ParticipantInterface $blackParticipant): Game
     {
         return Game::init(
             Str::uuid(),
             GameMode::vsPlayerMode(),
-            Participants::make($whitePlayer, $blackPlayer)
+            Participants::make($whiteParticipant, $blackParticipant)
         );
     }
 
-    public static function makeVsBotGame(ParticipantInterface $whitePlayer, ParticipantInterface $blackPlayer): Game
+    public static function makeVsBotGame(ParticipantInterface $whiteParticipant, ParticipantInterface $blackParticipant): Game
     {
         return Game::init(
             Str::uuid(),
             GameMode::vsBotMode(),
-            Participants::make($whitePlayer, $blackPlayer)
+            Participants::make($whiteParticipant, $blackParticipant)
         );
     }
 
-    public static function makeViewingGame(ParticipantInterface $whitePlayer, ParticipantInterface $blackPlayer): Game
+    public static function makeViewingGame(ParticipantInterface $whiteParticipant, ParticipantInterface $blackParticipant): Game
     {
         return Game::init(
             Str::uuid(),
             GameMode::viewingMode(),
-            Participants::make($whitePlayer, $blackPlayer)
+            Participants::make($whiteParticipant, $blackParticipant)
         );
     }
 }

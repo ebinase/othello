@@ -23,19 +23,13 @@ class GameRequest extends AbstractRequest
      */
     public function rules()
     {
-        $rules = [];
-        switch($this->getCurrentActionMethod()) {
-            case 'process':
-                $rules = [
+         return match ($this->getCurrentActionMethod()) {
+            'process' => [
                     'x'     => 'required',
                     'y'     => 'required',
-                ];
-                break;
-
-            default:
-                break;
-        }
-        return $rules;
+                ],
+            default => []
+        };
     }
 
     /**

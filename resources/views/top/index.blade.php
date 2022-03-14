@@ -73,7 +73,7 @@
     <div class="flex justify-center mt-4 sm:items-center sm:justify-between">
         <div class="text-center text-sm text-gray-500 sm:text-left">
             <div class="flex items-center">
-                <a href="https://github.com/ebinase/othello" class="ml-1 underline">
+                <a href="https://github.com/ebinase/othello" class="ml-1 underline" target="_blank">
                     <!--copyright https://www.iconfinder.com/icons/6214715/github_logo_icon-->
                     <img src="https://cdn4.iconfinder.com/data/icons/social-media-and-logos-12/32/Logo_Github-48.png" alt="" height="20px">
                 </a>

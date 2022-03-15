@@ -1,4 +1,4 @@
-# Laravel Othello
+# Othello on Laravel with DDD
 
 [![LaravelTest](https://github.com/ebinase/othello/actions/workflows/laravel.yml/badge.svg)](https://github.com/ebinase/othello/actions/workflows/laravel.yml)
 ![Issues](https://img.shields.io/github/issues/ebinase/othello)
@@ -6,15 +6,23 @@
 
 <img src="https://3.bp.blogspot.com/-hRiScUsWZHk/VA7mVasETMI/AAAAAAAAmOg/OHTyO2Zjxck/s800/othello_game.png" width="20%">
 
-## 概要
+## :bookmark: 概要
 オセロゲームをドメイン駆動設計を中心に作成してみる。
 
-## 技術要件
+## :rocket: ステータス
+
+| タイプ     | ステータス     |
+| ---      | ---       |
+| ページ公開 | :new: IP制限状態で公開中 |
+| 開発 | バックエンドの主要機能は開発済み。今後はReactによるフロント開発 + バックエンドAPI開発へ |
+
+
+## :wrench: 技術要件
 * php8.0以上
 * composer
 * doocker
 
-## インストール
+## :computer: インストール
 ### 開発環境
 Composerインストール
 
@@ -33,7 +41,7 @@ Laravel sail実行(コンテナ起動)
 
 ```./vendor/bin/sail artisan key:generate```
 
-## 技術等(予定)
+## :books: 技術等(予定)
 ### バックエンド
 * php + Laravel
 

@@ -21,11 +21,11 @@ class GameController extends BaseController
 
         if (!$result['success']) {
             // TODO: エラー文言追加
-            return redirect()->route('top');
+            return to_route('top');
         }
 
         if ($result['isFinished']) {
-            return redirect()->route('game.showResult', ['game_id' => $result['data']->getId()]);
+            return to_route('game.showResult', ['game_id' => $result['data']->getId()]);
         }
 
         // TODO: viewModelに詰め替え
@@ -42,10 +42,10 @@ class GameController extends BaseController
         $result = $initializeUsecase->initialize($gameMode);
 
         if (!$result['success']) {
-            return redirect()->route('top');
+            return to_route('top');
         }
 
-        return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
+        return to_route('game.show', ['game_id' => $result['data']->getId()]);
     }
 
     public function process(GameRequest $request, GameProcessUsecase $gameProcessUsecase)
@@ -58,7 +58,7 @@ class GameController extends BaseController
         if (!$result['success']) {
             session()->flash('error', $result['message']);
         }
-        return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
+        return to_route('game.show', ['game_id' => $result['data']->getId()]);
     }
 
     public function showResult(Request $request, GameShowBoardUsecase $showBoardUsecase)
@@ -70,7 +70,7 @@ class GameController extends BaseController
 
         if (!$result['isFinished']) {
             session()->flash('error', 'まだ諦めるには早いかも');
-            return redirect()->route('game.show', ['game_id' => $result['data']->getId()]);
+            return to_route('game.show', ['game_id' => $result['data']->getId()]);
         }
 
         $winner = $result['data']->getWinner();

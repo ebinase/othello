@@ -19,9 +19,8 @@
 
 ## :wrench: 技術要件
 ### 本番
-* php8.0以上
-* Laravel9
-* composer
+* PHP 8.1
+* Laravel 9
 
 ### 開発環境
 * doocker
@@ -85,7 +84,7 @@ $ ./vendor/bin/sail stop # バックグラウンド実行をしていた場合
 
 ## :books: 技術等(予定)
 ### バックエンド
-* php + Laravel
+* PHP + Laravel
 
 ### フロントエンド
 * TypeScript

@@ -81,7 +81,7 @@
         </div>
 
         <div class="ml-4 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
-            Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+            Laravel v{{ explode('.', Illuminate\Foundation\Application::VERSION)[0] }} (PHP v{{ explode('.', PHP_VERSION)[0] }})
         </div>
     </div>
 @endsection

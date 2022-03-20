@@ -9,6 +9,6 @@ class RandomCalculator
     public static function calculate(array $positions): Position
     {
         $key = array_rand($positions);
-        return Position::make($positions[$key]);
+        return $positions[$key];
     }
 }

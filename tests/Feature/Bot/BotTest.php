@@ -4,6 +4,7 @@ namespace Tests\Feature\Bot;
 
 use Packages\Models\Board\Position\Position;
 use Packages\Models\Bot\BotFactory;
+use Packages\Models\Bot\BotType;
 use Packages\Models\Bot\Levels\LevelFactory;
 use Packages\Models\Turn\Turn;
 use Tests\TestCase;
@@ -11,14 +12,21 @@ use Tests\TestCase;
 class BotTest extends TestCase
 {
     /** @test */
-    public function ボット実行()
+    public function 全てのボットが期待した通りの動作をする()
     {
         // given:
-        $bot = BotFactory::make(BotFactory::BOT_ID_RANDOM);
         $turn = Turn::init();
+        foreach (BotType::cases() as $type) {
+            $bots[] = BotFactory::make($type);
+        }
         // when:
-        $result = $bot->run($turn);
+        foreach ($bots as $bot) {
+            $results[] = $bot->run($turn);
+        }
+
         // then:
-        self::assertTrue($result instanceof Position);
+        foreach ($results as $result) {
+            self::assertTrue($result instanceof Position);
+        }
     }
 }

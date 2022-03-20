@@ -112,8 +112,8 @@ class Board
     public function playablePositions(Color $color): array
     {
         if (empty($this->flipScores)) $this->analyze($color);
-
-        return array_keys($this->flipScores); // ひっくり返せる場所のidだけ返す
+        // ひっくり返せるPositionだけ返す
+        return array_map(fn($positionId) => Position::make($positionId), array_keys($this->flipScores));
     }
 
     private function getFlipScore(array $position, Color $color): int

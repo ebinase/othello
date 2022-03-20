@@ -5,6 +5,7 @@ namespace Packages\Models\Game;
 use Packages\Models\Board\Color\Color;
 use Packages\Models\Board\Position\Position;
 use Packages\Models\Bot\BotFactory;
+use Packages\Models\Bot\BotType;
 use Packages\Models\Participant\ParticipantInterface;
 use Packages\Models\Turn\Turn;
 
@@ -72,7 +73,8 @@ class Game
             if (isset($playerMove)) throw new \RuntimeException('ボットのターンにプレイヤーが行動することはできません。');
 
             // ボットを起動して置く場所を算出する
-            $bot = BotFactory::make($this->getCurrentPlayer()->getId());
+            $botType = BotType::from($this->getCurrentPlayer()->getId());
+            $bot = BotFactory::make($botType);
             $playerMove = $bot->run($this->turn);
         }
 

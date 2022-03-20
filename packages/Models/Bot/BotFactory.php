@@ -2,26 +2,18 @@
 
 namespace Packages\Models\Bot;
 
-use Packages\Models\Bot\Calculators\CalculatorInterface;
-use Packages\Models\Bot\Levels\LevelFactory;
-use Packages\Models\Turn\Turn;
+use Packages\Models\Bot\Bots\RandomBot;
+use Packages\Models\Bot\Bots\SelfOpennessBot;
 
 class BotFactory
 {
-    const BOT_ID_RANDOM = '01';
-
-    /**
-     * @var array<string, BotInterface>
-     */
-    private static array $botList = [
-        self::BOT_ID_RANDOM => \Packages\Models\Bot\Bots\RandomBot::class
-    ];
-
-    public static function make(string $botId): BotInterface
+    public static function make(BotType $botType): BotInterface
     {
-        $botClass = self::$botList[$botId];
+        $botClass = match ($botType) {
+            BotType::RANDOM => RandomBot::class,
+            BotType::SELF_OPENNESS => SelfOpennessBot::class
+        };
 
-        return app()->make($botClass, ['id' => $botId]);
+        return new $botClass;
     }
-
 }

@@ -3,7 +3,7 @@
 namespace Packages\UseCases\Game;
 
 use Packages\Factories\Game\GameFactory;
-use Packages\Models\Bot\BotFactory;
+use Packages\Models\Bot\BotType;
 use Packages\Models\Game\Game;
 use Packages\Models\Game\GameMode;
 use Packages\Models\Participant\BotParticipant;
@@ -36,11 +36,11 @@ class GameInitializeUsecase
                 $newGame = GameFactory::makeVsPlayerGame($whitePlayer, $blackPlayer);
             } elseif ($gameMode->isVsBotMode()) {
                 $whitePlayer = new Player('01', '白プレイヤー');
-                $blackPlayer = new BotParticipant(BotFactory::BOT_ID_RANDOM, '黒プレイヤー');
+                $blackPlayer = new BotParticipant(BotType::SELF_OPENNESS->value, '黒プレイヤー');
                 $newGame = GameFactory::makeVsBotGame($whitePlayer, $blackPlayer);
             } else {
-                $whitePlayer = new BotParticipant('01', '白プレイヤー');
-                $blackPlayer = new BotParticipant(BotFactory::BOT_ID_RANDOM, '黒プレイヤー');
+                $whitePlayer = new BotParticipant(BotType::RANDOM->value, 'ランダムボット');
+                $blackPlayer = new BotParticipant(BotType::SELF_OPENNESS->value, '周辺開放度ボット');
                 $newGame = GameFactory::makeViewingGame($whitePlayer, $blackPlayer);
             }
 

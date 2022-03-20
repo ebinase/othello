@@ -9,7 +9,7 @@ use Packages\Models\Bot\Calculators\CalculatorInterface;
 use Packages\Models\Common\Matrix\Matrix;
 use Packages\Models\Turn\Turn;
 
-class SurroundingsOpennessCalculator
+class SelfOpennessCalculator
 {
     /**
      * @param Turn $turn
@@ -22,13 +22,13 @@ class SurroundingsOpennessCalculator
 
        $result = [];
        foreach ($board->playablePositions($color) as $position) {
-           $openness = self::getSurroundingsOpenness($board, $position, $color);
+           $openness = self::getSelfOpenness($board, $position, $color);
            $result[$openness][] = $position;
        }
        return $result;
    }
 
-    public static function getSurroundingsOpenness(Board $board, Position $targetPosition, Color $color): int
+    public static function getSelfOpenness(Board $board, Position $targetPosition, Color $color): int
     {
         // 置けない場所の場合は開放度0
         if (!$board->isValid($targetPosition, $color)) return 0;

@@ -47,7 +47,7 @@ body:
         - ボット対戦モード
         - 観戦モード
     validations:
-      required: true
+      required: false
   - type: dropdown
     id: browsers
     attributes:

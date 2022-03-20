@@ -113,6 +113,7 @@ class Board
     {
         if (empty($this->flipScores)) $this->analyze($color);
         // ひっくり返せるPositionだけ返す
+        // TODO: ここで処理が重くなっている可能性があるので検証する
         return array_map(fn($positionId) => Position::make($positionId), array_keys($this->flipScores));
     }
 

@@ -12,7 +12,7 @@ class SelfOpennessBot implements BotInterface
 {
     public function run(Turn $turn): Position
     {
-        // 周囲の空きマスの数 => 座標、の形式で結果を取得
+        // 周囲の空きマスの数 => Position[]、の形式で結果を取得
         $result = SelfOpennessCalculator::calculate($turn);
         // 最小の周辺開放度を取得
         $minOpenness = min(array_keys($result));

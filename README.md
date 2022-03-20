@@ -13,7 +13,7 @@
 
 | タイプ     | ステータス     |
 | ---      | ---       |
-| ページ公開 | :new: IP制限状態で公開中 |
+| ページ公開 | 公開中 |
 | 開発 | バックエンドの主要機能は開発済み。今後はReactによるフロント開発 + バックエンドAPI開発へ |
 
 
@@ -27,13 +27,13 @@
 
 ## :computer: インストール
 ### 開発環境
-Laravel公式の開発ツール、[sail](https://readouble.com/laravel/8.x/ja/sail.html)を使用します。
+Laravel公式の開発ツール、[Laravel Sail](https://readouble.com/laravel/8.x/ja/sail.html)を使用します。
 
 #### クローン
 
 ```shell
 # HTTPの場合
-$ git clone https://github.com/ebinase/nextjs-tutorial.git
+$ git clone https://github.com/ebinase/othello.git
 ```
 
 #### パッケージインストール
@@ -48,37 +48,38 @@ $ docker run --rm \
     composer install --ignore-platform-reqs
 ```
 
+#### コンテナの起動
+sailコマンドで起動
+
+```shell
+$ ./vendor/bin/sail up
+$ ./vendor/bin/sail up -d # バックグラウンド実行する場合
+```
+
 #### .envファイルセットアップ
 
 ```shell
 # 本番用ファイル作成
 $ cp .env.example .env
 
-# 設定
-$ vim .env   # 設定内容は下記参照
-
 # アプリケーションキー発行
 $ ./vendor/bin/sail artisan key:generate
 ```
-.envの最低限の設定例
 
-```shell
-# 以下の箇所を書き換える
-APP_ENV=production
-APP_DEBUG=false
+#### 開発サーバへのアクセス
+http://0.0.0.0:80 にアクセスすることで動作確認できます。
+
+アクセスできない場合はコンテナ起動時のメッセージを参照してください！
+
+> Starting Laravel development server: http://0.0.0.0:80
+
+#### コンテナの終了
+
+`ctrl` + `c`
+
 ```
-
-#### Laravel sail実行
-コンテナの起動・終了
-
-```shell
-# 起動
-$ ./vendor/bin/sail up
-$ ./vendor/bin/sail up -d # バックグラウンド実行
-
-# 終了
-# ctrl + c
-$ ./vendor/bin/sail stop # バックグラウンド実行をしていた場合
+# バックグラウンド実行をしていた場合
+$ ./vendor/bin/sail stop
 ```
 
 

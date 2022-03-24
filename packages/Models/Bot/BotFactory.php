@@ -3,7 +3,7 @@
 namespace Packages\Models\Bot;
 
 use Packages\Models\Bot\Bots\RandomBot;
-use Packages\Models\Bot\Bots\SelfOpennessBot;
+use Packages\Models\Bot\Bots\SingleOpennessBot;
 
 class BotFactory
 {
@@ -11,7 +11,7 @@ class BotFactory
     {
         $botClass = match ($botType) {
             BotType::RANDOM => RandomBot::class,
-            BotType::SELF_OPENNESS => SelfOpennessBot::class
+            BotType::SINGLE_OPENNESS => SingleOpennessBot::class
         };
 
         return new $botClass;

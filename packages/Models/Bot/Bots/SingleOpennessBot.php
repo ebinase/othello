@@ -8,7 +8,7 @@ use Packages\Models\Bot\Calculators\Openness\SelfOpennessCalculator;
 use Packages\Models\Bot\Calculators\Random\RandomCalculator;
 use Packages\Models\Turn\Turn;
 
-class SelfOpennessBot implements BotInterface
+class SingleOpennessBot implements BotInterface
 {
     public function run(Turn $turn): Position
     {

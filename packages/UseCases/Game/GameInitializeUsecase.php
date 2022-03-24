@@ -36,11 +36,11 @@ class GameInitializeUsecase
                 $newGame = GameFactory::makeVsPlayerGame($whitePlayer, $blackPlayer);
             } elseif ($gameMode->isVsBotMode()) {
                 $whitePlayer = new Player('01', '白プレイヤー');
-                $blackPlayer = new BotParticipant(BotType::SELF_OPENNESS->value, '黒プレイヤー');
+                $blackPlayer = new BotParticipant(BotType::SINGLE_OPENNESS->value, '黒プレイヤー');
                 $newGame = GameFactory::makeVsBotGame($whitePlayer, $blackPlayer);
             } else {
                 $whitePlayer = new BotParticipant(BotType::RANDOM->value, 'ランダムボット');
-                $blackPlayer = new BotParticipant(BotType::SELF_OPENNESS->value, '周辺開放度ボット');
+                $blackPlayer = new BotParticipant(BotType::SINGLE_OPENNESS->value, '周辺開放度ボット');
                 $newGame = GameFactory::makeViewingGame($whitePlayer, $blackPlayer);
             }
 

@@ -8,7 +8,7 @@
     </div>
 
     <div class="flex justify-center">
-        <form action="{{ route('game.process') }}" method="post">
+        <form id="board-form" action="{{ route('game.process') }}" method="post">
             <input id="action" type="hidden" name="action" value="{{ $action }}">
             <input id="x" type="hidden" name="x" value="">
             <input id="y" type="hidden" name="y" value="">
@@ -43,7 +43,7 @@
                 const [x, y] = [$(this).data('position-x'), $(this).data('position-y')];
                 $('#x').val(x);
                 $('#y').val(y);
-                $('form').submit();
+                $('#board-form').submit();
             });
         });
 

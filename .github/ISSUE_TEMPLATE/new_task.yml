@@ -52,7 +52,7 @@ body:
     validations:
       required: false
   - type: markdown
-      id: special-thanks
+    id: special-thanks
     attributes:
       value: |
         こちらの記事をベースに作成。

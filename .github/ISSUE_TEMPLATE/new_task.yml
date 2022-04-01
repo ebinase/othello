@@ -1,0 +1,57 @@
+name: 新規タスク(New Task)
+description: 新規タスク用issueを作成する
+title: "[task]: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        こちらの記事をベースに作成。
+        https://qiita.com/suzuki-hoge/items/3a568dff36fd981082ba#git-template-for-issue-issue%E4%BD%9C%E6%88%90%E6%99%82%E3%81%AE%E8%AA%AC%E6%98%8E%E6%AC%84%E3%81%AB%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B
+  - type: textarea
+    id: purpose
+    attributes:
+      label: 目的
+      description: このissueの目的を記入してください。
+      placeholder: 
+    validations:
+      required: true
+  - type: textarea
+    id: task_list
+    attributes:
+      label: タスクリスト
+      description: このタスクの達成に必要な作業を具体的に列挙してください。
+      value: |
+        + [ ] 
+    validations:
+      required: false
+  - type: textarea
+    id: definition_of_done
+    attributes:
+      label: Doneの定義
+      description: このタスクが「完了した」と言える状態を教えてください。
+    validations:
+      required: false
+  - type: textarea
+    id: notice
+    attributes:
+      label: 留意事項
+      value: |
+        * 
+    validations:
+      required: false
+  - type: textarea
+    id: consideration
+    attributes:
+      label: 検討事項
+      value: |
+        * 
+    validations:
+      required: false
+  - type: textarea
+    id: reference
+    attributes:
+      label: 参考
+      description: 関連する資料やissueがあれば教えてください。
+    validations:
+      required: false

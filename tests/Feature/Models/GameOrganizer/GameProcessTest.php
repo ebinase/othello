@@ -10,7 +10,7 @@ use Packages\Models\GameOrganizer\Participants;
 use Packages\Models\Othello\Board\Board;
 use Packages\Models\Othello\Board\Color\Color;
 use Packages\Models\Othello\Board\Position\Position;
-use Packages\Models\Othello\Turn\Turn;
+use Packages\Models\Othello\Othello\Othello;
 use Tests\TestCase;
 
 class GameProcessTest extends TestCase
@@ -55,7 +55,7 @@ class GameProcessTest extends TestCase
         $blackPlayer = new Player('02', 'player_black');
         $participants = Participants::make($whitePlayer, $blackPlayer);
         $status = GameStatus::finish();
-        $turn = Turn::init();
+        $turn = Othello::init();
 
         $game = Game::make($gameId, $mode, $participants, $status, $turn);
 

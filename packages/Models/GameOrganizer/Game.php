@@ -7,7 +7,7 @@ use Packages\Models\Bot\BotType;
 use Packages\Models\GameOrganizer\Participant\ParticipantInterface;
 use Packages\Models\Othello\Board\Color\Color;
 use Packages\Models\Othello\Board\Position\Position;
-use Packages\Models\Othello\Turn\Turn;
+use Packages\Models\Othello\Othello\Othello;
 
 class Game
 {
@@ -16,7 +16,7 @@ class Game
         private GameMode     $gameMode,
         private Participants $participants,
         private GameStatus   $gameStatus,
-        private Turn         $turn,
+        private Othello      $turn,
     )
     {
         // ゲームモードと実際の参加者の組み合わせをチェック
@@ -49,11 +49,11 @@ class Game
             gameMode:     $gameMode,
             participants: $participants,
             gameStatus:   GameStatus::playing(),
-            turn:         Turn::init()
+            turn:         Othello::init()
         );
     }
 
-    public static function make(string $id, GameMode $gameMode, Participants $participants, GameStatus $status, Turn $turn)
+    public static function make(string $id, GameMode $gameMode, Participants $participants, GameStatus $status, Othello $turn)
     {
         return new Game(
             id:           $id,
@@ -169,9 +169,9 @@ class Game
     }
 
     /**
-     * @return Turn
+     * @return Othello
      */
-    public function getTurn(): Turn
+    public function getTurn(): Othello
     {
         return $this->turn;
     }

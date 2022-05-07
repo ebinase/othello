@@ -6,7 +6,7 @@ use Packages\Models\Common\Matrix\Matrix;
 use Packages\Models\Othello\Board\Board;
 use Packages\Models\Othello\Board\Color\Color;
 use Packages\Models\Othello\Board\Position\Position;
-use Packages\Models\Othello\Turn\Turn;
+use Packages\Models\Othello\Othello\Othello;
 use Tests\TestCase;
 
 class TurnTest extends TestCase
@@ -17,7 +17,7 @@ class TurnTest extends TestCase
         // given:
 
         // when:
-        $turn = Turn::init();
+        $turn = Othello::init();
 
         // then:
         self::assertSame(1, $turn->getTurnNumber(), 'ターン数は1から始まる');
@@ -30,7 +30,7 @@ class TurnTest extends TestCase
     public function ターン更新()
     {
         // given:
-        $turn = Turn::init(); // 1ターン目
+        $turn = Othello::init(); // 1ターン目
         $move = Position::make([4, 6]); // 先行プレイヤーの1ターン目の指した場所
         // when:
         $next = $turn->next($move); // ターンを進める
@@ -47,7 +47,7 @@ class TurnTest extends TestCase
     public function おけない場所を指定された時は例外を出す()
     {
         // given:
-        $turn = Turn::init(); // 1ターン目
+        $turn = Othello::init(); // 1ターン目
         // when:
         $move = Position::make([1, 1]); // おけない場所
         // then:
@@ -65,8 +65,8 @@ class TurnTest extends TestCase
         $fullBoard = Board::make(Matrix::init(8, 8, Color::white()->toCode())->toArray());
 
         // when:
-        $firstTurn = Turn::init();
-        $lastTurn = Turn::make(20, Color::white(), $fullBoard, 0);
+        $firstTurn = Othello::init();
+        $lastTurn = Othello::make(20, Color::white(), $fullBoard, 0);
         // then:
         self::assertSame(false, $firstTurn->finishedLastTurn());
         self::assertSame(true, $lastTurn->finishedLastTurn());
@@ -79,9 +79,9 @@ class TurnTest extends TestCase
         $position = Position::make([4, 6]);
 
         // when:
-        $turnSkip0 = Turn::make(20, Color::white(), Board::init(), 0);
-        $turnSkip1 = Turn::make(20, Color::white(), Board::init(), 1);
-        $turnSkip2 = Turn::make(20, Color::white(), Board::init(), 2);
+        $turnSkip0 = Othello::make(20, Color::white(), Board::init(), 0);
+        $turnSkip1 = Othello::make(20, Color::white(), Board::init(), 1);
+        $turnSkip2 = Othello::make(20, Color::white(), Board::init(), 2);
 
         // then:
         // isContinuable()テスト
@@ -118,7 +118,7 @@ class TurnTest extends TestCase
         $board = Board::make($board);
 
         // when:
-        $turn1 = Turn::make(1, Color::black(), $board, 0);
+        $turn1 = Othello::make(1, Color::black(), $board, 0);
         $turn2 = $turn1->next();
         $turn3 = $turn2->next();
 
@@ -154,7 +154,7 @@ class TurnTest extends TestCase
 
         // when:
         // 黒のターンとして生成
-        $turn1 = Turn::make(1, Color::black(), $board, 0);
+        $turn1 = Othello::make(1, Color::black(), $board, 0);
         // 黒が行動(スキップ)
         $turn2 = $turn1->next();
         // 白が行動
@@ -172,7 +172,7 @@ class TurnTest extends TestCase
     {
         // given:
         // when:
-        $turn = Turn::init(); // 1ターン目
+        $turn = Othello::init(); // 1ターン目
         // then:
         $this->expectException(\Exception::class);
         // 置ける場所があるのに場所指定なしで更新した場合

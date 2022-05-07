@@ -8,7 +8,7 @@ use Packages\Models\GameOrganizer\GameStatus;
 use Packages\Models\GameOrganizer\Participant\BotParticipant;
 use Packages\Models\GameOrganizer\Participant\Player;
 use Packages\Models\GameOrganizer\Participants;
-use Packages\Models\Othello\Turn\Turn;
+use Packages\Models\Othello\Othello\Othello;
 use Tests\TestCase;
 
 class GameFactoryTest extends TestCase
@@ -25,7 +25,7 @@ class GameFactoryTest extends TestCase
         // then:
         self::assertTrue(\Str::isUuid($game->getId()));
         self::assertTrue($game->getStatus()->toCode() === GameStatus::GAME_STATUS_PLAYING);
-        self::assertTrue($game->getTurn() == Turn::init());
+        self::assertTrue($game->getTurn() == Othello::init());
     }
 
     /** @test */

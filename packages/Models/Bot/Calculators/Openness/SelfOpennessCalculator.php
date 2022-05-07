@@ -7,15 +7,15 @@ use Packages\Models\Common\Matrix\Matrix;
 use Packages\Models\Othello\Board\Board;
 use Packages\Models\Othello\Board\Color\Color;
 use Packages\Models\Othello\Board\Position\Position;
-use Packages\Models\Othello\Turn\Turn;
+use Packages\Models\Othello\Othello\Othello;
 
 class SelfOpennessCalculator
 {
     /**
-     * @param Turn $turn
+     * @param Othello $turn
      * @return array{openness:int, positions:array<Position>}
      */
-    public static function calculate(Turn $turn): array
+    public static function calculate(Othello $turn): array
    {
        $board = $turn->getBoard();
        $color = $turn->getPlayableColor();

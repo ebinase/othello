@@ -12,7 +12,7 @@ use Packages\Models\Othello\Board\Board;
 use Packages\Models\Othello\Board\Color\Color;
 use Packages\Models\Othello\Board\Position\Position;
 use Packages\Models\Othello\Board\Position\PositionConverterTrait;
-use Packages\Models\Othello\Turn\Turn;
+use Packages\Models\Othello\Othello\Othello;
 
 class OthelloCommand extends Command
 {
@@ -110,7 +110,7 @@ class OthelloCommand extends Command
             ];
         }
 
-        $turn = Turn::init();
+        $turn = Othello::init();
         while (!$turn->finishedLastTurn() && $turn->isContinuable()) { // 最終ターンが終了しておらず、プレイが継続可能な状態の時
             $this->info($turn->getTurnNumber() . 'ターン目');
 

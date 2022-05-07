@@ -6,11 +6,11 @@ use Packages\Models\Bot\BotInterface;
 use Packages\Models\Bot\Calculators\Openness\SelfOpennessCalculator;
 use Packages\Models\Bot\Calculators\Random\RandomCalculator;
 use Packages\Models\Othello\Board\Position\Position;
-use Packages\Models\Othello\Turn\Turn;
+use Packages\Models\Othello\Othello\Othello;
 
 class SelfOpennessBot implements BotInterface
 {
-    public function run(Turn $turn): Position
+    public function run(Othello $turn): Position
     {
         // 周囲の空きマスの数 => Position[]、の形式で結果を取得
         $result = SelfOpennessCalculator::calculate($turn);

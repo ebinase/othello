@@ -1,12 +1,12 @@
 <?php
 
-namespace Packages\Models\Othello\Turn;
+namespace Packages\Models\Othello\Othello;
 
 use Packages\Models\Othello\Board\Board;
 use Packages\Models\Othello\Board\Color\Color;
 use Packages\Models\Othello\Board\Position\Position;
 
-class Turn
+class Othello
 {
     // スキップの連続を許容する回数
     const MAX_CONTINUOUS_SKIP_COUNT = 1;
@@ -23,9 +23,9 @@ class Turn
         }
     }
 
-    public static function init(): Turn
+    public static function init(): Othello
     {
-        return new Turn(
+        return new Othello(
             turnNumber:    1,
             playableColor: Color::white(),
             board:         Board::init(),
@@ -33,9 +33,9 @@ class Turn
         );
     }
 
-    public static function make(int $turnNumber, Color $playableColor, Board $board, int $skipCount): Turn
+    public static function make(int $turnNumber, Color $playableColor, Board $board, int $skipCount): Othello
     {
-        return new Turn(
+        return new Othello(
             turnNumber:    $turnNumber,
             playableColor: $playableColor,
             board:         $board,
@@ -50,7 +50,7 @@ class Turn
      * 盤面：コマを置いて更新。スキップの場合は現在のものをそのまま設定
      * 連続スキップ数：スキップ時+1。スキップしない場合は0にリセット
      */
-    public function next(?Position $position = null): Turn
+    public function next(?Position $position = null): Othello
     {
         // ゲームが終了している場合
         if ($this->finishedLastTurn()) throw new \RuntimeException();
@@ -59,7 +59,7 @@ class Turn
 
         // スキップするときは盤面はそのままで、スキップカウントを加算する
         if ($this->mustSkip()) {
-            return new Turn(
+            return new Othello(
                 $this->turnNumber + 1,
                 $this->playableColor->opposite(),
                 $this->board,
@@ -73,7 +73,7 @@ class Turn
         // 指定された場所にコマを置くことができるか確認
         if (!$this->board->isValid($position, $this->playableColor)) throw new \Exception('指定された場所に置くことができません。');
 
-        return new Turn(
+        return new Othello(
             $this->turnNumber + 1,
             $this->playableColor->opposite(),
             $this->board->update($position, $this->playableColor),

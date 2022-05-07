@@ -6,7 +6,7 @@ use Packages\Models\Bot\BotFactory;
 use Packages\Models\Bot\BotType;
 use Packages\Models\Bot\Levels\LevelFactory;
 use Packages\Models\Othello\Board\Position\Position;
-use Packages\Models\Othello\Turn\Turn;
+use Packages\Models\Othello\Othello\Othello;
 use Tests\TestCase;
 
 class BotTest extends TestCase
@@ -15,7 +15,7 @@ class BotTest extends TestCase
     public function 全てのボットが期待した通りの動作をする()
     {
         // given:
-        $turn = Turn::init();
+        $turn = Othello::init();
         foreach (BotType::cases() as $type) {
             $bots[] = BotFactory::make($type);
         }

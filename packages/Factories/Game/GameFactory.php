@@ -3,10 +3,10 @@
 namespace Packages\Factories\Game;
 
 use Illuminate\Support\Str;
-use Packages\Models\Game\Game;
-use Packages\Models\Game\GameMode;
-use Packages\Models\Game\Participants;
-use Packages\Models\Participant\ParticipantInterface;
+use Packages\Models\GameOrganizer\Game;
+use Packages\Models\GameOrganizer\GameMode;
+use Packages\Models\GameOrganizer\Participant\ParticipantInterface;
+use Packages\Models\GameOrganizer\Participants;
 
 class GameFactory
 {

@@ -2,12 +2,12 @@
 
 namespace Packages\Models\Bot\Calculators\Openness;
 
-use Packages\Models\Board\Board;
-use Packages\Models\Board\Color\Color;
-use Packages\Models\Board\Position\Position;
 use Packages\Models\Bot\Calculators\CalculatorInterface;
 use Packages\Models\Common\Matrix\Matrix;
-use Packages\Models\Turn\Turn;
+use Packages\Models\Othello\Board\Board;
+use Packages\Models\Othello\Board\Color\Color;
+use Packages\Models\Othello\Board\Position\Position;
+use Packages\Models\Othello\Turn\Turn;
 
 class SelfOpennessCalculator
 {

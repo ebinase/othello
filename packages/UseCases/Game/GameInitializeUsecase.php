@@ -4,10 +4,10 @@ namespace Packages\UseCases\Game;
 
 use Packages\Factories\Game\GameFactory;
 use Packages\Models\Bot\BotType;
-use Packages\Models\Game\Game;
-use Packages\Models\Game\GameMode;
-use Packages\Models\Participant\BotParticipant;
-use Packages\Models\Participant\Player;
+use Packages\Models\GameOrganizer\Game;
+use Packages\Models\GameOrganizer\GameMode;
+use Packages\Models\GameOrganizer\Participant\BotParticipant;
+use Packages\Models\GameOrganizer\Participant\Player;
 use Packages\Repositories\Game\GameRepositoryInterface;
 
 class GameInitializeUsecase

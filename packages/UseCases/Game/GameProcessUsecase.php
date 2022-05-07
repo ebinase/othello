@@ -2,10 +2,8 @@
 
 namespace Packages\UseCases\Game;
 
-use Illuminate\Http\JsonResponse;
-use JetBrains\PhpStorm\ArrayShape;
-use Packages\Models\Board\Position\Position;
-use Packages\Models\Game\Game;
+use Packages\Models\GameOrganizer\Game;
+use Packages\Models\Othello\Board\Position\Position;
 use Packages\Repositories\Game\GameRepositoryInterface;
 
 class GameProcessUsecase

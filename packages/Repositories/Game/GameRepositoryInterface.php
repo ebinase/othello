@@ -2,7 +2,7 @@
 
 namespace Packages\Repositories\Game;
 
-use Packages\Models\Game\Game;
+use Packages\Models\GameOrganizer\Game;
 
 interface GameRepositoryInterface
 {

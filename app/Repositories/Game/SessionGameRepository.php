@@ -1,7 +1,7 @@
 <?php
 namespace App\Repositories\Game;
 
-use Packages\Models\Game\Game;
+use Packages\Models\GameOrganizer\Game;
 use Packages\Repositories\Game\GameRepositoryInterface;
 
 class SessionGameRepository implements GameRepositoryInterface

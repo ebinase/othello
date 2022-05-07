@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GameRequest;
-use Packages\Models\Board\Color\Color;
-use Packages\UseCases\Game\GameInitializeUsecase;
-use Illuminate\Routing\Controller as BaseController;
-use Packages\UseCases\Game\GameProcessUsecase;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
+use Packages\Models\Othello\Board\Color\Color;
+use Packages\UseCases\Game\GameInitializeUsecase;
+use Packages\UseCases\Game\GameProcessUsecase;
 use Packages\UseCases\Game\GameShowBoardUsecase;
 
 class GameController extends BaseController

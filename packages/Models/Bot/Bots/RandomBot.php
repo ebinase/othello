@@ -2,10 +2,10 @@
 
 namespace Packages\Models\Bot\Bots;
 
-use Packages\Models\Board\Position\Position;
 use Packages\Models\Bot\BotInterface;
 use Packages\Models\Bot\Calculators\Random\RandomCalculator;
-use Packages\Models\Turn\Turn;
+use Packages\Models\Othello\Board\Position\Position;
+use Packages\Models\Othello\Turn\Turn;
 
 class RandomBot implements BotInterface
 {

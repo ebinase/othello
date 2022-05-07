@@ -3,16 +3,16 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Packages\Models\Board\Board;
-use Packages\Models\Board\Position\Position;
-use Packages\Models\Board\Position\PositionConverterTrait;
 use Packages\Models\Bot\BotFactory;
 use Packages\Models\Bot\Levels\LevelFactory;
-use Packages\Models\Board\Color\Color;
-use Packages\Models\Participant\BotParticipant;
-use Packages\Models\Participant\Player;
-use Packages\Models\Participant\ParticipantInterface;
-use Packages\Models\Turn\Turn;
+use Packages\Models\GameOrganizer\Participant\BotParticipant;
+use Packages\Models\GameOrganizer\Participant\ParticipantInterface;
+use Packages\Models\GameOrganizer\Participant\Player;
+use Packages\Models\Othello\Board\Board;
+use Packages\Models\Othello\Board\Color\Color;
+use Packages\Models\Othello\Board\Position\Position;
+use Packages\Models\Othello\Board\Position\PositionConverterTrait;
+use Packages\Models\Othello\Turn\Turn;
 
 class OthelloCommand extends Command
 {

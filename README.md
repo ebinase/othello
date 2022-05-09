@@ -13,8 +13,9 @@
 
 | タイプ     | ステータス     |
 | ---      | ---       |
-| ページ公開 | 公開中 |
-| 開発 | バックエンドの主要機能は開発済み。今後はReactによるフロント開発 + バックエンドAPI開発へ |
+| Webサイト | 公開中(SPA版⏩https://othello.ebinas.dev 、Laravel版⏩https://ddd-othello.ebinas.dev) |
+| バックエンド開発 | 主要なドメイン層の機能は開発済み。TODO: ドメイン層の継続的なリファクタリングとプレゼンテーション層の開発 |
+| フロントエンド開発|Reactにて開発中。リポジトリはこちらhttps://github.com/ebinase/othello-frontend|
 
 
 ## :wrench: 技術要件
@@ -85,11 +86,11 @@ $ ./vendor/bin/sail stop
 
 ## :books: 技術等(予定)
 ### バックエンド
-* PHP + Laravel
+* PHP/Laravel
 
 ### フロントエンド
 * TypeScript
-* React.js or Vue.js
+* React.js
 
 ### インフラ
 * AWS

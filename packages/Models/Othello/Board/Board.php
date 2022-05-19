@@ -2,6 +2,7 @@
 
 namespace Packages\Models\Othello\Board;
 
+use Packages\Exceptions\DomainException;
 use Packages\Models\Common\Matrix\Matrix;
 use Packages\Models\Othello\Board\Color\Color;
 use Packages\Models\Othello\Board\Position\Position;
@@ -31,9 +32,9 @@ class Board
         $matrix = Matrix::make($board);
 
         // 行数チェック
-        if ($matrix->dim() != self::BOARD_SIZE_ROWS) throw new \RuntimeException('lack of row');
+        if ($matrix->dim() != self::BOARD_SIZE_ROWS) throw new DomainException('lack of row');
         // 各行の列数チェック
-        if ($matrix->size() != self::BOARD_SIZE_COLS) throw new \RuntimeException('lack of column');
+        if ($matrix->size() != self::BOARD_SIZE_COLS) throw new DomainException('lack of column');
 
         $this->board = $matrix;
     }
@@ -155,7 +156,7 @@ class Board
     {
         // 指定された場所にコマを置くことができるか確認
         if (!$this->isValid($position, $color)) {
-            throw new \Exception('指定された場所に置くことができません');
+            throw new DomainException('指定された場所に置くことができません');
         }
 
         // 更新された盤面を返す

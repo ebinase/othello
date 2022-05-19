@@ -2,6 +2,7 @@
 
 namespace Packages\Models\Othello\Othello;
 
+use Packages\Exceptions\DomainException;
 use Packages\Models\Othello\Board\Board;
 use Packages\Models\Othello\Board\Color\Color;
 use Packages\Models\Othello\Board\Position\Position;
@@ -15,7 +16,7 @@ class Turn
     )
     {
         if ($turnNumber <= 0) {
-            throw new \InvalidArgumentException();
+            throw new DomainException();
         }
     }
 
@@ -46,9 +47,9 @@ class Turn
     public function advance(Position $position): Turn
     {
         // これ以上進めない場合
-        if (!$this->isAdvanceable()) throw new \RuntimeException();
+        if (!$this->isAdvanceable()) throw new DomainException();
         // スキップするしかない場合はコマを置けない
-        if ($this->mustSkip()) throw new \RuntimeException('コマを置くことができるマスがある場合、スキップはできません。');
+        if ($this->mustSkip()) throw new DomainException('コマを置くことができるマスがある場合、スキップはできません。');
 
         return new Turn(
             $this->turnNumber + 1,
@@ -63,12 +64,12 @@ class Turn
      * 色：反対の色へ
      * 盤面：スキップの場合は現在のものをそのまま設定
      */
-    public function skip()
+    public function skip(): Turn
     {
         // これ以上進めない場合
-        if (!$this->isAdvanceable()) throw new \RuntimeException();
+        if (!$this->isAdvanceable()) throw new DomainException();
         // コマを置くことができる場合はスキップできない
-        if ($this->mustSkip()) throw new \RuntimeException('コマを置くことができるマスがある場合、スキップはできません。');
+        if (!$this->mustSkip()) throw new DomainException('コマを置くことができるマスがある場合、スキップはできません。');
 
         return new Turn(
             $this->turnNumber + 1,
@@ -78,7 +79,7 @@ class Turn
     }
 
     /**
-     * 最終ターンが終了しているか(=ゲームが正常終了しているか)判定
+     * 最終ターンが終了しているか判定
      * @return bool
      */
     public function isAdvanceable(): bool

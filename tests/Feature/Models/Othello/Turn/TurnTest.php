@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\Models\Othello\Turn;
 
+use Packages\Exceptions\DomainException;
 use Packages\Models\Common\Matrix\Matrix;
 use Packages\Models\Othello\Board\Board;
 use Packages\Models\Othello\Board\Color\Color;
 use Packages\Models\Othello\Board\Position\Position;
 use Packages\Models\Othello\Othello\Turn;
+use Tests\Mock\Models\Othello\Board\SkipBoardMock;
 use Tests\TestCase;
 
 class TurnTest extends TestCase
@@ -52,7 +54,7 @@ class TurnTest extends TestCase
         // when:
         $move = Position::make([1, 1]); // おけない場所
         // then:
-        $this->expectException(\Exception::class);
+        $this->expectException(DomainException::class);
         $turn->advance($move); // ターンを進める
     }
 
@@ -60,28 +62,27 @@ class TurnTest extends TestCase
     // スキップ系
     // ---------------------------------------
     /** @test */
-    public function スキップ()
+    public function スキップをした場合ターン数増加とプレイヤー交代はするが盤面は変わらない()
     {
         // given:
-        $w = Color::white()->toCode();
         // 白も黒も置ける場所がない盤面
-
-        $board = Board::make($board);
+        $board = SkipBoardMock::get();
+        $turn1 = Turn::make(1, Color::white(), $board);
 
         // when:
-        $turn1 = Turn::make(1, Color::black(), $board, 0);
-        $turn2 = $turn1->advance();
-        $turn3 = $turn2->advance();
+        $turn2 = $turn1->skip(); // 白のスキップ
+        dump($turn2->playableColor);
+        $turn3 = $turn2->skip(); // 黒のスキップ
 
         // then:
         // 2ターン目
-        self::assertSame(1, $turn2->getSkipCount());
-        self::assertSame(true, $turn2->mustSkip());
-        self::assertSame(true, $turn2->isContinuable());
+        self::assertSame(2, $turn2->turnNumber);
+        self::assertTrue(Color::black()->equals($turn2->playableColor), '黒に交代');
+        self::assertTrue($board->equals($turn2->board), '初回の盤面から変更なし');
         // 3ターン目
-        self::assertSame(2, $turn3->getSkipCount());
-        self::assertSame(true, $turn2->mustSkip());
-        self::assertSame(true, $turn2->isContinuable());
+        self::assertSame(3, $turn3->turnNumber);
+        self::assertTrue(Color::white()->equals($turn3->playableColor), '白に交代');
+        self::assertTrue($board->equals($turn3->board), '初回の盤面から変更なし');
     }
 
     /** @test */
@@ -91,9 +92,9 @@ class TurnTest extends TestCase
         // when:
         $turn = Turn::init(); // 1ターン目
         // then:
-        $this->expectException(\Exception::class);
+        $this->expectException(DomainException::class);
         // 置ける場所があるのに場所指定なしで更新した場合
-        $turn->advance();
+        $turn->skip();
     }
 
     // ---------------------------------------

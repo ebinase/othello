@@ -59,6 +59,12 @@ class Board
         return $this->board->toArray();
     }
 
+    public function isFulfilled(): bool
+    {
+        return $this->getRest() === 0;
+    }
+
+
     /**
      * 何も置かれていない場所の数を取得
      *
@@ -147,9 +153,9 @@ class Board
 
     public function update(Position $position, Color $color): Board
     {
-        // 置けない場合
+        // 指定された場所にコマを置くことができるか確認
         if (!$this->isValid($position, $color)) {
-            throw new \Exception();
+            throw new \Exception('指定された場所に置くことができません');
         }
 
         // 更新された盤面を返す

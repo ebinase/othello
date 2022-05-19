@@ -41,24 +41,14 @@ class Turn
      * 次のターンへ
      * ターン数：+1
      * 色：反対の色へ
-     * 盤面：コマを置いて更新。スキップの場合は現在のものをそのまま設定
+     * 盤面：コマを置いて更新。
      */
-    public function next(?Position $position = null): Turn
+    public function advance(Position $position): Turn
     {
-        // ゲームが終了している場合
-        if ($this->finishedLastTurn()) throw new \RuntimeException();
-        // ゲームが続行不能な場合
-        if (!$this->isContinuable()) throw new \RuntimeException();
-
-        if ($this->mustSkip()) {
-
-        }
-
-        // コマを置くことができる場合、盤面を更新してスキップカウントをリセット
-        // 必須チェック
-        if (!isset($position)) throw new \Exception('コマを置くことができるマスがある場合、スキップはできません。');
-        // 指定された場所にコマを置くことができるか確認
-        if (!$this->board->isValid($position, $this->playableColor)) throw new \Exception('指定された場所に置くことができません。');
+        // これ以上進めない場合
+        if (!$this->isAdvanceable()) throw new \RuntimeException();
+        // スキップするしかない場合はコマを置けない
+        if ($this->mustSkip()) throw new \RuntimeException('コマを置くことができるマスがある場合、スキップはできません。');
 
         return new Turn(
             $this->turnNumber + 1,
@@ -67,8 +57,19 @@ class Turn
         );
     }
 
+    /**
+     * 次のターンへ
+     * ターン数：+1
+     * 色：反対の色へ
+     * 盤面：スキップの場合は現在のものをそのまま設定
+     */
     public function skip()
     {
+        // これ以上進めない場合
+        if (!$this->isAdvanceable()) throw new \RuntimeException();
+        // コマを置くことができる場合はスキップできない
+        if ($this->mustSkip()) throw new \RuntimeException('コマを置くことができるマスがある場合、スキップはできません。');
+
         return new Turn(
             $this->turnNumber + 1,
             $this->playableColor->opposite(),
@@ -80,15 +81,14 @@ class Turn
      * 最終ターンが終了しているか(=ゲームが正常終了しているか)判定
      * @return bool
      */
-    public function finishedLastTurn(): bool
+    public function isAdvanceable(): bool
     {
-        return $this->board->isFulfilled();
+        // 盤面がいっぱいになっていなかったら進行可能
+        return !$this->board->isFulfilled();
     }
 
     public function mustSkip(): bool
     {
         return !$this->board->hasPlayablePosition($this->playableColor);
     }
-
-
 }

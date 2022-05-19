@@ -120,7 +120,7 @@ class OthelloCommand extends Command
             // スキップの場合はすぐにcontinue
             if ($turn->mustSkip()) {
                 $this->confirm('置ける場所がないためスキップします。', true);
-                $turn = $turn->next();
+                $turn = $turn->advance();
                 continue;
             }
 
@@ -162,7 +162,7 @@ class OthelloCommand extends Command
                 $action = Position::make([$row, $col]);
             }
 
-            $turn = $turn->next($action);
+            $turn = $turn->advance($action);
         } // while()
 
         $this->error('=====================================');

@@ -35,7 +35,7 @@ class TurnTest extends TestCase
         $turn = Turn::init(); // 1ターン目
         $move = Position::make([4, 6]); // 先行プレイヤーの1ターン目の指した場所
         // when:
-        $next = $turn->next($move); // ターンを進める
+        $next = $turn->advance($move); // ターンを進める
         // then:
         // 2ターン目の盤面
         $boardAtSecondTurn = Board::init()->update($move, Color::white());
@@ -53,7 +53,7 @@ class TurnTest extends TestCase
         $move = Position::make([1, 1]); // おけない場所
         // then:
         $this->expectException(\Exception::class);
-        $turn->next($move); // ターンを進める
+        $turn->advance($move); // ターンを進める
     }
 
     // ---------------------------------------
@@ -70,8 +70,8 @@ class TurnTest extends TestCase
 
         // when:
         $turn1 = Turn::make(1, Color::black(), $board, 0);
-        $turn2 = $turn1->next();
-        $turn3 = $turn2->next();
+        $turn2 = $turn1->advance();
+        $turn3 = $turn2->advance();
 
         // then:
         // 2ターン目
@@ -93,7 +93,7 @@ class TurnTest extends TestCase
         // then:
         $this->expectException(\Exception::class);
         // 置ける場所があるのに場所指定なしで更新した場合
-        $turn->next();
+        $turn->advance();
     }
 
     // ---------------------------------------
@@ -109,8 +109,8 @@ class TurnTest extends TestCase
         $firstTurn = Turn::init();
         $lastTurn = Turn::make(20, Color::white(), $fullBoard, 0);
         // then:
-        self::assertSame(false, $firstTurn->finishedLastTurn());
-        self::assertSame(true, $lastTurn->finishedLastTurn());
+        self::assertSame(false, !$firstTurn->isAdvanceable());
+        self::assertSame(true, !$lastTurn->isAdvanceable());
     }
 
 

@@ -3,7 +3,9 @@
 namespace Packages\Models\Othello\Othello;
 
 use Illuminate\Support\Str;
+use Packages\Exceptions\DomainException;
 use Packages\Models\Othello\Action\Action;
+use Packages\Models\Othello\Action\ActionType;
 
 class Othello
 {
@@ -38,39 +40,28 @@ class Othello
      * ゲームの状態更新
      * 連続スキップ数：スキップ時+1。スキップしない場合は0にリセット
      */
-    public function next(Action $action): void
+    public function apply(Action $action): void
     {
         // ゲームが終了している場合
-        if ($this->finishedLastTurn()) throw new \RuntimeException();
-        // ゲームが続行不能な場合
-        if (!$this->isContinuable()) throw new \RuntimeException();
+        if ($this->isOver()) throw new DomainException();
 
-        // スキップするときは盤面はそのままで、スキップカウントを加算する
-        if ($this->turn->mustSkip()) {
-            $this->skipCount + 1;
-        }
-
-        // コマを置くことができる場合、盤面を更新してスキップカウントをリセット
-        // 必須チェック
-        if (!isset($position)) throw new \Exception('コマを置くことができるマスがある場合、スキップはできません。');
-        // 指定された場所にコマを置くことができるか確認
-        if (!$this->board->isValid($position, $this->playableColor)) throw new \Exception('指定された場所に置くことができません。');
-    }
-
-    public function isPlayable()
-    {
-        $this->turn->isAdvanceable();
+        $this->turn = match ($action->actionType) {
+            ActionType::SET_STONE => $this->turn->advance($action->data),
+            ActionType::CONFIRM_SKIP => $this->turn->skip(),
+        };
     }
 
     /**
-     * ゲームが継続可能か判定
-     * 決着(最後のターン到達)以外のゲームの途中終了条件の判定をする
+     * ゲームが終了しているか判定する
+     * 正常終了、スキップによる異常終了なのかは問わない
+     *
      * @return bool
      */
-    public function isContinuable(): bool
+    public function isOver(): bool
     {
+        // ターンが進行不可(正常系)、もしくはスキップが連続してどちらも置く場所がなくなった(異常系)場合、終了
         $isInvalidSkipCount = $this->skipCount > self::MAX_CONTINUOUS_SKIP_COUNT;
-        return !$isInvalidSkipCount;
+        return !$this->turn->isAdvanceable() || $isInvalidSkipCount;
     }
 
     /**

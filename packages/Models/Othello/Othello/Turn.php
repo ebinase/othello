@@ -84,7 +84,7 @@ class Turn
      */
     public function isAdvanceable(): bool
     {
-        // 盤面がいっぱいになっていなかったら進行可能
+        // 盤面がいっぱいになっていなかったら最終ターンに到達していない = 進行可能
         return !$this->board->isFulfilled();
     }
 

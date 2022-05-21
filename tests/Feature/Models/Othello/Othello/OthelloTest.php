@@ -32,17 +32,22 @@ class OthelloTest extends TestCase
     public function 通常更新()
     {
         // given:
-        $othello = Othello::init(); // 1ターン目
-        $action = Action::make(ActionType::SET_STONE, Position::make([4, 6])); // 先行プレイヤーの1ターン目の指した場所
+        $othello = Othello::make(
+            $id = \Str::uuid(),
+            $turn = Turn::init(),
+            0,
+        ); // 1ターン目
+        $position = Position::make([4, 6]);// 先行プレイヤーが1ターン目に指す場所
+        $action = Action::make(ActionType::SET_STONE, $position);
+
         // when:
-        $othello->attach($action); // ターンを進める
+        $othello->apply($action); // プレーを進める
+
         // then:
-        // 2ターン目の盤面
-        $boardAtSecondTurn = Board::init()->update($move, Color::white());
-        self::assertSame(2, $next->getTurnNumber(), 'ターン数は2');
-        self::assertSame(true, Color::Black()->equals($next->getPlayableColor()), '後攻のプレイヤーに交代');
-        self::assertSame(true, $boardAtSecondTurn->equals($next->getBoard()), '盤面更新');
-        self::assertSame(0, $next->getSkipCount(), 'スキップカウントは0');
+        self::assertSame($id->toString(), $othello->id);
+        self::assertTrue($turn->advance($position) == $othello->getTurn());
+        self::assertSame(0, $othello->getSkipCount());
+
     }
 
     /** @test */
@@ -74,7 +79,7 @@ class OthelloTest extends TestCase
     // 終了条件系
     // ---------------------------------------
     /** @test */
-    public function 盤面に空いているマスがなくなった時が最後のターン()
+    public function 盤面に空いているマスがなくなったら終了()
     {
         // given:
         $fullBoard = Board::make(Matrix::init(8, 8, Color::white()->toCode())->toArray());
@@ -88,7 +93,7 @@ class OthelloTest extends TestCase
     }
 
     /** @test */
-    public function スキップが2ターン続いたらそれ以降は一切更新不可()
+    public function スキップが2ターン続いたら終了()
     {
         // given:
         $position = Position::make([4, 6]);

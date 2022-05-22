@@ -10,6 +10,7 @@ use Packages\Models\Othello\Board\Color\Color;
 use Packages\Models\Othello\Board\Position\Position;
 use Packages\Models\Othello\Othello\Othello;
 use Packages\Models\Othello\Othello\Turn;
+use Tests\Mock\Models\Othello\Action\FirstTurnActionMock;
 use Tests\Mock\Models\Othello\Board\SkipBoardMock;
 use Tests\TestCase;
 
@@ -37,42 +38,45 @@ class OthelloTest extends TestCase
             $turn = Turn::init(),
             0,
         ); // 1ターン目
-        $position = Position::make([4, 6]);// 先行プレイヤーが1ターン目に指す場所
-        $action = Action::make(ActionType::SET_STONE, $position);
+        $action = FirstTurnActionMock::setStone();
 
         // when:
         $othello->apply($action); // プレーを進める
 
         // then:
         self::assertSame($id->toString(), $othello->id);
-        self::assertTrue($turn->advance($position) == $othello->getTurn());
+        self::assertTrue($turn->advance($action->getData()) == $othello->getTurn());
         self::assertSame(0, $othello->getSkipCount());
 
     }
 
     /** @test */
-    public function 不正なアクションを指定された時は例外を出す()
+    public function スキップせざるを得ないのにコマを置こうとした時は例外を出す()
     {
         // given:
-        $turn = Turn::init(); // 1ターン目
+        $othello = Othello::make(
+            \Str::uuid(),
+            Turn::make(1, Color::white(), SkipBoardMock::get()),
+            0
+        ); // 1ターン目
         // when:
-
-        $move = Position::make(ActionType::SET_STONE); // おけない場所
+        $action = FirstTurnActionMock::setStone(); // おけない場所
         // then:
         $this->expectException(\Exception::class);
-        $turn->advance($move); // ターンを進める
+        $othello->apply($action);
     }
 
     /** @test */
     public function 置ける場所があるのにスキップしようとした場合は例外を出す()
     {
         // given:
+        $othello = Othello::init(); // 1ターン目
         // when:
-        $turn = Turn::init(); // 1ターン目
+        $skipAction = FirstTurnActionMock::skip();
         // then:
         $this->expectException(\Exception::class);
         // 置ける場所があるのに場所指定なしで更新した場合
-        $turn->advance();
+        $othello->apply($skipAction);
     }
 
     // ---------------------------------------

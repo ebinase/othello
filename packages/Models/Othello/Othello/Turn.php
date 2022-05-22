@@ -49,7 +49,7 @@ class Turn
         // これ以上進めない場合
         if (!$this->isAdvanceable()) throw new DomainException();
         // スキップするしかない場合はコマを置けない
-        if ($this->mustSkip()) throw new DomainException('コマを置くことができるマスがある場合、スキップはできません。');
+        if ($this->mustSkip()) throw new DomainException('このターンはスキップ以外できません。');
 
         return new Turn(
             $this->turnNumber + 1,

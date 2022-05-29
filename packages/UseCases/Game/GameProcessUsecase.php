@@ -3,8 +3,8 @@
 namespace Packages\UseCases\Game;
 
 use Packages\Models\GameOrganizer\Game;
-use Packages\Models\Othello\Board\Position\Position;
-use Packages\Repositories\Game\GameRepositoryInterface;
+use Packages\Models\GameOrganizer\GameRepositoryInterface;
+use Packages\Models\Core\Board\Position\Position;
 
 class GameProcessUsecase
 {

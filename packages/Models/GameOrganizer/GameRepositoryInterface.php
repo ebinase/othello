@@ -1,8 +1,6 @@
 <?php
 
-namespace Packages\Repositories\Game;
-
-use Packages\Models\GameOrganizer\Game;
+namespace Packages\Models\GameOrganizer;
 
 interface GameRepositoryInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Packages\Models\Othello\Action;
+namespace Packages\Models\Core\Action;
 
 class Action
 {

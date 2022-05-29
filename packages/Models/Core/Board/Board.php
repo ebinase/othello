@@ -1,12 +1,12 @@
 <?php
 
-namespace Packages\Models\Othello\Board;
+namespace Packages\Models\Core\Board;
 
 use Packages\Exceptions\DomainException;
 use Packages\Models\Common\Matrix\Matrix;
-use Packages\Models\Othello\Board\Color\Color;
-use Packages\Models\Othello\Board\Position\Position;
-use Packages\Models\Othello\Board\Position\PositionConverterTrait;
+use Packages\Models\Core\Board\Color\Color;
+use Packages\Models\Core\Board\Position\Position;
+use Packages\Models\Core\Board\Position\PositionConverterTrait;
 
 class Board
 {

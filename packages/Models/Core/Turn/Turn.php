@@ -1,11 +1,11 @@
 <?php
 
-namespace Packages\Models\Othello\Othello;
+namespace Packages\Models\Core\Turn;
 
 use Packages\Exceptions\DomainException;
-use Packages\Models\Othello\Board\Board;
-use Packages\Models\Othello\Board\Color\Color;
-use Packages\Models\Othello\Board\Position\Position;
+use Packages\Models\Core\Board\Board;
+use Packages\Models\Core\Board\Color\Color;
+use Packages\Models\Core\Board\Position\Position;
 
 class Turn
 {

@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Repositories\Game\SessionGameRepository;
 use Illuminate\Support\ServiceProvider;
-use Packages\Repositories\Game\GameRepositoryInterface;
+use Packages\Models\GameOrganizer\GameRepositoryInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {

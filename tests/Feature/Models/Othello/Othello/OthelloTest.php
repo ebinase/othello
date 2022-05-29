@@ -3,10 +3,10 @@
 namespace Tests\Feature\Models\Othello\Othello;
 
 use Packages\Exceptions\DomainException;
-use Packages\Models\Othello\Board\Color\Color;
-use Packages\Models\Othello\Othello\Othello;
-use Packages\Models\Othello\Othello\Status;
-use Packages\Models\Othello\Othello\Turn;
+use Packages\Models\Core\Board\Color\Color;
+use Packages\Models\Core\Othello\Othello;
+use Packages\Models\Core\Othello\Status;
+use Packages\Models\Core\Turn\Turn;
 use Tests\Mock\Models\Othello\Action\ActionMock;
 use Tests\Mock\Models\Othello\Board\FulfilledBoard;
 use Tests\Mock\Models\Othello\Board\OneLastActionBoard;

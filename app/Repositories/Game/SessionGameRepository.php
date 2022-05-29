@@ -2,7 +2,7 @@
 namespace App\Repositories\Game;
 
 use Packages\Models\GameOrganizer\Game;
-use Packages\Repositories\Game\GameRepositoryInterface;
+use Packages\Models\GameOrganizer\GameRepositoryInterface;
 
 class SessionGameRepository implements GameRepositoryInterface
 {

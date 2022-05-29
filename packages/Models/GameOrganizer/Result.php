@@ -2,7 +2,7 @@
 
 namespace Packages\Models\GameOrganizer;
 
-use Packages\Models\Othello\Board\Color\Color;
+use Packages\Models\Core\Board\Color\Color;
 
 /**
  * ゲームの結果を表す区分オブジェクト

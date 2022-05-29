@@ -1,11 +1,12 @@
 <?php
 
-namespace Packages\Models\Othello\Othello;
+namespace Packages\Models\Core\Othello;
 
 use Illuminate\Support\Str;
 use Packages\Exceptions\DomainException;
-use Packages\Models\Othello\Action\Action;
-use Packages\Models\Othello\Action\ActionType;
+use Packages\Models\Core\Action\Action;
+use Packages\Models\Core\Action\ActionType;
+use Packages\Models\Core\Turn\Turn;
 
 class Othello
 {

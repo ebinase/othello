@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GameRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
-use Packages\Models\Othello\Board\Color\Color;
+use Packages\Models\Core\Board\Color\Color;
 use Packages\UseCases\Game\GameInitializeUsecase;
 use Packages\UseCases\Game\GameProcessUsecase;
 use Packages\UseCases\Game\GameShowBoardUsecase;

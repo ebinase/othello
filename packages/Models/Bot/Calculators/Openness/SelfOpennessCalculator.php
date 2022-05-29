@@ -4,10 +4,10 @@ namespace Packages\Models\Bot\Calculators\Openness;
 
 use Packages\Models\Bot\Calculators\CalculatorInterface;
 use Packages\Models\Common\Matrix\Matrix;
-use Packages\Models\Othello\Board\Board;
-use Packages\Models\Othello\Board\Color\Color;
-use Packages\Models\Othello\Board\Position\Position;
-use Packages\Models\Othello\Othello\Othello;
+use Packages\Models\Core\Board\Board;
+use Packages\Models\Core\Board\Color\Color;
+use Packages\Models\Core\Board\Position\Position;
+use Packages\Models\Core\Othello\Othello;
 
 class SelfOpennessCalculator
 {

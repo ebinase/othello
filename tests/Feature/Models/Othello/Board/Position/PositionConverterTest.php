@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Models\Othello\Board\Position;
 
-use Packages\Models\Othello\Board\Position\PositionConverterTrait;
+use Packages\Models\Core\Board\Position\PositionConverterTrait;
 use Tests\TestCase;
 use function PHPUnit\Framework\assertSame;
 

@@ -2,13 +2,13 @@
 
 namespace Packages\UseCases\Game;
 
-use Packages\Factories\Game\GameFactory;
 use Packages\Models\Bot\BotType;
 use Packages\Models\GameOrganizer\Game;
+use Packages\Models\GameOrganizer\GameFactory;
 use Packages\Models\GameOrganizer\GameMode;
+use Packages\Models\GameOrganizer\GameRepositoryInterface;
 use Packages\Models\GameOrganizer\Participant\BotParticipant;
 use Packages\Models\GameOrganizer\Participant\Player;
-use Packages\Repositories\Game\GameRepositoryInterface;
 
 class GameInitializeUsecase
 {

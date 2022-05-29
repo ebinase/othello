@@ -8,11 +8,11 @@ use Packages\Models\Bot\Levels\LevelFactory;
 use Packages\Models\GameOrganizer\Participant\BotParticipant;
 use Packages\Models\GameOrganizer\Participant\ParticipantInterface;
 use Packages\Models\GameOrganizer\Participant\Player;
-use Packages\Models\Othello\Board\Board;
-use Packages\Models\Othello\Board\Color\Color;
-use Packages\Models\Othello\Board\Position\Position;
-use Packages\Models\Othello\Board\Position\PositionConverterTrait;
-use Packages\Models\Othello\Othello\Othello;
+use Packages\Models\Core\Board\Board;
+use Packages\Models\Core\Board\Color\Color;
+use Packages\Models\Core\Board\Position\Position;
+use Packages\Models\Core\Board\Position\PositionConverterTrait;
+use Packages\Models\Core\Othello\Othello;
 
 class OthelloCommand extends Command
 {

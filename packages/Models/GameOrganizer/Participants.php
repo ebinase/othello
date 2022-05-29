@@ -3,7 +3,7 @@
 namespace Packages\Models\GameOrganizer;
 
 use Packages\Models\GameOrganizer\Participant\ParticipantInterface;
-use Packages\Models\Othello\Board\Color\Color;
+use Packages\Models\Core\Board\Color\Color;
 
 class Participants
 {

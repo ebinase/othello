@@ -2,7 +2,7 @@
 
 namespace Packages\Models\Bot\Calculators\Random;
 
-use Packages\Models\Othello\Board\Position\Position;
+use Packages\Models\Core\Board\Position\Position;
 
 class RandomCalculator
 {

@@ -2,9 +2,9 @@
 
 namespace Tests\Mock\Models\Othello\Action;
 
-use Packages\Models\Othello\Action\Action;
-use Packages\Models\Othello\Action\ActionType;
-use Packages\Models\Othello\Board\Position\Position;
+use Packages\Models\Core\Action\Action;
+use Packages\Models\Core\Action\ActionType;
+use Packages\Models\Core\Board\Position\Position;
 
 class ActionMock
 {

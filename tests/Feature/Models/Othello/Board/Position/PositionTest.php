@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Models\Othello\Board\Position;
 
-use Packages\Models\Othello\Board\Position\Position;
+use Packages\Models\Core\Board\Position\Position;
 use Tests\TestCase;
 
 class PositionTest extends TestCase

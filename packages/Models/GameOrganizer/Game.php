@@ -5,9 +5,9 @@ namespace Packages\Models\GameOrganizer;
 use Packages\Models\Bot\BotFactory;
 use Packages\Models\Bot\BotType;
 use Packages\Models\GameOrganizer\Participant\ParticipantInterface;
-use Packages\Models\Othello\Board\Color\Color;
-use Packages\Models\Othello\Board\Position\Position;
-use Packages\Models\Othello\Othello\Othello;
+use Packages\Models\Core\Board\Color\Color;
+use Packages\Models\Core\Board\Position\Position;
+use Packages\Models\Core\Othello\Othello;
 
 class Game
 {

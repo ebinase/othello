@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Test;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Packages\Models\Othello\Board\Board;
+use Packages\Models\Core\Board\Board;
 use function collect;
 use function response;
 

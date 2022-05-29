@@ -1,8 +1,8 @@
 <?php
 
-namespace Packages\Models\Othello\Action;
+namespace Packages\Models\Core\Action;
 
-use Packages\Models\Othello\Board\Position\Position;
+use Packages\Models\Core\Board\Position\Position;
 
 enum ActionType: string
 {

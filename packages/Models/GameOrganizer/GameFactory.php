@@ -1,12 +1,9 @@
 <?php
 
-namespace Packages\Factories\Game;
+namespace Packages\Models\GameOrganizer;
 
 use Illuminate\Support\Str;
-use Packages\Models\GameOrganizer\Game;
-use Packages\Models\GameOrganizer\GameMode;
 use Packages\Models\GameOrganizer\Participant\ParticipantInterface;
-use Packages\Models\GameOrganizer\Participants;
 
 class GameFactory
 {

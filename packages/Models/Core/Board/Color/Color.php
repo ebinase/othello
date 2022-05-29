@@ -1,6 +1,6 @@
 <?php
 
-namespace Packages\Models\Othello\Board\Color;
+namespace Packages\Models\Core\Board\Color;
 
 /**
  * Enum風に実装

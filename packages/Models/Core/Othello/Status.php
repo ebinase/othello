@@ -1,6 +1,6 @@
 <?php
 
-namespace Packages\Models\Othello\Othello;
+namespace Packages\Models\Core\Othello;
 
 enum Status
 {

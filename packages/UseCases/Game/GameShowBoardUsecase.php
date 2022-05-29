@@ -3,7 +3,7 @@
 namespace Packages\UseCases\Game;
 
 use JetBrains\PhpStorm\ArrayShape;
-use Packages\Repositories\Game\GameRepositoryInterface;
+use Packages\Models\GameOrganizer\GameRepositoryInterface;
 
 class GameShowBoardUsecase
 {

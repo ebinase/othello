@@ -1,8 +1,8 @@
 <?php
 
-namespace Packages\Models\Othello\Board\Position;
+namespace Packages\Models\Core\Board\Position;
 
-use Packages\Models\Othello\Board\Board;
+use Packages\Models\Core\Board\Board;
 
 trait PositionConverterTrait
 {

@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Models\Othello\Board;
 
-use Packages\Models\Othello\Board\Board;
-use Packages\Models\Othello\Board\Color\Color;
-use Packages\Models\Othello\Board\Position\Position;
+use Packages\Models\Core\Board\Board;
+use Packages\Models\Core\Board\Color\Color;
+use Packages\Models\Core\Board\Position\Position;
 use Tests\TestCase;
 
 class BoardUpdateTest extends TestCase

@@ -1,6 +1,6 @@
 <?php
 
-namespace Packages\Models\Othello\Board\Position;
+namespace Packages\Models\Core\Board\Position;
 
 /**
  * 盤面上での位置を表すクラス

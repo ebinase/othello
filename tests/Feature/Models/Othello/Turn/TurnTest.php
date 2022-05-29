@@ -3,11 +3,11 @@
 namespace Tests\Feature\Models\Othello\Turn;
 
 use Packages\Exceptions\DomainException;
-use Packages\Models\Common\Matrix\Matrix;
 use Packages\Models\Othello\Board\Board;
 use Packages\Models\Othello\Board\Color\Color;
 use Packages\Models\Othello\Board\Position\Position;
 use Packages\Models\Othello\Othello\Turn;
+use Tests\Mock\Models\Othello\Board\FulfilledBoard;
 use Tests\Mock\Models\Othello\Board\SkipBoardMock;
 use Tests\TestCase;
 
@@ -88,7 +88,6 @@ class TurnTest extends TestCase
     /** @test */
     public function 置ける場所があるのにスキップしようとした場合は例外を出す()
     {
-        // given:
         // when:
         $turn = Turn::init(); // 1ターン目
         // then:
@@ -103,16 +102,11 @@ class TurnTest extends TestCase
     /** @test */
     public function 盤面に空いているマスがなくなった時が最後のターン()
     {
-        // given:
-        $fullBoard = Board::make(Matrix::init(8, 8, Color::white()->toCode())->toArray());
-
         // when:
         $firstTurn = Turn::init();
-        $lastTurn = Turn::make(20, Color::white(), $fullBoard, 0);
+        $lastTurn = Turn::make(20, Color::white(), FulfilledBoard::get());
         // then:
-        self::assertSame(false, !$firstTurn->isAdvanceable());
-        self::assertSame(true, !$lastTurn->isAdvanceable());
+        self::assertFalse($firstTurn->isLast());
+        self::assertTrue($lastTurn->isLast());
     }
-
-
 }

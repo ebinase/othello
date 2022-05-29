@@ -9,46 +9,61 @@ use Packages\Models\Othello\Action\ActionType;
 
 class Othello
 {
-    // スキップの連続を許容する回数
-    const MAX_CONTINUOUS_SKIP_COUNT = 1;
-
     private function __construct(
         public readonly string $id,
+        private Status $status,
         private Turn $turn,
-        private int $skipCount
-    ) {}
+    ) {
+        if (!Str::isUuid($id)) throw new DomainException();
+    }
 
     public static function init(): Othello
     {
         return new self(
-            id:         Str::uuid(),
-            turn:       Turn::init(),
-            skipCount:  0,
+            id:     Str::uuid(),
+            status: Status::PLAYING,
+            turn:   Turn::init(),
         );
     }
 
-    public static function make(string $id, Turn $turn, int $skipCount): self
+    public static function make(string $id, Status $status, Turn $turn): self
     {
         return new self(
-            id:        $id,
-            turn:      $turn,
-            skipCount: $skipCount,
+            id:     $id,
+            status: $status,
+            turn:   $turn,
         );
     }
 
     /**
      * ゲームの状態更新
-     * 連続スキップ数：スキップ時+1。スキップしない場合は0にリセット
      */
     public function apply(Action $action): void
     {
-        // ゲームが終了している場合
-        if ($this->isOver()) throw new DomainException();
+        // プレー中ではない場合
+        if ($this->status !== Status::PLAYING) throw new DomainException();
 
+        $turnBefore = $this->turn;
+        // ターンを更新する
         $this->turn = match ($action->actionType) {
             ActionType::SET_STONE => $this->turn->advance($action->data),
             ActionType::CONFIRM_SKIP => $this->turn->skip(),
         };
+
+        $this->status = $this->nextStatus($turnBefore, $this->turn);
+    }
+
+    private function nextStatus(Turn $turnBefore, Turn $turnAfter): Status
+    {
+        if ($turnAfter->isLast()) return $this->status = Status::RESULTED;
+        if (self::mustInterrupt($turnBefore, $turnAfter)) return $this->status = Status::INTERRUPTED;
+
+        return Status::PLAYING;
+    }
+
+    private static function mustInterrupt(Turn $turnBefore, Turn $turnAfter)
+    {
+        return $turnBefore->mustSkip() && $turnAfter->mustSkip();
     }
 
     /**
@@ -60,8 +75,15 @@ class Othello
     public function isOver(): bool
     {
         // ターンが進行不可(正常系)、もしくはスキップが連続してどちらも置く場所がなくなった(異常系)場合、終了
-        $isInvalidSkipCount = $this->skipCount > self::MAX_CONTINUOUS_SKIP_COUNT;
-        return !$this->turn->isAdvanceable() || $isInvalidSkipCount;
+        return !$this->turn->isLast();
+    }
+
+    /**
+     * @return Status
+     */
+    public function getStatus(): Status
+    {
+        return $this->status;
     }
 
     /**
@@ -72,11 +94,4 @@ class Othello
         return $this->turn;
     }
 
-    /**
-     * @return int
-     */
-    public function getSkipCount(): int
-    {
-        return $this->skipCount;
-    }
 }

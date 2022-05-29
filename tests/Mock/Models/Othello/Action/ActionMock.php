@@ -6,11 +6,11 @@ use Packages\Models\Othello\Action\Action;
 use Packages\Models\Othello\Action\ActionType;
 use Packages\Models\Othello\Board\Position\Position;
 
-class FirstTurnActionMock
+class ActionMock
 {
-    public static function setStone(): Action
+    public static function setStone($row = 4, $col = 6): Action
     {
-        $position = Position::make([4, 6]);// 先行プレイヤーが1ターン目に指す場所
+        $position = Position::make([$row, $col]);// 先行プレイヤーが1ターン目に指す場所
         return Action::make(ActionType::SET_STONE, $position);
     }
 

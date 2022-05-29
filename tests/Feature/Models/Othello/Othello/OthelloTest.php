@@ -2,15 +2,14 @@
 
 namespace Tests\Feature\Models\Othello\Othello;
 
-use Packages\Models\Common\Matrix\Matrix;
-use Packages\Models\Othello\Action\Action;
-use Packages\Models\Othello\Action\ActionType;
-use Packages\Models\Othello\Board\Board;
+use Packages\Exceptions\DomainException;
 use Packages\Models\Othello\Board\Color\Color;
-use Packages\Models\Othello\Board\Position\Position;
 use Packages\Models\Othello\Othello\Othello;
+use Packages\Models\Othello\Othello\Status;
 use Packages\Models\Othello\Othello\Turn;
-use Tests\Mock\Models\Othello\Action\FirstTurnActionMock;
+use Tests\Mock\Models\Othello\Action\ActionMock;
+use Tests\Mock\Models\Othello\Board\FulfilledBoard;
+use Tests\Mock\Models\Othello\Board\OneLastActionBoard;
 use Tests\Mock\Models\Othello\Board\SkipBoardMock;
 use Tests\TestCase;
 
@@ -24,29 +23,25 @@ class OthelloTest extends TestCase
 
         // then:
         self::assertTrue(\Str::isUuid($othello->id));
-        self::assertSame(0, $othello->getSkipCount(), 'スキップカウントは0');
+        self::assertSame(Status::PLAYING, $othello->getStatus(), '初期状態はプレー中');
         // 下記の値はそのまま設定される
         self::assertTrue(Turn::init() == $othello->getTurn());
     }
 
     /** @test */
-    public function 通常更新()
+    public function プレー中の場合はゲームを進めることができる()
     {
         // given:
-        $othello = Othello::make(
-            $id = \Str::uuid(),
-            $turn = Turn::init(),
-            0,
-        ); // 1ターン目
-        $action = FirstTurnActionMock::setStone();
+        $othello = Othello::init();
+        $turn = $othello->getTurn();
 
         // when:
+        $action = ActionMock::setStone();
         $othello->apply($action); // プレーを進める
 
         // then:
-        self::assertSame($id->toString(), $othello->id);
+        self::assertSame(Status::PLAYING, $othello->getStatus());
         self::assertTrue($turn->advance($action->getData()) == $othello->getTurn());
-        self::assertSame(0, $othello->getSkipCount());
 
     }
 
@@ -56,13 +51,13 @@ class OthelloTest extends TestCase
         // given:
         $othello = Othello::make(
             \Str::uuid(),
+            Status::PLAYING,
             Turn::make(1, Color::white(), SkipBoardMock::get()),
-            0
-        ); // 1ターン目
+        );
         // when:
-        $action = FirstTurnActionMock::setStone(); // おけない場所
+        $action = ActionMock::setStone(); // おけない場所
         // then:
-        $this->expectException(\Exception::class);
+        $this->expectException(DomainException::class);
         $othello->apply($action);
     }
 
@@ -72,11 +67,33 @@ class OthelloTest extends TestCase
         // given:
         $othello = Othello::init(); // 1ターン目
         // when:
-        $skipAction = FirstTurnActionMock::skip();
+        $skipAction = ActionMock::skip();
         // then:
-        $this->expectException(\Exception::class);
+        $this->expectException(DomainException::class);
         // 置ける場所があるのに場所指定なしで更新した場合
         $othello->apply($skipAction);
+    }
+
+    /** @test */
+    public function ゲームが終了しているのに進めようとしたら例外を出す()
+    {
+        // given:
+        $interruptedOthello = Othello::make(
+            \Str::uuid(),
+            Status::INTERRUPTED,
+            Turn::make(1, Color::white(), FulfilledBoard::get()),
+        );
+        $resultedOthello = Othello::make(
+            \Str::uuid(),
+            Status::RESULTED,
+            Turn::make(1, Color::white(), FulfilledBoard::get()),
+        );
+        // then:
+        self::expectException(DomainException::class);
+        $interruptedOthello->apply(ActionMock::setStone());
+        $interruptedOthello->apply(ActionMock::skip());
+        $resultedOthello->apply(ActionMock::setStone());
+        $resultedOthello->apply(ActionMock::skip());
     }
 
     // ---------------------------------------
@@ -85,100 +102,36 @@ class OthelloTest extends TestCase
     /** @test */
     public function 盤面に空いているマスがなくなったら終了()
     {
-        // given:
-        $fullBoard = Board::make(Matrix::init(8, 8, Color::white()->toCode())->toArray());
-
         // when:
-        $firstTurn = Turn::init();
-        $lastTurn = Turn::make(20, Color::white(), $fullBoard, 0);
+        $othello = Othello::make(
+            \Str::uuid(),
+            Status::PLAYING,
+            Turn::make(1, Color::white(), OneLastActionBoard::get8行8列に白を置くとすべて埋まる盤面()),
+        );
         // then:
-        self::assertSame(true, $firstTurn->isAdvanceable());
-        self::assertSame(false, $lastTurn->isAdvanceable());
+        $othello->apply(ActionMock::setStone(8, 8));
+        self::assertSame(Status::RESULTED, $othello->getStatus());
     }
 
     /** @test */
     public function スキップが2ターン続いたら終了()
     {
         // given:
-        $position = Position::make([4, 6]);
-
         // when:
-        $turnSkip0 = Turn::make(20, Color::white(), Board::init(), 0);
-        $turnSkip1 = Turn::make(20, Color::white(), Board::init(), 1);
-        $turnSkip2 = Turn::make(20, Color::white(), Board::init(), 2);
-
+        // 両者ともスキップしかできない盤面
+        $othello = Othello::make(
+            \Str::uuid(),
+            Status::PLAYING,
+            Turn::make(1, Color::white(), SkipBoardMock::白を4行5列に置くと両色ともスキップせざるを得なくなる盤面()),
+        );
         // then:
-        // isContinuable()テスト
-        self::assertSame(true,  $turnSkip0->isContinuable());
-        self::assertSame(true,  $turnSkip1->isContinuable());
-        self::assertSame(false, $turnSkip2->isContinuable());
-        // skipカウントとupdateのテスト
-        self::assertSame(true,  !empty($turnSkip0->advance($position))); // next()が問題なく実行できればOK
-        self::assertSame(true,  !empty($turnSkip1->advance($position))); // next()が問題なく実行できればOK
-        // スキップが2回続いたターンを更新しようとすると例外
-        self::expectException(\Exception::class);
-        $turnSkip2->advance($position);
+        self::assertSame(Status::PLAYING, $othello->getStatus(), 'このターンはプレー中');
+        // 白の行動
+        $othello->apply(ActionMock::setStone(4, 5));
+        self::assertSame(Status::PLAYING, $othello->getStatus(), '白がコマを置くと黒にスキップを強制');
+        // 黒がスキップ
+        $othello->apply(ActionMock::skip());
+        self::assertSame(Status::INTERRUPTED, $othello->getStatus(), '黒がスキップした後、白もスキップせざるを得なくなるため試合終了');
     }
-
-    // ---------------------------------------
-    // スキップ系
-    // ---------------------------------------
-    /** @test */
-    public function 盤面における場所がなかったらスキップカウントがアップ()
-    {
-        // given:
-        // 白も黒も置ける場所がない盤面
-        $board = SkipBoardMock::get();
-
-        // when:
-        $turn1 = Turn::make(1, Color::black(), $board, 0);
-        $turn2 = $turn1->advance();
-        $turn3 = $turn2->advance();
-
-        // then:
-        // 2ターン目
-        self::assertSame(1, $turn2->getSkipCount());
-        self::assertSame(true, $turn2->mustSkip());
-        self::assertSame(true, $turn2->isContinuable());
-        // 3ターン目
-        self::assertSame(2, $turn3->getSkipCount());
-        self::assertSame(true, $turn2->mustSkip());
-        self::assertSame(true, $turn2->isContinuable());
-    }
-
-    /** @test */
-    public function スキップされなかった時、カウントは0に戻る()
-    {
-        // given:
-        $w = Color::white()->toCode();
-        $b = Color::black()->toCode();
-        // 黒がスキップする盤面
-        $board = [
-            [0,0,0,0,0,0,0,0,],
-            [0,0,0,0,0,0,0,0,],
-            [0,0,0,0,0,0,0,0,],
-            [0,0,$b,$w,$b,0,0,0,],
-            [0,0,0,0,0,0,0,0,],
-            [0,0,0,0,0,0,0,0,],
-            [0,0,0,0,0,0,0,0,],
-            [0,0,0,0,0,0,0,0,],
-        ];
-        $board = Board::make($board);
-
-        // when:
-        // 黒のターンとして生成
-        $turn1 = Turn::make(1, Color::black(), $board, 0);
-        // 黒が行動(スキップ)
-        $turn2 = $turn1->advance();
-        // 白が行動
-        $turn3 = $turn2->advance(Position::make([4, 2]));
-
-        // then:
-        // 2ターン目(黒の行動後の白のターン)
-        self::assertSame(1, $turn2->getSkipCount(), 'スキップしたのでカウントアップ');
-        // 3ターン目(白の行動後の黒のターン)
-        self::assertSame(0, $turn3->getSkipCount(), '色に関わらず行動できたときはリセット');
-    }
-
 
 }

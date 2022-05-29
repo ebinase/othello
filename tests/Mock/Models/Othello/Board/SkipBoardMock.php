@@ -23,4 +23,21 @@ class SkipBoardMock
         ];
         return Board::make($board);
     }
+
+    public static function 白を4行5列に置くと両色ともスキップせざるを得なくなる盤面(): Board
+    {
+        $w = Color::white()->toCode();
+        $b = Color::black()->toCode();
+        $board = [
+            [0,0,0,0,0,0,0,0,],
+            [0,0,0,0,0,0,0,0,],
+            [0,0,0,0,0,0,0,0,],
+            [0,0,0,$w, 0,0,0,0,],
+            [0,0,0,$w,$b,0,0,0,],
+            [0,0,0, 0,$w,0,0,0,],
+            [0,0,0,0,0,0,0,0,],
+            [0,0,0,0,0,0,0,0,],
+        ];
+        return Board::make($board);
+    }
 }

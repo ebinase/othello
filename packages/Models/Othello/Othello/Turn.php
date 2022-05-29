@@ -47,7 +47,7 @@ class Turn
     public function advance(Position $position): Turn
     {
         // これ以上進めない場合
-        if (!$this->isAdvanceable()) throw new DomainException();
+        if ($this->isLast()) throw new DomainException();
         // スキップするしかない場合はコマを置けない
         if ($this->mustSkip()) throw new DomainException('このターンはスキップ以外できません。');
 
@@ -67,7 +67,7 @@ class Turn
     public function skip(): Turn
     {
         // これ以上進めない場合
-        if (!$this->isAdvanceable()) throw new DomainException();
+        if ($this->isLast()) throw new DomainException();
         // コマを置くことができる場合はスキップできない
         if (!$this->mustSkip()) throw new DomainException('コマを置くことができるマスがある場合、スキップはできません。');
 
@@ -82,10 +82,10 @@ class Turn
      * 最終ターンが終了しているか判定
      * @return bool
      */
-    public function isAdvanceable(): bool
+    public function isLast(): bool
     {
         // 盤面がいっぱいになっていなかったら最終ターンに到達していない = 進行可能
-        return !$this->board->isFulfilled();
+        return $this->board->isFulfilled();
     }
 
     public function mustSkip(): bool

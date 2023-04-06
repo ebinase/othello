@@ -13,10 +13,11 @@
 
 | タイプ     | ステータス     |
 | ---      | ---       |
-| Webサイト | 公開中(SPA版⏩https://othello.ebinas.dev 、Laravel版⏩https://ddd-othello.ebinas.dev) |
-| バックエンド開発 | 主要なドメイン層の機能は開発済み。TODO: ドメイン層の継続的なリファクタリングとプレゼンテーション層の開発 |
-| フロントエンド開発|Reactにて開発中。リポジトリはこちらhttps://github.com/ebinase/othello-frontend|
+| Webサイト | SPA版：公開中 <br>⏩https://othello.ebinas.dev<br>Laravel版：公開停止中<br>⏩https://ddd-othello.ebinas.dev) |
+| バックエンド開発 | **現在開発停止中...**<br>主要なドメイン層の機能は開発済み。<br>TODO: ドメイン層の継続的なリファクタリングとプレゼンテーション層の開発 |
+| フロントエンド開発|フロントのみで動く独立したSPAアプリとしてReactに移植<br>⏩https://github.com/ebinase/othello-frontend|
 
+Update: 2023/04/06
 
 ## :wrench: 技術要件
 ### 本番

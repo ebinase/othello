@@ -72,7 +72,7 @@
             }
 
             Swal.fire(options).then(function () {
-                $('form').submit();
+                $('#board-form').submit();
             })
         })
     </script>
